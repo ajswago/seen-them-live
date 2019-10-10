@@ -9,10 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.search.SearchResultActivity"></activity>
+        <activity android:name=".ui.search.SearchActivity" />
         <activity
             android:name=".ViewConcertsActivity"
             android:label="@string/title_activity_view_concerts"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

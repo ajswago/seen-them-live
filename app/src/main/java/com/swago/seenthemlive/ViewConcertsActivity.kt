@@ -18,6 +18,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
+import com.swago.seenthemlive.ui.search.SearchActivity
 
 class ViewConcertsActivity : AppCompatActivity() {
 
@@ -57,7 +58,9 @@ class ViewConcertsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_search -> {
-                Toast.makeText(this,"Search", Toast.LENGTH_LONG).show()
+//                Toast.makeText(this,"Search", Toast.LENGTH_LONG).show()
+                val intent = SearchActivity.newIntent(this)
+                startActivity(intent)
                 return true
             }
         }
