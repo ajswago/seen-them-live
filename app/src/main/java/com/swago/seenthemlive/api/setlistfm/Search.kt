@@ -26,69 +26,69 @@ interface Search{
 }
 
 data class Setlist(
-    val artist: Artist,
-    val venue: Venue,
-    val tour: Tour,
-    val set: List<Set>,
-    val info: String,
-    val url: String,
-    val id: String,
-    val versionId: String,
-    val eventDate: String,
-    val lastUpdated: String
+    val artist: Artist?,
+    val venue: Venue?,
+    val tour: Tour?,
+    val set: List<Set>?,
+    val info: String?,
+    val url: String?,
+    val id: String?,
+    val versionId: String?,
+    val eventDate: String?,
+    val lastUpdated: String?
 )
 
 data class Artist(
-    val mbid: String,
-    val tmid: Int,
-    val name: String,
-    val sortName: String,
-    val disambiguation: String,
-    val url: String
+    val mbid: String?,
+    val tmid: Int?,
+    val name: String?,
+    val sortName: String?,
+    val disambiguation: String?,
+    val url: String?
 )
 
 data class Venue(
-    val city: City,
-    val url: String,
-    val id: String,
-    val name: String
+    val city: City?,
+    val url: String?,
+    val id: String?,
+    val name: String?
 )
 
 data class City(
-    val id: String,
-    val name: String,
-    val stateCode: String,
-    val state: String,
-    val coords: Coords,
-    val country: Country
+    val id: String?,
+    val name: String?,
+    val stateCode: String?,
+    val state: String?,
+    val coords: Coords?,
+    val country: Country?
 )
 
 data class Coords(
-    val long: Double,
-    val lat: Double
+    val long: Double?,
+    val lat: Double?
 )
 
 data class Country(
-    val code: String,
-    val name: String
+    val code: String?,
+    val name: String?
 )
 
 data class Tour(
-    val name: String
+    val name: String?
 )
 
 data class Set(
-    val name: String,
-    val encore: Int,
-    val song: List<Song>
+    val name: String?,
+    val encore: Int?,
+    val song: List<Song>?
 )
 
 data class Song(
-    val name: String,
-    val with: Artist,
-    val cover: Artist,
-    val info: String,
-    val tape: Boolean
+    val name: String?,
+    val with: Artist?,
+    val cover: Artist?,
+    val info: String?,
+    val tape: Boolean?
 )
 
 data class SetlistResponse(

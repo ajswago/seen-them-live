@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
+
+    <TextView
+        android:id="@+id/setlist_item_artist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="16dp"
+        android:text="Iron Maiden"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/setlist_item_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="20dp"
+            android:text="14/10/2019"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/setlist_item_venue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="20dp"
+        android:text="Jiffy Lube Live"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/setlist_item_tour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginStart="20dp"
+        android:text="Legacy of the Beast Tour"
+        android:textSize="16sp"/>
+
+</LinearLayout>

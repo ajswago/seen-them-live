@@ -8,17 +8,58 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.swago.seenthemlive.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.swago.seenthemlive.api.setlistfm.*
+import kotlinx.android.synthetic.main.activity_search_result.*
+import androidx.recyclerview.widget.DividerItemDecoration
+
+
 
 class SearchResultActivity : AppCompatActivity() {
+
+    private val sampleSetlists = listOf(
+        Setlist(
+            Artist("", 0, "Iron Maiden", "Iron Maiden", "", ""),
+            Venue(
+                City("", "Bristow", "", "VA",
+                    Coords(0.0, 0.0),
+                    Country("", "United States")),
+                "", "", "Jiffy Lube Live"),
+            Tour("Legacy of the Beast"), emptyList(), "", "", "", "", "30/07/2019", ""),
+        Setlist(
+            Artist("", 0, "Iron Maiden", "Iron Maiden", "", ""),
+            Venue(
+                City("", "Bristow", "", "VA",
+                    Coords(0.0, 0.0),
+                    Country("", "United States")),
+                "", "", "Jiffy Lube Live"),
+            Tour("Final Frontier"), emptyList(), "", "", "", "", "20/07/2012", "")
+        )
+
+    private val setlists = mutableListOf<Setlist>()
 
     private lateinit var searchResultViewModel: SearchResultViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_result)
+        setContentView(com.swago.seenthemlive.R.layout.activity_search_result)
 
         searchResultViewModel = ViewModelProviders.of(this).get(SearchResultViewModel::class.java)
+
+        list_recycler_view.apply {
+            // set a LinearLayoutManager to handle Android
+            // RecyclerView behavior
+            layoutManager = LinearLayoutManager(this@SearchResultActivity)
+            // set the custom adapter to the RecyclerView
+            adapter = SetlistListAdapter(setlists)
+        }
+
+        list_recycler_view.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                LinearLayoutManager.VERTICAL
+            )
+        )
 
         val artistName = intent.getStringExtra(INTENT_ARTIST_NAME)
 //        Toast.makeText(this,"Artist:"+artistName, Toast.LENGTH_LONG).show()
@@ -30,8 +71,10 @@ class SearchResultActivity : AppCompatActivity() {
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
 
             Log.d("SEARCHRESULT", "Data Received!!!")
-            Log.d("DATA", "Artist: ${it[0].artist.name}, Venue: ${it[0].venue.name}, Date: ${it[0].eventDate}")
-            Log.d("DATA", "Artist: ${it[1].artist.name}, Venue: ${it[1].venue.name}, Date: ${it[1].eventDate}")
+            Log.d("DATA", "Artist: ${it[0].artist?.name}, Venue: ${it[0].venue?.name}, Date: ${it[0].eventDate}")
+            Log.d("DATA", "Artist: ${it[1].artist?.name}, Venue: ${it[1].venue?.name}, Date: ${it[1].eventDate}")
+            setlists.addAll(it)
+            list_recycler_view.adapter?.notifyDataSetChanged()
         })
     }
 
