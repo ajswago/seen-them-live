@@ -62,11 +62,12 @@ class SearchResultActivity : AppCompatActivity() {
         )
 
         val artistName = intent.getStringExtra(INTENT_ARTIST_NAME)
+        val stateCode = intent.getStringExtra(INTENT_STATE_CODE)
 //        Toast.makeText(this,"Artist:"+artistName, Toast.LENGTH_LONG).show()
 
         Log.d("SEARCHRESULT", "Making call!!!")
 
-        searchResultViewModel.fetchSetlists(artistName = artistName)
+        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
 
