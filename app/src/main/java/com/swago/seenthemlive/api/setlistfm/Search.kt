@@ -4,6 +4,7 @@ import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.io.Serializable
 
 interface Search{
     @GET("search/setlists")
@@ -29,14 +30,14 @@ data class Setlist(
     val artist: Artist?,
     val venue: Venue?,
     val tour: Tour?,
-    val set: List<Set>?,
+    val sets: Sets?,
     val info: String?,
     val url: String?,
     val id: String?,
     val versionId: String?,
     val eventDate: String?,
     val lastUpdated: String?
-)
+) : Serializable
 
 data class Artist(
     val mbid: String?,
@@ -45,14 +46,14 @@ data class Artist(
     val sortName: String?,
     val disambiguation: String?,
     val url: String?
-)
+) : Serializable
 
 data class Venue(
     val city: City?,
     val url: String?,
     val id: String?,
     val name: String?
-)
+) : Serializable
 
 data class City(
     val id: String?,
@@ -61,27 +62,31 @@ data class City(
     val state: String?,
     val coords: Coords?,
     val country: Country?
-)
+) : Serializable
 
 data class Coords(
     val long: Double?,
     val lat: Double?
-)
+) : Serializable
 
 data class Country(
     val code: String?,
     val name: String?
-)
+) : Serializable
 
 data class Tour(
     val name: String?
-)
+) : Serializable
+
+data class Sets(
+    val set: List<Set>?
+) : Serializable
 
 data class Set(
     val name: String?,
     val encore: Int?,
     val song: List<Song>?
-)
+) : Serializable
 
 data class Song(
     val name: String?,
@@ -89,7 +94,7 @@ data class Song(
     val cover: Artist?,
     val info: String?,
     val tape: Boolean?
-)
+) : Serializable
 
 data class SetlistResponse(
     val setlist: List<Setlist>

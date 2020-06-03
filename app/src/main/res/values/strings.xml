@@ -19,6 +19,8 @@
     <string name="state_label">State:</string>
     <string name="search">Search</string>
 
+    <string name="title_activity_setlist_detail">SetlistDetailActivity</string>
+
     <string-array name="States">
         <item>AL</item>
         <item>AK</item>

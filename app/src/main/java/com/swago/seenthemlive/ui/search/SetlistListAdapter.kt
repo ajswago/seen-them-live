@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
 
-class SetlistListAdapter(private val list: List<Setlist>)
+class SetlistListAdapter(private val list: List<Setlist>, private val selectListener: OnSelectListener)
     : RecyclerView.Adapter<SetlistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetlistViewHolder {
@@ -16,12 +16,19 @@ class SetlistListAdapter(private val list: List<Setlist>)
     }
 
     override fun onBindViewHolder(holder: SetlistViewHolder, position: Int) {
-        val movie: Setlist = list[position]
-        holder.bind(movie)
+        val setlist: Setlist = list[position]
+        holder.bind(setlist)
+        holder.itemView.setOnClickListener {
+            val selectedSetlist = list.get(holder.adapterPosition)
+            selectListener.selected(selectedSetlist)
+        }
     }
 
     override fun getItemCount(): Int = list.size
 
+    interface OnSelectListener {
+        fun selected(setlist: Setlist)
+    }
 }
 
 class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup) :

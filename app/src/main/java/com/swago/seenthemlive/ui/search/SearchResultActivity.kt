@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.swago.seenthemlive.api.setlistfm.*
 import kotlinx.android.synthetic.main.activity_search_result.*
 import androidx.recyclerview.widget.DividerItemDecoration
-
+import com.swago.seenthemlive.ui.SetlistDetailActivity
 
 
 class SearchResultActivity : AppCompatActivity() {
@@ -25,7 +25,7 @@ class SearchResultActivity : AppCompatActivity() {
                     Coords(0.0, 0.0),
                     Country("", "United States")),
                 "", "", "Jiffy Lube Live"),
-            Tour("Legacy of the Beast"), emptyList(), "", "", "", "", "30/07/2019", ""),
+            Tour("Legacy of the Beast"), Sets(emptyList()), "", "", "", "", "30/07/2019", ""),
         Setlist(
             Artist("", 0, "Iron Maiden", "Iron Maiden", "", ""),
             Venue(
@@ -33,7 +33,7 @@ class SearchResultActivity : AppCompatActivity() {
                     Coords(0.0, 0.0),
                     Country("", "United States")),
                 "", "", "Jiffy Lube Live"),
-            Tour("Final Frontier"), emptyList(), "", "", "", "", "20/07/2012", "")
+            Tour("Final Frontier"), Sets(emptyList()), "", "", "", "", "20/07/2012", "")
         )
 
     private val setlists = mutableListOf<Setlist>()
@@ -51,7 +51,13 @@ class SearchResultActivity : AppCompatActivity() {
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(this@SearchResultActivity)
             // set the custom adapter to the RecyclerView
-            adapter = SetlistListAdapter(setlists)
+            adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
+                override fun selected(setlist: Setlist) {
+                    Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
+                    val intent = SetlistDetailActivity.newIntent(context, setlist)
+                    startActivity(intent)
+                }
+            })
         }
 
         list_recycler_view.addItemDecoration(
