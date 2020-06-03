@@ -12,7 +12,7 @@
         <activity
             android:name=".ui.SetlistDetailActivity"
             android:label="@string/title_activity_setlist_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ui.search.SearchResultActivity" />
         <activity android:name=".ui.search.SearchActivity" />
         <activity

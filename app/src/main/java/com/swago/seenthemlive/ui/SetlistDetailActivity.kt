@@ -5,6 +5,8 @@ import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -20,7 +22,7 @@ class SetlistDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setlist_detail)
-//        setSupportActionBar(findViewById(R.id.toolbar))
+        setSupportActionBar(findViewById(R.id.toolbar))
         val setlist: Setlist = intent.getSerializableExtra(INTENT_SETLIST) as Setlist
         setlist_detail_artist?.text = setlist.artist?.name
         var venueString = StringBuilder()
@@ -71,6 +73,20 @@ class SetlistDetailActivity : AppCompatActivity() {
             val intent = SearchResultActivity.newIntent(this, venueId = setlist.venue?.id, date = setlist.eventDate, excludeArtistMbid = setlist.artist?.mbid)
             startActivity(intent)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.setlist_detail, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_add -> {
+                Log.d("DetailActivity", "ADD THIS SETLIST")
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {
