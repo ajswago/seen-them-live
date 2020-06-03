@@ -69,18 +69,19 @@ class SearchResultActivity : AppCompatActivity() {
 
         val artistName = intent.getStringExtra(INTENT_ARTIST_NAME)
         val stateCode = intent.getStringExtra(INTENT_STATE_CODE)
+        val venueId = intent.getStringExtra(INTENT_VENUE_ID)
+        val date = intent.getStringExtra(INTENT_DATE)
+        val excludeArtistMbid = intent.getStringExtra(INTENT_EXCLUDE_ARTIST_MBID)
 //        Toast.makeText(this,"Artist:"+artistName, Toast.LENGTH_LONG).show()
 
         Log.d("SEARCHRESULT", "Making call!!!")
 
-        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode)
+        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, date = date)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
 
             Log.d("SEARCHRESULT", "Data Received!!!")
-            Log.d("DATA", "Artist: ${it[0].artist?.name}, Venue: ${it[0].venue?.name}, Date: ${it[0].eventDate}")
-            Log.d("DATA", "Artist: ${it[1].artist?.name}, Venue: ${it[1].venue?.name}, Date: ${it[1].eventDate}")
-            setlists.addAll(it)
+            setlists.addAll(it.filter { setlist -> setlist.artist?.mbid != excludeArtistMbid })
             list_recycler_view.adapter?.notifyDataSetChanged()
         })
     }
@@ -103,6 +104,7 @@ class SearchResultActivity : AppCompatActivity() {
         private val INTENT_VENUE_ID = "venueId"
         private val INTENT_VENUE_NAME = "venueName"
         private val INTENT_YEAR = "year"
+        private val INTENT_EXCLUDE_ARTIST_MBID = "excludeArtistMbid"
 
         fun newIntent(context: Context,
                       artistMbid: String? = null,
@@ -120,7 +122,8 @@ class SearchResultActivity : AppCompatActivity() {
                       tourName: String? = null,
                       venueId: String? = null,
                       venueName: String? = null,
-                      year: String? = null): Intent {
+                      year: String? = null,
+                      excludeArtistMbid: String? = null): Intent {
             val intent = Intent(context, SearchResultActivity::class.java)
             intent.putExtra(INTENT_ARTIST_MBID, artistMbid)
             intent.putExtra(INTENT_ARTIST_NAME, artistName)
@@ -138,6 +141,7 @@ class SearchResultActivity : AppCompatActivity() {
             intent.putExtra(INTENT_VENUE_ID, venueId)
             intent.putExtra(INTENT_VENUE_NAME, venueName)
             intent.putExtra(INTENT_YEAR, year)
+            intent.putExtra(INTENT_EXCLUDE_ARTIST_MBID, excludeArtistMbid)
             return intent
         }
     }

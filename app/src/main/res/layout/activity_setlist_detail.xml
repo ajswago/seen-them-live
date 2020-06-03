@@ -60,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/setlist_label_setlist"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@id/other_artist_button_layout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -92,5 +92,23 @@
     </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/other_artist_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/other_artist_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Other Artists"/>
+    </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

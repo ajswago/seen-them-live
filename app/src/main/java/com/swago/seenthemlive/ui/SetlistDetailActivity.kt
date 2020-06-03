@@ -2,14 +2,17 @@ package com.swago.seenthemlive.ui
 
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
+import com.swago.seenthemlive.ui.search.SearchResultActivity
 import kotlinx.android.synthetic.main.activity_setlist_detail.*
 
 class SetlistDetailActivity : AppCompatActivity() {
@@ -57,15 +60,17 @@ class SetlistDetailActivity : AppCompatActivity() {
             adapter = SongListAdapter(songs)
         }
 
+        setlist_label_encore.visibility = if (encoreSongs.isEmpty()) View.GONE else View.VISIBLE
+
         encore_recycler_view.apply {
             layoutManager = LinearLayoutManager(this@SetlistDetailActivity)
             adapter = SongListAdapter(encoreSongs)
         }
 
-        Log.d("Songs", "${songs}")
-        Log.d("Encore", "${encoreSongs}")
-//        song_recycler_view.adapter = SongListAdapter(songs)
-//        encore_recycler_view.adapter = SongListAdapter(encoreSongs)
+        other_artist_button.setOnClickListener() {
+            val intent = SearchResultActivity.newIntent(this, venueId = setlist.venue?.id, date = setlist.eventDate, excludeArtistMbid = setlist.artist?.mbid)
+            startActivity(intent)
+        }
     }
 
     companion object {
