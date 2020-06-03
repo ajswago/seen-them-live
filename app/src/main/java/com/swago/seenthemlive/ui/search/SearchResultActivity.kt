@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.swago.seenthemlive.api.setlistfm.*
 import kotlinx.android.synthetic.main.activity_search_result.*
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.ui.SetlistDetailActivity
 
 
@@ -44,6 +45,8 @@ class SearchResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(com.swago.seenthemlive.R.layout.activity_search_result)
 
+        val user: LoginActivity.User = intent.getSerializableExtra(INTENT_USER) as LoginActivity.User
+
         searchResultViewModel = ViewModelProviders.of(this).get(SearchResultViewModel::class.java)
 
         list_recycler_view.apply {
@@ -54,7 +57,7 @@ class SearchResultActivity : AppCompatActivity() {
             adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
                 override fun selected(setlist: Setlist) {
                     Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-                    val intent = SetlistDetailActivity.newIntent(context, setlist)
+                    val intent = SetlistDetailActivity.newIntent(context, user, setlist)
                     startActivity(intent)
                 }
             })
@@ -88,6 +91,7 @@ class SearchResultActivity : AppCompatActivity() {
 
     companion object {
 
+        private val INTENT_USER = "user"
         private val INTENT_ARTIST_MBID = "artistMbid"
         private val INTENT_ARTIST_NAME = "artistName"
         private val INTENT_ARTIST_TMID = "artistTmid"
@@ -107,6 +111,7 @@ class SearchResultActivity : AppCompatActivity() {
         private val INTENT_EXCLUDE_ARTIST_MBID = "excludeArtistMbid"
 
         fun newIntent(context: Context,
+                      user: LoginActivity.User? = null,
                       artistMbid: String? = null,
                       artistName: String? = null,
                       artistTmid: Int? = null,
@@ -125,6 +130,7 @@ class SearchResultActivity : AppCompatActivity() {
                       year: String? = null,
                       excludeArtistMbid: String? = null): Intent {
             val intent = Intent(context, SearchResultActivity::class.java)
+            intent.putExtra(INTENT_USER, user)
             intent.putExtra(INTENT_ARTIST_MBID, artistMbid)
             intent.putExtra(INTENT_ARTIST_NAME, artistName)
             intent.putExtra(INTENT_ARTIST_TMID, artistTmid)

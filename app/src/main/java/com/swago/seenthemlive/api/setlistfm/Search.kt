@@ -27,73 +27,73 @@ interface Search{
 }
 
 data class Setlist(
-    val artist: Artist?,
-    val venue: Venue?,
-    val tour: Tour?,
-    val sets: Sets?,
-    val info: String?,
-    val url: String?,
-    val id: String?,
-    val versionId: String?,
-    val eventDate: String?,
-    val lastUpdated: String?
+    val artist: Artist? = null,
+    val venue: Venue? = null,
+    val tour: Tour? = null,
+    val sets: Sets? = null,
+    val info: String? = null,
+    val url: String? = null,
+    val id: String? = null,
+    val versionId: String? = null,
+    val eventDate: String? = null,
+    val lastUpdated: String? = null
 ) : Serializable
 
 data class Artist(
-    val mbid: String?,
-    val tmid: Int?,
-    val name: String?,
-    val sortName: String?,
-    val disambiguation: String?,
-    val url: String?
+    val mbid: String? = null,
+    val tmid: Int? = null,
+    val name: String? = null,
+    val sortName: String? = null,
+    val disambiguation: String? = null,
+    val url: String? = null
 ) : Serializable
 
 data class Venue(
-    val city: City?,
-    val url: String?,
-    val id: String?,
-    val name: String?
+    val city: City? = null,
+    val url: String? = null,
+    val id: String? = null,
+    val name: String? = null
 ) : Serializable
 
 data class City(
-    val id: String?,
-    val name: String?,
-    val stateCode: String?,
-    val state: String?,
-    val coords: Coords?,
-    val country: Country?
+    val id: String? = null,
+    val name: String? = null,
+    val stateCode: String? = null,
+    val state: String? = null,
+    val coords: Coords? = null,
+    val country: Country? = null
 ) : Serializable
 
 data class Coords(
-    val long: Double?,
-    val lat: Double?
+    val long: Double? = null,
+    val lat: Double? = null
 ) : Serializable
 
 data class Country(
-    val code: String?,
-    val name: String?
+    val code: String? = null,
+    val name: String? = null
 ) : Serializable
 
 data class Tour(
-    val name: String?
+    val name: String? = null
 ) : Serializable
 
 data class Sets(
-    val set: List<Set>?
+    val set: List<Set>? = null
 ) : Serializable
 
 data class Set(
-    val name: String?,
-    val encore: Int?,
-    val song: List<Song>?
+    val name: String? = null,
+    val encore: Int? = null,
+    val song: List<Song>? = null
 ) : Serializable
 
 data class Song(
-    val name: String?,
-    val with: Artist?,
-    val cover: Artist?,
-    val info: String?,
-    val tape: Boolean?
+    val name: String? = null,
+    val with: Artist? = null,
+    val cover: Artist? = null,
+    val info: String? = null,
+    val tape: Boolean? = null
 ) : Serializable
 
 data class SetlistResponse(

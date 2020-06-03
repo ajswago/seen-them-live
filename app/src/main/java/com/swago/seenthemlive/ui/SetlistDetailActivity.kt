@@ -12,7 +12,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.FirebaseFirestore
+import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
+import com.swago.seenthemlive.ViewConcertsActivity
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.ui.search.SearchResultActivity
 import kotlinx.android.synthetic.main.activity_setlist_detail.*
@@ -23,7 +26,51 @@ class SetlistDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setlist_detail)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        val user: LoginActivity.User = intent.getSerializableExtra(INTENT_USER) as LoginActivity.User
         val setlist: Setlist = intent.getSerializableExtra(INTENT_SETLIST) as Setlist
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(user.id!!)
+            .get()
+            .addOnSuccessListener { documentReference ->
+                val user: LoginActivity.User = documentReference.toObject(LoginActivity.User::class.java)!!
+                if (user?.setlists == null) {
+                    user?.setlists = ArrayList()
+                }
+                Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
+                val isSaved = user.setlists?.filter{ setlistItem -> setlistItem.id == setlist.id }?.isNotEmpty()
+                Log.d("Is Saved", "Is Saved: ${isSaved}")
+                isSaved.let{
+                    save_setlist_checkbox.isChecked = isSaved!!
+                }
+
+                save_setlist_checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+                    Log.d("Star", "Checked: ${isChecked}")
+                    val savedSetlists = ArrayList<Setlist>()
+                    savedSetlists.addAll(user.setlists!!)
+                    if (isChecked) {
+                        savedSetlists.add(setlist)
+                        user.setlists = savedSetlists
+                    } else {
+                        savedSetlists.removeAll { setlistItem -> setlist.id == setlistItem.id }
+                        user.setlists = savedSetlists
+                    }
+                    val db = FirebaseFirestore.getInstance()
+                    db.collection("users").document(user.id!!)
+                        .set(user)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d("CLOUDFIRESTORE", "User Saved added with ID: ${documentReference}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("CLOUDFIRESTORE", "Error adding document", e)
+            }
+
         setlist_detail_artist?.text = setlist.artist?.name
         var venueString = StringBuilder()
         venueString.append(setlist.venue?.name)
@@ -73,6 +120,37 @@ class SetlistDetailActivity : AppCompatActivity() {
             val intent = SearchResultActivity.newIntent(this, venueId = setlist.venue?.id, date = setlist.eventDate, excludeArtistMbid = setlist.artist?.mbid)
             startActivity(intent)
         }
+
+        Log.d("Saved User Setlists", "Setlists: ${user.setlists}")
+        Log.d("Current Setlist", "Setlist: ${setlist}")
+
+//        val isSaved = user.setlists?.filter{ setlistItem -> setlistItem.id == setlist.id }?.isNotEmpty()
+//        Log.d("Is Saved", "Is Saved: ${isSaved}")
+//        isSaved.let{
+//            save_setlist_checkbox.isChecked = isSaved!!
+//        }
+//
+//        save_setlist_checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+//            Log.d("Star", "Checked: ${isChecked}")
+//            val savedSetlists = ArrayList<Setlist>()
+//            savedSetlists.addAll(user.setlists!!)
+//            if (isChecked) {
+//                savedSetlists.add(setlist)
+//                user.setlists = savedSetlists
+//            } else {
+//                savedSetlists.removeAll { setlistItem -> setlist.id == setlistItem.id }
+//                user.setlists = savedSetlists
+//            }
+//            val db = FirebaseFirestore.getInstance()
+//            db.collection("users").document(user.id!!)
+//                .set(user)
+//                .addOnSuccessListener { documentReference ->
+//                    Log.d("CLOUDFIRESTORE", "User Saved added with ID: ${documentReference}")
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.w("CLOUDFIRESTORE", "Error adding document", e)
+//                }
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -92,10 +170,13 @@ class SetlistDetailActivity : AppCompatActivity() {
     companion object {
 
         private val INTENT_SETLIST = "setlist"
+        private val INTENT_USER = "user"
 
         fun newIntent(context: Context,
+                      user: LoginActivity.User? = null,
                       setlist: Setlist): Intent {
             val intent = Intent(context, SetlistDetailActivity::class.java)
+            intent.putExtra(INTENT_USER, user)
             intent.putExtra(INTENT_SETLIST, setlist)
             return intent
         }

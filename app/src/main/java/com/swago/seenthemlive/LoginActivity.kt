@@ -13,7 +13,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.swago.seenthemlive.api.setlistfm.Setlist
 import kotlinx.android.synthetic.main.activity_login.*
+import java.io.Serializable
 
 
 class LoginActivity : BaseActivity() {
@@ -111,8 +113,23 @@ class LoginActivity : BaseActivity() {
     fun updateUI(user: FirebaseUser?){
         if(user != null){
             //Do your Stuff
-            val intent = ViewConcertsActivity.newIntent(this, user)
-            startActivity(intent)
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(user.uid)
+                .get()
+                .addOnSuccessListener { documentReference ->
+                    val user: User? = documentReference.toObject(User::class.java)
+                    if (user?.setlists == null) {
+                        user?.setlists = ArrayList()
+                    }
+                    Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
+                    val intent = ViewConcertsActivity.newIntent(this, user!!)
+                    startActivity(intent)
+                }
+                .addOnFailureListener { e ->
+                    Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                }
+//            val intent = ViewConcertsActivity.newIntent(this, user)
+//            startActivity(intent)
         }
     }
 
@@ -125,11 +142,10 @@ class LoginActivity : BaseActivity() {
     }
 
     data class User(
-        val id: String?,
-        val username: String?,
-        val email: String?,
-        val displayName: String?
-    )
-
-
+        var id: String? = null,
+        var username: String? = null,
+        var email: String? = null,
+        var displayName: String? = null,
+        var setlists: List<Setlist>? = null
+    ) : Serializable
 }
