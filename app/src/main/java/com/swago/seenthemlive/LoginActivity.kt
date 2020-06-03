@@ -12,12 +12,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
 
 
 class LoginActivity : BaseActivity() {
@@ -88,8 +84,18 @@ class LoginActivity : BaseActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d("Login", "signInWithCredential:success")
+                    Log.d("Login", "signInWithCredential:success ${mAuth.currentUser?.displayName}")
                     val user = mAuth.currentUser
+                    val username = usernameFromEmail(user!!.email!!)
+                    val db = FirebaseFirestore.getInstance()
+                    db.collection("users").document(user.uid)
+                        .set(User(id = user.uid, username = username, email = user.email, displayName = user.displayName))
+                        .addOnSuccessListener { documentReference ->
+                            Log.d("CLOUDFIRESTORE", "DocumentSnapshot added with ID: ${documentReference}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                        }
                     updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user.
@@ -109,6 +115,21 @@ class LoginActivity : BaseActivity() {
             startActivity(intent)
         }
     }
+
+    private fun usernameFromEmail(email: String): String? {
+        return if (email.contains("@")) {
+            email.split("@".toRegex()).toTypedArray()[0]
+        } else {
+            email
+        }
+    }
+
+    data class User(
+        val id: String?,
+        val username: String?,
+        val email: String?,
+        val displayName: String?
+    )
 
 
 }
