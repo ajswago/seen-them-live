@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -30,6 +31,8 @@ class ListFragment : Fragment() {
 
     private lateinit var listViewModel: ListViewModel
 
+    private var loading: ContentLoadingProgressBar? = null
+
     private val setlists = mutableListOf<Setlist>()
     private var userId: String? = null
 
@@ -43,6 +46,7 @@ class ListFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_list, container, false)
         val setlistRecyclerView: RecyclerView = root.findViewById(R.id.setlist_recycler_view)
         val noContentView: TextView = root.findViewById(R.id.setlist_list_no_content_label)
+        loading = root.findViewById(R.id.loading)
 
         userId = activity?.intent?.getStringExtra("user")
         listViewModel.setlists.observe(this, Observer {
@@ -77,7 +81,7 @@ class ListFragment : Fragment() {
             })
         }
         val db = FirebaseFirestore.getInstance()
-        updateUi()
+//        updateUi()
         return root
     }
 
@@ -87,6 +91,7 @@ class ListFragment : Fragment() {
     }
 
     fun updateUi() {
+        loading?.show()
         val db = FirebaseFirestore.getInstance()
         db.collection("users").document(userId!!)
             .get()
@@ -98,9 +103,11 @@ class ListFragment : Fragment() {
                 val userSetlists = user?.setlists ?: ArrayList()
                 Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
                 listViewModel.setlists.postValue(userSetlists!!)
+                loading?.hide()
             }
             .addOnFailureListener { e ->
                 Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                loading?.hide()
             }
     }
 }

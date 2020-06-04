@@ -24,6 +24,12 @@
         tools:layout="@layout/fragment_map" />
 
     <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.swago.seenthemlive.ui.profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
         android:id="@+id/nav_friends"
         android:name="com.swago.seenthemlive.ui.friends.FriendsFragment"
         android:label="@string/menu_friends"
