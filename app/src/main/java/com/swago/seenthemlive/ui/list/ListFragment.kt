@@ -43,6 +43,7 @@ class ListFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_list, container, false)
         val setlistRecyclerView: RecyclerView = root.findViewById(R.id.setlist_recycler_view)
         val noContentView: TextView = root.findViewById(R.id.setlist_list_no_content_label)
+
         userId = activity?.intent?.getStringExtra("user")
         listViewModel.setlists.observe(this, Observer {
             if (it.isEmpty()) {

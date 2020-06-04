@@ -141,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Also At This Show"
-            android:drawableRight="@android:drawable/ic_menu_add"
+            android:drawableRight="@drawable/ic_more_content_arrow"
             android:gravity="center_vertical"
             android:drawablePadding="20dp"
             android:textSize="18sp"/>

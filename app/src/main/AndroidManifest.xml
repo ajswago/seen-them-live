@@ -14,7 +14,8 @@
             android:label="@string/title_activity_setlist_detail"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ui.search.SearchResultActivity" />
-        <activity android:name=".ui.search.SearchActivity" />
+        <activity android:name=".ui.search.SearchActivity"
+            android:label="Search"/>
         <activity
             android:name=".ViewConcertsActivity"
             android:label="@string/title_activity_view_concerts"

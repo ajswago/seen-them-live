@@ -52,6 +52,12 @@ class SearchResultActivity : AppCompatActivity() {
         val userId = intent.getStringExtra(INTENT_USER)
         val nested = intent.getBooleanExtra(INTENT_NESTED, false)
 
+        if (nested) {
+            title = "Also At This Show"
+        } else {
+            title = "Search Results"
+        }
+
         searchResultViewModel = ViewModelProviders.of(this).get(SearchResultViewModel::class.java)
 
         list_recycler_view.apply {
