@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,6 +15,9 @@ import kotlinx.android.synthetic.main.activity_search_result.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.ui.SetlistDetailActivity
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class SearchResultActivity : AppCompatActivity() {
@@ -83,10 +87,21 @@ class SearchResultActivity : AppCompatActivity() {
         searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, date = date)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
-
-            Log.d("SEARCHRESULT", "Data Received!!!")
-            setlists.addAll(it.filter { setlist -> setlist.artist?.mbid != excludeArtistMbid })
-            list_recycler_view.adapter?.notifyDataSetChanged()
+            if (it.isEmpty()) {
+                no_content_view.visibility = View.VISIBLE
+                list_recycler_view.visibility = View.GONE
+            } else {
+                setlists.clear()
+                setlists.addAll(it.filter { setlist -> setlist.artist?.mbid != excludeArtistMbid }.sortedByDescending {
+                    LocalDate.parse(
+                        it.eventDate,
+                        DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+                    )
+                })
+                list_recycler_view.adapter?.notifyDataSetChanged()
+                no_content_view.visibility = View.GONE
+                list_recycler_view.visibility = View.VISIBLE
+            }
         })
     }
 

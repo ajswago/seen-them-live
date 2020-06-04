@@ -1,5 +1,6 @@
 package com.swago.seenthemlive.ui.list
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,11 +42,24 @@ class ListFragment : Fragment() {
             ViewModelProviders.of(this).get(ListViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_list, container, false)
         val setlistRecyclerView: RecyclerView = root.findViewById(R.id.setlist_recycler_view)
+        val noContentView: TextView = root.findViewById(R.id.setlist_list_no_content_label)
         userId = activity?.intent?.getStringExtra("user")
         listViewModel.setlists.observe(this, Observer {
-            setlists.clear()
-            setlists.addAll(it.sortedByDescending { LocalDate.parse(it.eventDate, DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)) })
-            setlistRecyclerView.adapter?.notifyDataSetChanged()
+            if (it.isEmpty()) {
+                noContentView.visibility = View.VISIBLE
+                setlistRecyclerView.visibility = View.GONE
+            } else {
+                setlists.clear()
+                setlists.addAll(it.sortedByDescending {
+                    LocalDate.parse(
+                        it.eventDate,
+                        DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+                    )
+                })
+                setlistRecyclerView.adapter?.notifyDataSetChanged()
+                noContentView.visibility = View.GONE
+                setlistRecyclerView.visibility = View.VISIBLE
+            }
         })
         Log.d("RECYCLER", "${setlist_recycler_view}")
         setlistRecyclerView.apply {

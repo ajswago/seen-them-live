@@ -42,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_dropdown_item,
             states)
         state_spinner.setSelection(states.indexOf("VA"))
-        artistField.setText("Iron Maiden")
+//        artistField.setText("Iron Maiden")
     }
 
     fun validateForm(): Boolean {
