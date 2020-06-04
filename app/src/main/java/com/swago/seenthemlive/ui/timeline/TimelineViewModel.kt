@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class TimelineViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is timeline Fragment"
+        value = "Timeline Coming Soon!"
     }
     val text: LiveData<String> = _text
 }

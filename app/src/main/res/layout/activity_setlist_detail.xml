@@ -127,14 +127,25 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:layout_marginTop="20dp">
 
-        <Button
-            android:id="@+id/other_artist_button"
+<!--        <Button-->
+<!--            android:id="@+id/other_artist_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Other Artists"/>-->
+        <TextView
+            android:id="@+id/other_artist_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Other Artists"/>
+            android:text="Also At This Show"
+            android:drawableRight="@android:drawable/ic_menu_add"
+            android:gravity="center_vertical"
+            android:drawablePadding="20dp"
+            android:textSize="18sp"/>
+
     </LinearLayout>
 
 

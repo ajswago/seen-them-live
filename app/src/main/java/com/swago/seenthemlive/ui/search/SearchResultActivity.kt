@@ -46,6 +46,7 @@ class SearchResultActivity : AppCompatActivity() {
         setContentView(com.swago.seenthemlive.R.layout.activity_search_result)
 
         val userId = intent.getStringExtra(INTENT_USER)
+        val nested = intent.getBooleanExtra(INTENT_NESTED, false)
 
         searchResultViewModel = ViewModelProviders.of(this).get(SearchResultViewModel::class.java)
 
@@ -57,7 +58,7 @@ class SearchResultActivity : AppCompatActivity() {
             adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
                 override fun selected(setlist: Setlist) {
                     Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-                    val intent = SetlistDetailActivity.newIntent(context, userId, setlist)
+                    val intent = SetlistDetailActivity.newIntent(context, userId, setlist, hideOthers = nested)
                     startActivity(intent)
                 }
             })
@@ -109,6 +110,7 @@ class SearchResultActivity : AppCompatActivity() {
         private val INTENT_VENUE_NAME = "venueName"
         private val INTENT_YEAR = "year"
         private val INTENT_EXCLUDE_ARTIST_MBID = "excludeArtistMbid"
+        private val INTENT_NESTED = "nested"
 
         fun newIntent(context: Context,
                       userId: String,
@@ -128,7 +130,8 @@ class SearchResultActivity : AppCompatActivity() {
                       venueId: String? = null,
                       venueName: String? = null,
                       year: String? = null,
-                      excludeArtistMbid: String? = null): Intent {
+                      excludeArtistMbid: String? = null,
+                      nested: Boolean? = false): Intent {
             val intent = Intent(context, SearchResultActivity::class.java)
             intent.putExtra(INTENT_USER, userId)
             intent.putExtra(INTENT_ARTIST_MBID, artistMbid)
@@ -148,6 +151,7 @@ class SearchResultActivity : AppCompatActivity() {
             intent.putExtra(INTENT_VENUE_NAME, venueName)
             intent.putExtra(INTENT_YEAR, year)
             intent.putExtra(INTENT_EXCLUDE_ARTIST_MBID, excludeArtistMbid)
+            intent.putExtra(INTENT_NESTED, nested)
             return intent
         }
     }
