@@ -87,12 +87,19 @@ class SearchResultActivity : AppCompatActivity() {
         searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, date = date)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
-            if (it.isEmpty()) {
+            Log.d("QUERY", "Setlists found: ${it}")
+            val filteredList = it.filter { setlist -> setlist.artist?.mbid != excludeArtistMbid }
+            if (filteredList.isEmpty()) {
                 no_content_view.visibility = View.VISIBLE
                 list_recycler_view.visibility = View.GONE
+                if (nested) {
+                    no_content_view.text = "No Additional Artists Found!"
+                } else {
+                    no_content_view.text = "No Search Results Found!"
+                }
             } else {
                 setlists.clear()
-                setlists.addAll(it.filter { setlist -> setlist.artist?.mbid != excludeArtistMbid }.sortedByDescending {
+                setlists.addAll(filteredList.sortedByDescending {
                     LocalDate.parse(
                         it.eventDate,
                         DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)

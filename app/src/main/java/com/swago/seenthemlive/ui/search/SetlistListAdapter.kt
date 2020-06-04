@@ -6,6 +6,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class SetlistListAdapter(private val list: List<Setlist>, private val selectListener: OnSelectListener)
     : RecyclerView.Adapter<SetlistViewHolder>() {
@@ -65,7 +68,11 @@ class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         }
         mVenueView?.text = venueString.toString()
         mTourView?.text = setlist.tour?.name
-        mDateView?.text = setlist.eventDate
+        val date = LocalDate.parse(
+            setlist.eventDate,
+            DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+        )
+        mDateView?.text = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy", Locale.ENGLISH))
     }
 
 }

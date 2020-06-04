@@ -20,6 +20,10 @@ import com.swago.seenthemlive.ViewConcertsActivity
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.ui.search.SearchResultActivity
 import kotlinx.android.synthetic.main.activity_setlist_detail.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SetlistDetailActivity : AppCompatActivity() {
 
@@ -95,7 +99,11 @@ class SetlistDetailActivity : AppCompatActivity() {
         }
         setlist_detail_venue?.text = venueString.toString()
         setlist_detail_tour?.text = setlist.tour?.name
-        setlist_detail_date?.text = setlist.eventDate
+        val date = LocalDate.parse(
+            setlist.eventDate,
+            DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+        )
+        setlist_detail_date?.text = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy", Locale.ENGLISH))
 
         Log.d("Setlist", "${setlist}")
         val songs = ArrayList<SongItem>()
