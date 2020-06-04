@@ -24,7 +24,7 @@ import com.swago.seenthemlive.ui.search.SearchResultActivity
 class ViewConcertsActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private var mUser: LoginActivity.User? = null
+    private var mUser: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +32,8 @@ class ViewConcertsActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val user = intent.getSerializableExtra(INTENT_USER)
-        mUser = user as LoginActivity.User?
+        val userId = intent.getStringExtra(INTENT_USER)
+        mUser = userId
 
 //        val fab: FloatingActionButton = findViewById(R.id.fab)
 //        fab.setOnClickListener { view ->
@@ -64,7 +64,7 @@ class ViewConcertsActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menu_search -> {
 //                Toast.makeText(this,"Search", Toast.LENGTH_LONG).show()
-                val intent = SearchActivity.newIntent(this, mUser)
+                val intent = SearchActivity.newIntent(this, mUser!!)
                 startActivity(intent)
                 return true
             }
@@ -81,9 +81,9 @@ class ViewConcertsActivity : AppCompatActivity() {
 
         private val INTENT_USER = "user"
 
-        fun newIntent(context: Context, user: LoginActivity.User?): Intent {
+        fun newIntent(context: Context, userId: String): Intent {
             val intent = Intent(context, ViewConcertsActivity::class.java)
-            intent.putExtra(INTENT_USER, user)
+            intent.putExtra(INTENT_USER, userId)
             return intent
         }
     }

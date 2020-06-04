@@ -122,7 +122,7 @@ class LoginActivity : BaseActivity() {
                         user?.setlists = ArrayList()
                     }
                     Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
-                    val intent = ViewConcertsActivity.newIntent(this, user!!)
+                    val intent = ViewConcertsActivity.newIntent(this, user!!.id!!)
                     startActivity(intent)
                 }
                 .addOnFailureListener { e ->

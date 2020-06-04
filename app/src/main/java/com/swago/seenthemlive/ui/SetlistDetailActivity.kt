@@ -27,11 +27,13 @@ class SetlistDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_setlist_detail)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        val user: LoginActivity.User = intent.getSerializableExtra(INTENT_USER) as LoginActivity.User
+        val userId = intent.getStringExtra(INTENT_USER)
         val setlist: Setlist = intent.getSerializableExtra(INTENT_SETLIST) as Setlist
 
+        save_setlist_checkbox.isEnabled = false
+
         val db = FirebaseFirestore.getInstance()
-        db.collection("users").document(user.id!!)
+        db.collection("users").document(userId!!)
             .get()
             .addOnSuccessListener { documentReference ->
                 val user: LoginActivity.User = documentReference.toObject(LoginActivity.User::class.java)!!
@@ -66,9 +68,11 @@ class SetlistDetailActivity : AppCompatActivity() {
                             Log.w("CLOUDFIRESTORE", "Error adding document", e)
                         }
                 }
+                save_setlist_checkbox.isEnabled = true
             }
             .addOnFailureListener { e ->
                 Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                save_setlist_checkbox.isEnabled = true
             }
 
         setlist_detail_artist?.text = setlist.artist?.name
@@ -117,12 +121,12 @@ class SetlistDetailActivity : AppCompatActivity() {
         }
 
         other_artist_button.setOnClickListener() {
-            val intent = SearchResultActivity.newIntent(this, venueId = setlist.venue?.id, date = setlist.eventDate, excludeArtistMbid = setlist.artist?.mbid)
+            val intent = SearchResultActivity.newIntent(this, userId, venueId = setlist.venue?.id, date = setlist.eventDate, excludeArtistMbid = setlist.artist?.mbid)
             startActivity(intent)
         }
 
-        Log.d("Saved User Setlists", "Setlists: ${user.setlists}")
-        Log.d("Current Setlist", "Setlist: ${setlist}")
+//        Log.d("Saved User Setlists", "Setlists: ${user.setlists}")
+//        Log.d("Current Setlist", "Setlist: ${setlist}")
 
 //        val isSaved = user.setlists?.filter{ setlistItem -> setlistItem.id == setlist.id }?.isNotEmpty()
 //        Log.d("Is Saved", "Is Saved: ${isSaved}")
@@ -173,10 +177,10 @@ class SetlistDetailActivity : AppCompatActivity() {
         private val INTENT_USER = "user"
 
         fun newIntent(context: Context,
-                      user: LoginActivity.User? = null,
+                      userId: String,
                       setlist: Setlist): Intent {
             val intent = Intent(context, SetlistDetailActivity::class.java)
-            intent.putExtra(INTENT_USER, user)
+            intent.putExtra(INTENT_USER, userId)
             intent.putExtra(INTENT_SETLIST, setlist)
             return intent
         }

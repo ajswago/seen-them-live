@@ -20,7 +20,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val user: LoginActivity.User = intent.getSerializableExtra(INTENT_USER) as LoginActivity.User
+        val userId = intent.getStringExtra(INTENT_USER)
 
         val artistField: EditText = findViewById(R.id.artist_field)
         val searchButton: Button = findViewById(R.id.search_button)
@@ -29,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
 //                Toast.makeText(this,"Artist:"+artistField.text, Toast.LENGTH_LONG).show()
                 val intent = SearchResultActivity.newIntent(
                     this,
-                    user = user,
+                    userId = userId,
                     artistMbid = null, artistName = artistField.text.toString(),
                     stateCode = state_spinner.selectedItem as String?)
                 startActivity(intent)
@@ -53,9 +53,9 @@ class SearchActivity : AppCompatActivity() {
 
         private val INTENT_USER = "user"
 
-        fun newIntent(context: Context, user: LoginActivity.User?): Intent {
+        fun newIntent(context: Context, userId: String): Intent {
             val intent = Intent(context, SearchActivity::class.java)
-            intent.putExtra(INTENT_USER, user)
+            intent.putExtra(INTENT_USER, userId)
             return intent
         }
     }
