@@ -77,10 +77,10 @@ class ListFragment : Fragment() {
             .get()
             .addOnSuccessListener { documentReference ->
                 val user: LoginActivity.User? = documentReference.toObject(LoginActivity.User::class.java)
-                if (user?.setlists == null) {
-                    user?.setlists = ArrayList()
-                }
-                val userSetlists = user?.setlists
+//                if (user?.setlists == null) {
+//                    user?.setlists = ArrayList()
+//                }
+                val userSetlists = user?.setlists ?: ArrayList()
                 Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
                 listViewModel.setlists.postValue(userSetlists!!)
             }

@@ -90,13 +90,18 @@ class LoginActivity : BaseActivity() {
                     val user = mAuth.currentUser
                     val username = usernameFromEmail(user!!.email!!)
                     val db = FirebaseFirestore.getInstance()
+                    Log.d("CLOUDFIRESTORE", "Getting user")
                     db.collection("users").document(user.uid)
-                        .set(User(id = user.uid, username = username, email = user.email, displayName = user.displayName))
+                        .get()
                         .addOnSuccessListener { documentReference ->
-                            Log.d("CLOUDFIRESTORE", "DocumentSnapshot added with ID: ${documentReference}")
+                            Log.d("CLOUDFIRESTORE", "Got User: ${documentReference}")
+                            val existingUser: User? = documentReference.toObject(LoginActivity.User::class.java)
+                            if (existingUser == null) {
+                                saveNewUser(user!!)
+                            }
                         }
                         .addOnFailureListener { e ->
-                            Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                            saveNewUser(user!!)
                         }
                     updateUI(user)
                 } else {
@@ -110,26 +115,39 @@ class LoginActivity : BaseActivity() {
             }
     }
 
+    fun saveNewUser(user: FirebaseUser) {
+        val username = usernameFromEmail(user!!.email!!)
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(user.uid)
+            .set(User(id = user.uid, username = username, email = user.email, displayName = user.displayName))
+            .addOnSuccessListener { documentReference ->
+                Log.d("CLOUDFIRESTORE", "Saved User: ${documentReference}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("CLOUDFIRESTORE", "Failed to save user", e)
+            }
+    }
+
     fun updateUI(user: FirebaseUser?){
         if(user != null){
             //Do your Stuff
-            val db = FirebaseFirestore.getInstance()
-            db.collection("users").document(user.uid)
-                .get()
-                .addOnSuccessListener { documentReference ->
-                    val user: User? = documentReference.toObject(User::class.java)
-                    if (user?.setlists == null) {
-                        user?.setlists = ArrayList()
-                    }
-                    Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
-                    val intent = ViewConcertsActivity.newIntent(this, user!!.id!!)
-                    startActivity(intent)
-                }
-                .addOnFailureListener { e ->
-                    Log.w("CLOUDFIRESTORE", "Error adding document", e)
-                }
-//            val intent = ViewConcertsActivity.newIntent(this, user)
-//            startActivity(intent)
+//            val db = FirebaseFirestore.getInstance()
+//            db.collection("users").document(user.uid)
+//                .get()
+//                .addOnSuccessListener { documentReference ->
+//                    val user: User? = documentReference.toObject(User::class.java)
+//                    if (user?.setlists == null) {
+//                        user?.setlists = ArrayList()
+//                    }
+//                    Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
+//                    val intent = ViewConcertsActivity.newIntent(this, user!!.id!!)
+//                    startActivity(intent)
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.w("CLOUDFIRESTORE", "Error adding document", e)
+//                }
+            val intent = ViewConcertsActivity.newIntent(this, user.uid)
+            startActivity(intent)
         }
     }
 

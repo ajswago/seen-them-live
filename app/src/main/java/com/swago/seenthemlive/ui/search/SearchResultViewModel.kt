@@ -56,7 +56,7 @@ class SearchResultViewModel : ViewModel(){
                 venueId,
                 venueName,
                 year)
-            setlistsLiveData.postValue(setlists)
+            setlistsLiveData.postValue(setlists ?: ArrayList())
         }
     }
 
