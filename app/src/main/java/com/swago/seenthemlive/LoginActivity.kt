@@ -148,6 +148,7 @@ class LoginActivity : BaseActivity() {
 //                }
             val intent = ViewConcertsActivity.newIntent(this, user.uid)
             startActivity(intent)
+            finish()
         }
     }
 

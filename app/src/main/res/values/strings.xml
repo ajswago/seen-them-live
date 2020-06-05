@@ -17,6 +17,7 @@
     <string name="title_activity_view_concerts">ViewConcertsActivity</string>
 
     <string name="artist_label">Artist:</string>
+    <string name="venue_label">Venue:</string>
     <string name="state_label">State:</string>
     <string name="search">Search</string>
 

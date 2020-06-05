@@ -84,13 +84,14 @@ class SearchResultActivity : AppCompatActivity() {
         val artistName = intent.getStringExtra(INTENT_ARTIST_NAME)
         val stateCode = intent.getStringExtra(INTENT_STATE_CODE)
         val venueId = intent.getStringExtra(INTENT_VENUE_ID)
+        val venueName = intent.getStringExtra(INTENT_VENUE_NAME)
         val date = intent.getStringExtra(INTENT_DATE)
         val excludeArtistMbid = intent.getStringExtra(INTENT_EXCLUDE_ARTIST_MBID)
 //        Toast.makeText(this,"Artist:"+artistName, Toast.LENGTH_LONG).show()
 
         Log.d("SEARCHRESULT", "Making call!!!")
 
-        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, date = date)
+        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, venueName = venueName, date = date)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
             Log.d("QUERY", "Setlists found: ${it}")

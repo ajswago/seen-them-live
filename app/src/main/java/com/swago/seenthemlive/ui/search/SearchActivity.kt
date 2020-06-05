@@ -23,6 +23,7 @@ class SearchActivity : AppCompatActivity() {
         val userId = intent.getStringExtra(INTENT_USER)
 
         val artistField: EditText = findViewById(R.id.artist_field)
+        val venueField: EditText = findViewById(R.id.venue_field)
         val searchButton: Button = findViewById(R.id.search_button)
         searchButton.setOnClickListener { view ->
             if (validateForm()) {
@@ -31,6 +32,7 @@ class SearchActivity : AppCompatActivity() {
                     this,
                     userId = userId,
                     artistMbid = null, artistName = artistField.text.toString(),
+                    venueName = venueField.text.toString(),
                     stateCode = state_spinner.selectedItem as String?)
                 startActivity(intent)
             }
