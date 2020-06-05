@@ -11,9 +11,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
+import com.swago.seenthemlive.ui.common.CountedItem
+import com.swago.seenthemlive.ui.common.CountedListAdapter
+import kotlinx.android.synthetic.main.fragment_profile.*
 
 /**
  * A simple [Fragment] subclass.
@@ -28,6 +33,7 @@ class ProfileFragment : Fragment() {
     private var content: ConstraintLayout? = null
 
     private var userId: String? = null
+    private var topArtists = mutableListOf<CountedItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,10 +49,16 @@ class ProfileFragment : Fragment() {
         val profileConcertCount: TextView = root.findViewById(R.id.profile_num_shows_label)
         val profileBandsCount: TextView = root.findViewById(R.id.profile_num_bands_label)
         val profileVenuesCount: TextView = root.findViewById(R.id.profile_num_venues_label)
+        val topArtistRecyclerView: RecyclerView = root.findViewById(R.id.top_artist_recycler_view)
         content = root.findViewById(R.id.profile_content)
         loading = root.findViewById(R.id.loading)
 
         userId = activity?.intent?.getStringExtra("user")
+
+        topArtistRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = CountedListAdapter(topArtists)
+        }
 
         profileViewModel.userDisplayName.observe(this, Observer {
             profileDisplayName.text = it
@@ -66,10 +78,18 @@ class ProfileFragment : Fragment() {
         profileViewModel.userVenueCount.observe(this, Observer {
             profileVenuesCount.text = "Number of Venues Attended: ${it}"
         })
-
-        updateUi()
+        profileViewModel.userTopArtists.observe(this, Observer {
+            topArtists.clear()
+            topArtists.addAll(it)
+            top_artist_recycler_view.adapter?.notifyDataSetChanged()
+        })
 
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUi()
     }
 
     fun updateUi() {
@@ -89,16 +109,22 @@ class ProfileFragment : Fragment() {
                 val venueCount = user?.setlists?.groupBy {
                     it.venue?.id
                 }?.size
-                val topArtists = user?.setlists?.groupBy { it.artist?.name }?.toList()
-                    ?.sortedByDescending { (_, value) -> value.size }?.take(10)?.toMap()
-                Log.d("Profile", "Top Five Artists: ${topArtists}")
-                topArtists?.forEach { artistMap -> Log.d("Profile", "Artist: ${artistMap.key}, Count: ${artistMap.value.size}") }
+//                val topArtists = user?.setlists?.groupBy { it.artist?.name }?.toList()
+//                    ?.sortedByDescending { (_, value) -> value.size }?.take(10)?.toMap()
+//                    ?.map { item -> ProfileViewModel.ArtistCount(item.key, item.value.size) }
+                val artistsByCount = user?.setlists
+                    ?.groupBy { it.artist?.name }
+                    ?.map { CountedItem(it.key, it.value.size) }
+
+//                Log.d("Profile", "Top Five Artists: ${topArtists}")
+//                topArtists?.forEach { artistCount -> Log.d("Profile", "Artist: ${artistCount.name}, Count: ${artistCount.count}") }
                 profileViewModel.userDisplayName.postValue(user?.displayName)
                 profileViewModel.userUsername.postValue(user?.username)
                 profileViewModel.userEmail.postValue(user?.email)
                 profileViewModel.userConcertCount.postValue(concertCount)
                 profileViewModel.userBandCount.postValue(bandCount)
                 profileViewModel.userVenueCount.postValue(venueCount)
+                profileViewModel.setTopArtists(artistsByCount ?: ArrayList())
 
                 content?.visibility = View.VISIBLE
                 loading?.hide()

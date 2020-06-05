@@ -71,6 +71,25 @@
             android:text="Number Of Venues Attended: #"
             android:textSize="18sp"/>
 
+        <TextView
+            android:id="@+id/top_artist_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/profile_num_venues_label"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Top Artists: (Times Seen)"
+            android:textSize="18sp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/top_artist_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/top_artist_label"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.ContentLoadingProgressBar
