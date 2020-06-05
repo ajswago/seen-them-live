@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,25 +22,6 @@ import java.util.*
 
 
 class SearchResultActivity : AppCompatActivity() {
-
-    private val sampleSetlists = listOf(
-        Setlist(
-            Artist("", 0, "Iron Maiden", "Iron Maiden", "", ""),
-            Venue(
-                City("", "Bristow", "", "VA",
-                    Coords(0.0, 0.0),
-                    Country("", "United States")),
-                "", "", "Jiffy Lube Live"),
-            Tour("Legacy of the Beast"), Sets(emptyList()), "", "", "", "", "30/07/2019", ""),
-        Setlist(
-            Artist("", 0, "Iron Maiden", "Iron Maiden", "", ""),
-            Venue(
-                City("", "Bristow", "", "VA",
-                    Coords(0.0, 0.0),
-                    Country("", "United States")),
-                "", "", "Jiffy Lube Live"),
-            Tour("Final Frontier"), Sets(emptyList()), "", "", "", "", "20/07/2012", "")
-        )
 
     private val setlists = mutableListOf<Setlist>()
 
@@ -91,6 +73,7 @@ class SearchResultActivity : AppCompatActivity() {
 
         Log.d("SEARCHRESULT", "Making call!!!")
 
+        loading?.show()
         searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, venueName = venueName, date = date)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
@@ -116,6 +99,7 @@ class SearchResultActivity : AppCompatActivity() {
                 no_content_view.visibility = View.GONE
                 list_recycler_view.visibility = View.VISIBLE
             }
+            loading.hide()
         })
     }
 
