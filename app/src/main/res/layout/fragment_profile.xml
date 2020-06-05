@@ -4,16 +4,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_share"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/profile_display_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="First Last"
+            android:textStyle="bold"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/profile_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/profile_display_name"
+            android:gravity="center_horizontal"
+            android:text="username"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/profile_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/profile_username"
+            android:gravity="center_horizontal"
+            android:text="email@something.com"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/profile_num_shows_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/profile_email"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            android:text="Number Of Shows Attended: #"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/profile_num_bands_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/profile_num_shows_label"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Number Of Bands Attended: #"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/profile_num_venues_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/profile_num_bands_label"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Number Of Venues Attended: #"
+            android:textSize="18sp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:padding="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminate="true"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
