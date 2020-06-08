@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.swago.seenthemlive.BaseActivity
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.common.CountedItem
@@ -21,9 +22,7 @@ import com.swago.seenthemlive.ui.common.CountedListAdapter
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 /**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * A [Fragment] subclass for display of user profile info
  */
 class ProfileFragment : Fragment() {
 
@@ -32,7 +31,6 @@ class ProfileFragment : Fragment() {
     private var loading: ContentLoadingProgressBar? = null
     private var content: ConstraintLayout? = null
 
-    private var userId: String? = null
     private var topArtists = mutableListOf<CountedItem>()
 
     override fun onCreateView(
@@ -53,8 +51,6 @@ class ProfileFragment : Fragment() {
         content = root.findViewById(R.id.profile_content)
         loading = root.findViewById(R.id.loading)
 
-        userId = activity?.intent?.getStringExtra("user")
-
         topArtistRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = CountedListAdapter(topArtists)
@@ -70,13 +66,13 @@ class ProfileFragment : Fragment() {
             profileEmail.text = it
         })
         profileViewModel.userConcertCount.observe(this, Observer {
-            profileConcertCount.text = "Number of Concerts Attended: ${it}"
+            profileConcertCount.text = getString(R.string.profile_concerts_count_format, it)
         })
         profileViewModel.userBandCount.observe(this, Observer {
-            profileBandsCount.text = "Number of Bands Seen: ${it}"
+            profileBandsCount.text = getString(R.string.profile_bands_count_format, it)
         })
         profileViewModel.userVenueCount.observe(this, Observer {
-            profileVenuesCount.text = "Number of Venues Attended: ${it}"
+            profileVenuesCount.text = getString(R.string.profile_venues_count_format, it)
         })
         profileViewModel.userTopArtists.observe(this, Observer {
             topArtists.clear()
@@ -96,7 +92,8 @@ class ProfileFragment : Fragment() {
         content?.visibility = View.GONE
         loading?.show()
         val db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userId!!)
+        val userId = (activity as BaseActivity).uid
+        db.collection("users").document(userId)
             .get()
             .addOnSuccessListener { documentReference ->
                 val user: LoginActivity.User? = documentReference.toObject(LoginActivity.User::class.java)
@@ -109,15 +106,10 @@ class ProfileFragment : Fragment() {
                 val venueCount = user?.setlists?.groupBy {
                     it.venue?.id
                 }?.size
-//                val topArtists = user?.setlists?.groupBy { it.artist?.name }?.toList()
-//                    ?.sortedByDescending { (_, value) -> value.size }?.take(10)?.toMap()
-//                    ?.map { item -> ProfileViewModel.ArtistCount(item.key, item.value.size) }
                 val artistsByCount = user?.setlists
                     ?.groupBy { it.artist?.name }
                     ?.map { CountedItem(it.key, it.value.size) }
 
-//                Log.d("Profile", "Top Five Artists: ${topArtists}")
-//                topArtists?.forEach { artistCount -> Log.d("Profile", "Artist: ${artistCount.name}, Count: ${artistCount.count}") }
                 profileViewModel.userDisplayName.postValue(user?.displayName)
                 profileViewModel.userUsername.postValue(user?.username)
                 profileViewModel.userEmail.postValue(user?.email)

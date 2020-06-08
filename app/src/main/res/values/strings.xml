@@ -1,28 +1,42 @@
 <resources>
+
     <string name="app_name">Seen Them Live</string>
-    <string name="loading">Loading...</string>
-    <string name="title_activity_concert_list">ConcertListActivity</string>
+
+    <!-- Common -->
+    <string name="counted_item_list_index_format">%d.</string>
+    <string name="counted_item_list_count_format">(%d)</string>
+
+    <!--  Navigation  -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Seen Them Live</string>
     <string name="nav_header_subtitle">By Anthony Swago</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
     <string name="menu_list">My Concerts</string>
     <string name="menu_timeline">Timeline</string>
     <string name="menu_map">Map</string>
     <string name="menu_profile">My Profile</string>
     <string name="menu_friends">Friends</string>
+
+    <!-- View Concerts Activity -->
     <string name="title_activity_view_concerts">ViewConcertsActivity</string>
 
+    <!-- Profile Fragment -->
+    <string name="profile_concerts_count_format">Number of Concerts Attended: %d</string>
+    <string name="profile_bands_count_format">Number of Bands Seen: %d</string>
+    <string name="profile_venues_count_format">Number of Venues Attended: %d</string>
+    <string name="profile_top_artists_label">Top Artists: (Times Seen)</string>
+
+    <!-- Search Activity -->
     <string name="artist_label">Artist:</string>
     <string name="venue_label">Venue:</string>
     <string name="state_label">State:</string>
     <string name="search">Search</string>
 
+    <!-- Setlist Detail Activity -->
     <string name="title_activity_setlist_detail">SetlistDetailActivity</string>
 
+    <!-- States -->
     <string-array name="States">
         <item>AL</item>
         <item>AK</item>
@@ -76,7 +90,5 @@
         <item>WI</item>
         <item>WY</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

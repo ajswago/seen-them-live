@@ -47,8 +47,4 @@ class ProfileViewModel : ViewModel() {
         userTopArtists.postValue(artistsByCount.sortedByDescending { it.count }.take(10))
     }
 
-//    data class ArtistCount(
-//        var name: String? = null,
-//        var count: Int? = null
-//    ) : Serializable
 }

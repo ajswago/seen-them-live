@@ -1,8 +1,6 @@
 package com.swago.seenthemlive.ui.common
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +27,7 @@ class CountedItemViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     private var mCountedItemIndex: TextView? = null
     private var mCountedItemName: TextView? = null
     private var mCountedItemCount: TextView? = null
+    private var context = parent.context
     
     init {
         mCountedItemIndex = itemView.findViewById(R.id.counted_item_index)
@@ -37,9 +36,11 @@ class CountedItemViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
     
     fun bind(countedItem: CountedItem) {
-        mCountedItemIndex?.text = "${adapterPosition+1}."
+        mCountedItemIndex?.text = context
+            .getString(R.string.counted_item_list_index_format, adapterPosition+1)
         mCountedItemName?.text = countedItem.name
-        mCountedItemCount?.text = "(${countedItem.count})"
+        mCountedItemCount?.text = context
+            .getString(R.string.counted_item_list_count_format, countedItem.count)
     }
 }
 

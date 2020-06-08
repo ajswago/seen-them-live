@@ -16,7 +16,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
-            android:text="First Last"
             android:textStyle="bold"
             android:textSize="24sp"/>
 
@@ -26,7 +25,6 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/profile_display_name"
             android:gravity="center_horizontal"
-            android:text="username"
             android:textSize="16sp"/>
 
         <TextView
@@ -35,7 +33,6 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/profile_username"
             android:gravity="center_horizontal"
-            android:text="email@something.com"
             android:textSize="16sp"/>
 
         <TextView
@@ -46,7 +43,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginTop="40dp"
-            android:text="Number Of Shows Attended: #"
             android:textSize="18sp"/>
 
         <TextView
@@ -57,7 +53,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:text="Number Of Bands Attended: #"
             android:textSize="18sp"/>
 
         <TextView
@@ -68,7 +63,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:text="Number Of Venues Attended: #"
             android:textSize="18sp"/>
 
         <TextView
@@ -79,7 +73,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:text="Top Artists: (Times Seen)"
+            android:text="@string/profile_top_artists_label"
             android:textSize="18sp"/>
 
         <androidx.recyclerview.widget.RecyclerView

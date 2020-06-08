@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.swago.seenthemlive.ui.search.SearchActivity
 import com.swago.seenthemlive.ui.search.SearchResultActivity
 
-class ViewConcertsActivity : AppCompatActivity() {
+class ViewConcertsActivity : BaseActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var mUser: String? = null
