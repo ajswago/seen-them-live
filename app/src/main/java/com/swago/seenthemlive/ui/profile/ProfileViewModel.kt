@@ -1,12 +1,18 @@
 package com.swago.seenthemlive.ui.profile
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.swago.seenthemlive.firebase.firestore.UserRepository
 import com.swago.seenthemlive.ui.common.CountedItem
-import java.io.Serializable
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class ProfileViewModel : ViewModel() {
+
+    private val parentJob = Job()
+    private val coroutineContext: CoroutineContext
+        get() = parentJob + Dispatchers.Default
+    private val scope = CoroutineScope(coroutineContext)
 
     private val _userDisplayName = MutableLiveData<String>().apply {
         value = "First Last"
@@ -45,6 +51,36 @@ class ProfileViewModel : ViewModel() {
 
     fun setTopArtists(artistsByCount: List<CountedItem>) {
         userTopArtists.postValue(artistsByCount.sortedByDescending { it.count }.take(10))
+    }
+
+    fun fetchUser(userId: String, completion: () -> Unit) {
+        scope.launch {
+            val user = UserRepository.getUser(userId)
+            val concertCount = user?.setlists?.groupBy {
+                it.eventDate
+            }?.size
+            val bandCount = user?.setlists?.groupBy {
+                it.artist?.mbid
+            }?.size
+            val venueCount = user?.setlists?.groupBy {
+                it.venue?.id
+            }?.size
+            val artistsByCount = user?.setlists
+                ?.groupBy { it.artist?.name }
+                ?.map { CountedItem(it.key, it.value.size) }
+
+            userDisplayName.postValue(user?.displayName)
+            userUsername.postValue(user?.username)
+            userEmail.postValue(user?.email)
+            userConcertCount.postValue(concertCount)
+            userBandCount.postValue(bandCount)
+            userVenueCount.postValue(venueCount)
+            setTopArtists(artistsByCount ?: ArrayList())
+
+            GlobalScope.launch(Dispatchers.Main) {
+                completion()
+            }
+        }
     }
 
 }

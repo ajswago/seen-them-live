@@ -24,22 +24,22 @@ class CountedListAdapter(private val countedList: List<CountedItem>) : RecyclerV
 
 class CountedItemViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
         RecyclerView.ViewHolder(inflater.inflate(R.layout.counted_list_item, parent, false)) {
-    private var mCountedItemIndex: TextView? = null
-    private var mCountedItemName: TextView? = null
-    private var mCountedItemCount: TextView? = null
+    private var countedItemIndex: TextView? = null
+    private var countedItemName: TextView? = null
+    private var countedItemCount: TextView? = null
     private var context = parent.context
     
     init {
-        mCountedItemIndex = itemView.findViewById(R.id.counted_item_index)
-        mCountedItemName = itemView.findViewById(R.id.counted_item_name)
-        mCountedItemCount = itemView.findViewById(R.id.counted_item_count)
+        countedItemIndex = itemView.findViewById(R.id.counted_item_index)
+        countedItemName = itemView.findViewById(R.id.counted_item_name)
+        countedItemCount = itemView.findViewById(R.id.counted_item_count)
     }
     
     fun bind(countedItem: CountedItem) {
-        mCountedItemIndex?.text = context
+        countedItemIndex?.text = context
             .getString(R.string.counted_item_list_index_format, adapterPosition+1)
-        mCountedItemName?.text = countedItem.name
-        mCountedItemCount?.text = context
+        countedItemName?.text = countedItem.name
+        countedItemCount?.text = context
             .getString(R.string.counted_item_list_count_format, countedItem.count)
     }
 }

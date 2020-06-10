@@ -1,22 +1,20 @@
 package com.swago.seenthemlive.ui.profile
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.ContentLoadingProgressBar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.BaseActivity
-import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
+import com.swago.seenthemlive.ui.common.BaseFragment
 import com.swago.seenthemlive.ui.common.CountedItem
 import com.swago.seenthemlive.ui.common.CountedListAdapter
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -24,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 /**
  * A [Fragment] subclass for display of user profile info
  */
-class ProfileFragment : Fragment() {
+class ProfileFragment : BaseFragment() {
 
     private lateinit var profileViewModel: ProfileViewModel
 
@@ -34,7 +32,8 @@ class ProfileFragment : Fragment() {
     private var topArtists = mutableListOf<CountedItem>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         profileViewModel =
@@ -91,40 +90,9 @@ class ProfileFragment : Fragment() {
     fun updateUi() {
         content?.visibility = View.GONE
         loading?.show()
-        val db = FirebaseFirestore.getInstance()
-        val userId = (activity as BaseActivity).uid
-        db.collection("users").document(userId)
-            .get()
-            .addOnSuccessListener { documentReference ->
-                val user: LoginActivity.User? = documentReference.toObject(LoginActivity.User::class.java)
-                val concertCount = user?.setlists?.groupBy {
-                    it.eventDate
-                }?.size
-                val bandCount = user?.setlists?.groupBy {
-                    it.artist?.mbid
-                }?.size
-                val venueCount = user?.setlists?.groupBy {
-                    it.venue?.id
-                }?.size
-                val artistsByCount = user?.setlists
-                    ?.groupBy { it.artist?.name }
-                    ?.map { CountedItem(it.key, it.value.size) }
-
-                profileViewModel.userDisplayName.postValue(user?.displayName)
-                profileViewModel.userUsername.postValue(user?.username)
-                profileViewModel.userEmail.postValue(user?.email)
-                profileViewModel.userConcertCount.postValue(concertCount)
-                profileViewModel.userBandCount.postValue(bandCount)
-                profileViewModel.userVenueCount.postValue(venueCount)
-                profileViewModel.setTopArtists(artistsByCount ?: ArrayList())
-
-                content?.visibility = View.VISIBLE
-                loading?.hide()
-            }
-            .addOnFailureListener { e ->
-                Log.w("CLOUDFIRESTORE", "Error adding document", e)
-                content?.visibility = View.VISIBLE
-                loading?.hide()
-            }
+        profileViewModel.fetchUser(userId) {
+            content?.visibility = View.VISIBLE
+            loading?.hide()
+        }
     }
 }
