@@ -9,10 +9,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.swago.seenthemlive.BaseActivity
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.common.BaseFragment
 import com.swago.seenthemlive.ui.common.CountedItem
@@ -37,7 +36,7 @@ class ProfileFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         profileViewModel =
-            ViewModelProviders.of(this).get(ProfileViewModel::class.java)
+            ViewModelProvider(this).get(ProfileViewModel::class.java)
 
         val root = inflater.inflate(R.layout.fragment_profile, container, false)
         val profileDisplayName: TextView = root.findViewById(R.id.profile_display_name)
@@ -55,25 +54,25 @@ class ProfileFragment : BaseFragment() {
             adapter = CountedListAdapter(topArtists)
         }
 
-        profileViewModel.userDisplayName.observe(this, Observer {
+        profileViewModel.userDisplayName.observe(viewLifecycleOwner, Observer {
             profileDisplayName.text = it
         })
-        profileViewModel.userUsername.observe(this, Observer {
+        profileViewModel.userUsername.observe(viewLifecycleOwner, Observer {
             profileUsername.text = it
         })
-        profileViewModel.userEmail.observe(this, Observer {
+        profileViewModel.userEmail.observe(viewLifecycleOwner, Observer {
             profileEmail.text = it
         })
-        profileViewModel.userConcertCount.observe(this, Observer {
+        profileViewModel.userConcertCount.observe(viewLifecycleOwner, Observer {
             profileConcertCount.text = getString(R.string.profile_concerts_count_format, it)
         })
-        profileViewModel.userBandCount.observe(this, Observer {
+        profileViewModel.userBandCount.observe(viewLifecycleOwner, Observer {
             profileBandsCount.text = getString(R.string.profile_bands_count_format, it)
         })
-        profileViewModel.userVenueCount.observe(this, Observer {
+        profileViewModel.userVenueCount.observe(viewLifecycleOwner, Observer {
             profileVenuesCount.text = getString(R.string.profile_venues_count_format, it)
         })
-        profileViewModel.userTopArtists.observe(this, Observer {
+        profileViewModel.userTopArtists.observe(viewLifecycleOwner, Observer {
             topArtists.clear()
             topArtists.addAll(it)
             top_artist_recycler_view.adapter?.notifyDataSetChanged()

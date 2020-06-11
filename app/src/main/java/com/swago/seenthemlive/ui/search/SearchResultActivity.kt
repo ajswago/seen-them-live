@@ -6,16 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.swago.seenthemlive.api.setlistfm.*
 import kotlinx.android.synthetic.main.activity_search_result.*
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.swago.seenthemlive.LoginActivity
-import com.swago.seenthemlive.ui.SetlistDetailActivity
+import com.swago.seenthemlive.ui.setlist.SetlistDetailActivity
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -40,7 +37,7 @@ class SearchResultActivity : AppCompatActivity() {
             title = "Search Results"
         }
 
-        searchResultViewModel = ViewModelProviders.of(this).get(SearchResultViewModel::class.java)
+        searchResultViewModel = ViewModelProvider(this).get(SearchResultViewModel::class.java)
 
         list_recycler_view.apply {
             // set a LinearLayoutManager to handle Android

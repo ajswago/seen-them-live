@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.api.setlistfm.Setlist
+import com.swago.seenthemlive.ui.common.BaseActivity
 import kotlinx.android.synthetic.main.activity_login.*
 import java.io.Serializable
 

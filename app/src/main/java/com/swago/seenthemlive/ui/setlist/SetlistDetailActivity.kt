@@ -1,23 +1,21 @@
-package com.swago.seenthemlive.ui
+package com.swago.seenthemlive.ui.setlist
 
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
-import com.swago.seenthemlive.ViewConcertsActivity
 import com.swago.seenthemlive.api.setlistfm.Setlist
+import com.swago.seenthemlive.ui.SongItem
+import com.swago.seenthemlive.ui.SongListAdapter
 import com.swago.seenthemlive.ui.search.SearchResultActivity
 import kotlinx.android.synthetic.main.activity_setlist_detail.*
 import java.time.LocalDate
@@ -110,7 +108,10 @@ class SetlistDetailActivity : AppCompatActivity() {
         val encoreSongs = ArrayList<SongItem>()
         setlist.sets?.set?.forEach { set ->
             set.song?.map { song ->
-                val songItem = SongItem(set.song?.indexOf(song) + 1, song.name)
+                val songItem = SongItem(
+                    set.song?.indexOf(song) + 1,
+                    song.name
+                )
                 if (set.encore == 1)
                     encoreSongs.add(songItem)
                 else

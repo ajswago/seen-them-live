@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.swago.seenthemlive.R
 
 class TimelineFragment : Fragment() {
@@ -20,10 +20,10 @@ class TimelineFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         timelineViewModel =
-            ViewModelProviders.of(this).get(TimelineViewModel::class.java)
+            ViewModelProvider(this).get(TimelineViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_timeline, container, false)
         val textView: TextView = root.findViewById(R.id.text_gallery)
-        timelineViewModel.text.observe(this, Observer {
+        timelineViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root

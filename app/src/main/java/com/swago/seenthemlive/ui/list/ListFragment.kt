@@ -1,6 +1,5 @@
 package com.swago.seenthemlive.ui.list
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,17 +9,15 @@ import android.widget.TextView
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
-import com.swago.seenthemlive.ViewConcertsActivity
 import com.swago.seenthemlive.api.setlistfm.Setlist
-import com.swago.seenthemlive.ui.SetlistDetailActivity
+import com.swago.seenthemlive.ui.setlist.SetlistDetailActivity
 import com.swago.seenthemlive.ui.search.SetlistListAdapter
-import kotlinx.android.synthetic.main.activity_search_result.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -42,14 +39,14 @@ class ListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         listViewModel =
-            ViewModelProviders.of(this).get(ListViewModel::class.java)
+            ViewModelProvider(this).get(ListViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_list, container, false)
         val setlistRecyclerView: RecyclerView = root.findViewById(R.id.setlist_recycler_view)
         val noContentView: TextView = root.findViewById(R.id.setlist_list_no_content_label)
         loading = root.findViewById(R.id.loading)
 
         userId = activity?.intent?.getStringExtra("user")
-        listViewModel.setlists.observe(this, Observer {
+        listViewModel.setlists.observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()) {
                 noContentView.visibility = View.VISIBLE
                 setlistRecyclerView.visibility = View.GONE

@@ -1,4 +1,4 @@
-package com.swago.seenthemlive
+package com.swago.seenthemlive.ui.common
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
