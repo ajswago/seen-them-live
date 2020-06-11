@@ -20,7 +20,7 @@ class SearchRepository(private val api : Search) : BaseRepository() {
                                  year: String? = null) : MutableList<Setlist>?{
 
         val setlistResponse = safeApiCall(
-            call = {api.getSetlists(
+            call = {api.getSetlistsAsync(
                 artistMbid,
                 artistName,
                 artistTmid,

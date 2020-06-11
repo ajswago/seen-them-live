@@ -7,7 +7,7 @@ import com.swago.seenthemlive.api.setlistfm.Setlist
 import kotlinx.coroutines.tasks.await
 import java.io.Serializable
 
-class UserRepository() {
+class UserRepository {
 
     companion object {
         suspend fun getUser(userId : String)

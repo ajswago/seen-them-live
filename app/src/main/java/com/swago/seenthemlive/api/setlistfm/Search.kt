@@ -8,22 +8,22 @@ import java.io.Serializable
 
 interface Search{
     @GET("search/setlists")
-    fun getSetlists(@Query("artistMbid") artistMbid: String? = null,
-                    @Query("artistName") artistName: String? = null,
-                    @Query("artistTmid") artistTmid: Int? = null,
-                    @Query("cityId") cityId: String? = null,
-                    @Query("cityName") cityName: String? = null,
-                    @Query("countryCode") countryCode: String? = null,
-                    @Query("date") date: String? = null,
-                    @Query("lastFm") lastFm: Int? = null,
-                    @Query("lastUpdated") lastUpdated: String? = null,
-                    @Query("p") p: Int? = null,
-                    @Query("state") state: String? = null,
-                    @Query("stateCode") stateCode: String? = null,
-                    @Query("tourName") tourName: String? = null,
-                    @Query("venueId") venueId: String? = null,
-                    @Query("venueName") venueName: String? = null,
-                    @Query("year") year: String? = null): Deferred<Response<SetlistResponse>>
+    fun getSetlistsAsync(@Query("artistMbid") artistMbid: String? = null,
+                         @Query("artistName") artistName: String? = null,
+                         @Query("artistTmid") artistTmid: Int? = null,
+                         @Query("cityId") cityId: String? = null,
+                         @Query("cityName") cityName: String? = null,
+                         @Query("countryCode") countryCode: String? = null,
+                         @Query("date") date: String? = null,
+                         @Query("lastFm") lastFm: Int? = null,
+                         @Query("lastUpdated") lastUpdated: String? = null,
+                         @Query("p") p: Int? = null,
+                         @Query("state") state: String? = null,
+                         @Query("stateCode") stateCode: String? = null,
+                         @Query("tourName") tourName: String? = null,
+                         @Query("venueId") venueId: String? = null,
+                         @Query("venueName") venueName: String? = null,
+                         @Query("year") year: String? = null): Deferred<Response<SetlistResponse>>
 }
 
 data class Setlist(
