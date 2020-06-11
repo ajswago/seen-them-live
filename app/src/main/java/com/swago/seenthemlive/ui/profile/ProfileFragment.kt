@@ -86,7 +86,7 @@ class ProfileFragment : BaseFragment() {
         updateUi()
     }
 
-    fun updateUi() {
+    private fun updateUi() {
         content?.visibility = View.GONE
         loading?.show()
         profileViewModel.fetchUser(userId) {

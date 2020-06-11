@@ -49,7 +49,7 @@ class ProfileViewModel : ViewModel() {
     }
     val userTopArtists: MutableLiveData<List<CountedItem>> = _userTopArtists
 
-    fun setTopArtists(artistsByCount: List<CountedItem>) {
+    private fun setTopArtists(artistsByCount: List<CountedItem>) {
         userTopArtists.postValue(artistsByCount.sortedByDescending { it.count }.take(10))
     }
 
