@@ -16,8 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
-import com.swago.seenthemlive.ui.setlist.SetlistDetailActivity
 import com.swago.seenthemlive.ui.search.SetlistListAdapter
+import com.swago.seenthemlive.ui.setlist.SetlistActivity
 import kotlinx.android.synthetic.main.fragment_list.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -72,7 +72,7 @@ class ListFragment : Fragment() {
             adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
                 override fun selected(setlist: Setlist) {
                     Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-                    val intent = SetlistDetailActivity.newIntent(context, userId!!, setlist)
+                    val intent = SetlistActivity.newIntent(context, setlist)
                     startActivity(intent)
                 }
             })

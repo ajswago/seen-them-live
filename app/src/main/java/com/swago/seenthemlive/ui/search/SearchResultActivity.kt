@@ -2,17 +2,17 @@ package com.swago.seenthemlive.ui.search
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.swago.seenthemlive.api.setlistfm.*
-import kotlinx.android.synthetic.main.activity_search_result.*
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.swago.seenthemlive.ui.setlist.SetlistDetailActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.swago.seenthemlive.api.setlistfm.Setlist
+import com.swago.seenthemlive.ui.setlist.SetlistActivity
+import kotlinx.android.synthetic.main.activity_search_result.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -47,7 +47,7 @@ class SearchResultActivity : AppCompatActivity() {
             adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
                 override fun selected(setlist: Setlist) {
                     Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-                    val intent = SetlistDetailActivity.newIntent(context, userId, setlist, hideOthers = nested)
+                    val intent = SetlistActivity.newIntent(context, setlist, showOthersAtShow = !nested)
                     startActivity(intent)
                 }
             })

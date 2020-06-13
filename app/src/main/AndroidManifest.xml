@@ -3,19 +3,19 @@
     package="com.swago.seenthemlive">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".ui.setlist.SetlistDetailActivity"
-            android:label="@string/title_activity_setlist_detail"
+        <activity android:name=".ui.setlist.SetlistActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ui.search.SearchResultActivity" />
-        <activity android:name=".ui.search.SearchActivity"
-            android:label="Search"/>
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:label="Search" />
         <activity
             android:name=".ViewConcertsActivity"
             android:label="@string/title_activity_view_concerts"

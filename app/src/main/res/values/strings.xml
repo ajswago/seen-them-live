@@ -33,8 +33,10 @@
     <string name="state_label">State:</string>
     <string name="search">Search</string>
 
-    <!-- Setlist Detail Activity -->
-    <string name="title_activity_setlist_detail">SetlistDetailActivity</string>
+    <!-- Setlist Fragment -->
+    <string name="setlist_song_list_label">Setlist:</string>
+    <string name="setlist_encore_list_label">Encore:</string>
+    <string name="setlist_other_artists_at_show">Also At This Show</string>
 
     <!-- States -->
     <string-array name="States">
