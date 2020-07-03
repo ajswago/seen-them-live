@@ -18,10 +18,8 @@ import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.ui.common.ConcertItem
 import com.swago.seenthemlive.ui.common.ConcertListAdapter
-import com.swago.seenthemlive.ui.search.SetlistListAdapter
 import com.swago.seenthemlive.ui.setlist.SetlistActivity
 import com.swago.seenthemlive.util.Utils
-import kotlinx.android.synthetic.main.fragment_list.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -50,26 +48,20 @@ class ListFragment : Fragment() {
         loading = root.findViewById(R.id.loading)
 
         userId = activity?.intent?.getStringExtra("user")
-        listViewModel.setlists.observe(viewLifecycleOwner, Observer {
-            if (it.isEmpty()) {
+        listViewModel.setlists.observe(viewLifecycleOwner, Observer { updatedSetlists ->
+            if (updatedSetlists.isEmpty()) {
                 noContentView.visibility = View.VISIBLE
                 setlistRecyclerView.visibility = View.GONE
             } else {
                 setlists.clear()
-//                setlists.addAll(it.sortedByDescending {
-//                    LocalDate.parse(
-//                        it.eventDate,
-//                        DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
-//                    )
-//                })
-                setlists.addAll(it)
+                setlists.addAll(updatedSetlists)
                 concerts.clear()
-                val concertItems = it.groupBy { it.eventDate }
-                    .map {
-                        var location = ""
-                        val venue = it.value.first().venue
+                val concertItems = updatedSetlists.groupBy { it.eventDate }
+                    .map { group ->
+                        var location: String
+                        val venue = group.value.first().venue
                         venue.let { location = Utils.formatLocationString(venue!!) }
-                        ConcertItem(it.value.first().venue?.name, location, it.key, it.value.map { it.artist?.name ?: "" })
+                        ConcertItem(group.value.first().venue?.name, location, group.key, group.value.map { it.artist?.name ?: "" })
                     }
                 concerts.addAll(concertItems.sortedByDescending { LocalDate.parse(it.date, DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)) })
                 setlistRecyclerView.adapter?.notifyDataSetChanged()
@@ -77,31 +69,18 @@ class ListFragment : Fragment() {
                 setlistRecyclerView.visibility = View.VISIBLE
             }
         })
-        Log.d("RECYCLER", "${setlist_recycler_view}")
         setlistRecyclerView.apply {
-            // set a LinearLayoutManager to handle Android
-            // RecyclerView behavior
             layoutManager = LinearLayoutManager(activity)
-            // set the custom adapter to the RecyclerView
-//            adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
-//                override fun selected(setlist: Setlist) {
-//                    Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-//                    val intent = SetlistActivity.newIntent(context, setlist)
-//                    startActivity(intent)
-//                }
-//            })
             adapter = ConcertListAdapter(concerts, object : ConcertListAdapter.ArtistSelectedListener {
                 override fun selected(artist: String, date: String) {
-                    val setlist = setlists.find { setlist -> setlist.artist?.name.equals(artist) && setlist.eventDate.equals(date) }
-                    setlist.let { setlist ->
+                    val setlistMatch = setlists.find { setlist -> setlist.artist?.name.equals(artist) && setlist.eventDate.equals(date) }
+                    setlistMatch.let { setlist ->
                         val intent = SetlistActivity.newIntent(context, setlist!!)
                         startActivity(intent)
                     }
                 }
             })
         }
-        val db = FirebaseFirestore.getInstance()
-//        updateUi()
         return root
     }
 
@@ -110,23 +89,19 @@ class ListFragment : Fragment() {
         updateUi()
     }
 
-    fun updateUi() {
+    private fun updateUi() {
         loading?.show()
         val db = FirebaseFirestore.getInstance()
         db.collection("users").document(userId!!)
             .get()
             .addOnSuccessListener { documentReference ->
                 val user: LoginActivity.User? = documentReference.toObject(LoginActivity.User::class.java)
-//                if (user?.setlists == null) {
-//                    user?.setlists = ArrayList()
-//                }
                 val userSetlists = user?.setlists ?: ArrayList()
-                Log.d("CLOUDFIRESTORE", "DocumentSnapshot retrieved with ID: ${user}")
-                listViewModel.setlists.postValue(userSetlists!!)
+                listViewModel.setlists.postValue(userSetlists)
                 loading?.hide()
             }
             .addOnFailureListener { e ->
-                Log.w("CLOUDFIRESTORE", "Error adding document", e)
+                Log.w("CLOUDFIRESTORE", "Error getting document", e)
                 loading?.hide()
             }
     }

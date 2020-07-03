@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.util.Utils
@@ -60,9 +59,7 @@ class ConcertViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
             val artistView = TextView(context)
             val params = LinearLayout
                 .LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-//            params.marginStart = Utils.getPixelsFromDp(30.0f, context).toInt()
             artistView.layoutParams = params
-//            artistView.setPadding(Utils.getPixelsFromDp(5.0f, context).toInt())
             val padding = Utils.getPixelsFromDp(5.0f, context).toInt()
             val paddingStart = Utils.getPixelsFromDp(30.0f, context).toInt()
             artistView.setPaddingRelative(paddingStart, padding, padding, padding)
@@ -77,7 +74,6 @@ class ConcertViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
                     artistSelectedListener?.selected(artist, date!!)
                 }
             }
-//            artistView.tag = "artist"
             concertLayout?.addView(artistView)
         }
     }
