@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.firebase.firestore.UserRepository
-import com.swago.seenthemlive.ui.SongItem
+import com.swago.seenthemlive.ui.common.SongItem
 import com.swago.seenthemlive.util.Utils
 import kotlinx.coroutines.*
 import java.util.*

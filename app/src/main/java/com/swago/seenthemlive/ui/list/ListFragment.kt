@@ -16,8 +16,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.LoginActivity
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
+import com.swago.seenthemlive.ui.common.ConcertItem
+import com.swago.seenthemlive.ui.common.ConcertListAdapter
 import com.swago.seenthemlive.ui.search.SetlistListAdapter
 import com.swago.seenthemlive.ui.setlist.SetlistActivity
+import com.swago.seenthemlive.util.Utils
 import kotlinx.android.synthetic.main.fragment_list.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,6 +34,7 @@ class ListFragment : Fragment() {
     private var loading: ContentLoadingProgressBar? = null
 
     private val setlists = mutableListOf<Setlist>()
+    private val concerts = mutableListOf<ConcertItem>()
     private var userId: String? = null
 
     override fun onCreateView(
@@ -52,12 +56,22 @@ class ListFragment : Fragment() {
                 setlistRecyclerView.visibility = View.GONE
             } else {
                 setlists.clear()
-                setlists.addAll(it.sortedByDescending {
-                    LocalDate.parse(
-                        it.eventDate,
-                        DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
-                    )
-                })
+//                setlists.addAll(it.sortedByDescending {
+//                    LocalDate.parse(
+//                        it.eventDate,
+//                        DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
+//                    )
+//                })
+                setlists.addAll(it)
+                concerts.clear()
+                val concertItems = it.groupBy { it.eventDate }
+                    .map {
+                        var location = ""
+                        val venue = it.value.first().venue
+                        venue.let { location = Utils.formatLocationString(venue!!) }
+                        ConcertItem(it.value.first().venue?.name, location, it.key, it.value.map { it.artist?.name ?: "" })
+                    }
+                concerts.addAll(concertItems.sortedByDescending { LocalDate.parse(it.date, DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)) })
                 setlistRecyclerView.adapter?.notifyDataSetChanged()
                 noContentView.visibility = View.GONE
                 setlistRecyclerView.visibility = View.VISIBLE
@@ -69,11 +83,20 @@ class ListFragment : Fragment() {
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
-            adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
-                override fun selected(setlist: Setlist) {
-                    Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-                    val intent = SetlistActivity.newIntent(context, setlist)
-                    startActivity(intent)
+//            adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
+//                override fun selected(setlist: Setlist) {
+//                    Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
+//                    val intent = SetlistActivity.newIntent(context, setlist)
+//                    startActivity(intent)
+//                }
+//            })
+            adapter = ConcertListAdapter(concerts, object : ConcertListAdapter.ArtistSelectedListener {
+                override fun selected(artist: String, date: String) {
+                    val setlist = setlists.find { setlist -> setlist.artist?.name.equals(artist) && setlist.eventDate.equals(date) }
+                    setlist.let { setlist ->
+                        val intent = SetlistActivity.newIntent(context, setlist!!)
+                        startActivity(intent)
+                    }
                 }
             })
         }

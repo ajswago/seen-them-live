@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.api.setlistfm.Setlist
-import com.swago.seenthemlive.ui.SongItem
-import com.swago.seenthemlive.ui.SongListAdapter
+import com.swago.seenthemlive.ui.common.SongItem
+import com.swago.seenthemlive.ui.common.SongListAdapter
 import com.swago.seenthemlive.ui.common.BaseFragment
 import com.swago.seenthemlive.ui.search.SearchResultActivity
 import kotlinx.android.synthetic.main.setlist_fragment.*
@@ -85,7 +85,8 @@ class SetlistFragment : BaseFragment() {
         }
         setlistEncoreListRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = SongListAdapter(encoreItems)
+            adapter =
+                SongListAdapter(encoreItems)
         }
 
         if (otherArtistsAtShow) {

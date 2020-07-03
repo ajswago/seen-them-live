@@ -5,6 +5,7 @@
     <!-- Common -->
     <string name="counted_item_list_index_format">%d.</string>
     <string name="counted_item_list_count_format">(%d)</string>
+    <string name="song_list_index_format">%d.</string>
 
     <!--  Navigation  -->
     <string name="navigation_drawer_open">Open navigation drawer</string>

@@ -1,6 +1,5 @@
-package com.swago.seenthemlive.ui
+package com.swago.seenthemlive.ui.common
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -16,7 +15,6 @@ class SongListAdapter(private val songs: List<SongItem>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val song: SongItem = songs[position]
-        Log.d("Song", "SongItem: ${song}")
         holder.bind(song)
     }
 
@@ -27,6 +25,7 @@ class SongViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.song_list_item, parent, false)) {
     private var mSongIndex: TextView? = null
     private var mSongName: TextView? = null
+    private var context = parent.context
 
     init {
         mSongIndex = itemView.findViewById(R.id.song_index)
@@ -34,7 +33,8 @@ class SongViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
 
     fun bind(song: SongItem) {
-        mSongIndex?.text = "${song.index}."
+        mSongIndex?.text = context
+            .getString(R.string.counted_item_list_index_format, song.index)
         mSongName?.text = song.name
     }
 }
