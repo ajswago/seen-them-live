@@ -51,7 +51,7 @@ class ConcertViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     fun bind(concert: ConcertItem) {
         concertVenue?.text = concert.venue
         concertLocation?.text = concert.location
-        concertDate?.text = concert.date
+        concert.date.let { concertDate?.text = Utils.formatDateString(it!!) }
         concertLayout.let {
             concertLayout?.removeViews(2, concertLayout!!.childCount - 2)
         }
