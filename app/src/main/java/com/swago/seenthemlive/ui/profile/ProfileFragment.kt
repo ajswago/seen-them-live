@@ -23,11 +23,18 @@ import kotlinx.android.synthetic.main.fragment_profile.*
  */
 class ProfileFragment : BaseFragment() {
 
+    companion object {
+        fun newInstance(profileId: String) = ProfileFragment().apply {
+            this.profileId = profileId
+        }
+    }
+
     private lateinit var profileViewModel: ProfileViewModel
 
     private var loading: ContentLoadingProgressBar? = null
     private var content: ConstraintLayout? = null
 
+    private var profileId: String = userId
     private var topArtists = mutableListOf<CountedItem>()
 
     override fun onCreateView(
@@ -89,7 +96,7 @@ class ProfileFragment : BaseFragment() {
     private fun updateUi() {
         content?.visibility = View.GONE
         loading?.show()
-        profileViewModel.fetchUser(userId) {
+        profileViewModel.fetchUser(profileId) {
             content?.visibility = View.VISIBLE
             loading?.hide()
         }

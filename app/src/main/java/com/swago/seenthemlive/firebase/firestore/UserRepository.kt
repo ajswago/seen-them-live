@@ -10,6 +10,18 @@ import java.io.Serializable
 class UserRepository {
 
     companion object {
+        suspend fun getAllUsers() : List<UserData> {
+            val firestore = Firebase.firestore
+            return try {
+                val collection = firestore.collection("users")
+                    .get()
+                    .await()
+                collection.map { data -> data.toObject<UserData>() }
+            } catch (e : Exception) {
+                ArrayList()
+            }
+        }
+
         suspend fun getUser(userId : String)
                 : UserData?{
             val firestore = Firebase.firestore

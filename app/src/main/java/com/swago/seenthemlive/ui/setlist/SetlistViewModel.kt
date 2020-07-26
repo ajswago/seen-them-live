@@ -70,7 +70,7 @@ class SetlistViewModel : ViewModel() {
                 }
             }
 
-            isSaved.postValue(savedToUser)
+            isSaved.postValue(savedToUser ?: false)
             artist.postValue(setlist.artist?.name)
             date.postValue(eventDateString)
             venue.postValue(venueString)
@@ -90,15 +90,15 @@ class SetlistViewModel : ViewModel() {
         scope.launch {
             val user = UserRepository.getUser(userId)
             val savedSetlists = ArrayList<Setlist>()
-            savedSetlists.addAll(user?.setlists!!)
+            savedSetlists.addAll(user?.setlists ?: ArrayList())
             if (setlistSaved) {
                 savedSetlists.add(setlist)
-                user.setlists = savedSetlists
+                user?.setlists = savedSetlists
             } else {
                 savedSetlists.removeAll { setlistItem -> setlist.id == setlistItem.id }
-                user.setlists = savedSetlists
+                user?.setlists = savedSetlists
             }
-            user.let{ UserRepository.setUser(user) }
+            user.let{ UserRepository.setUser(it!!) }
 
             GlobalScope.launch(Dispatchers.Main) {
                 completion()

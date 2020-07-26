@@ -39,6 +39,9 @@
     <string name="setlist_encore_list_label">Encore:</string>
     <string name="setlist_other_artists_at_show">Also At This Show</string>
 
+    <!-- Friend Profile Activity -->
+    <string name="import_button_content_description">import</string>
+
     <!-- States -->
     <string-array name="States">
         <item>AL</item>
