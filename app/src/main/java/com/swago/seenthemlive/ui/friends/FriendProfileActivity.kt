@@ -3,6 +3,7 @@ package com.swago.seenthemlive.ui.friends
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.profile.ProfileFragment
@@ -17,6 +18,11 @@ class FriendProfileActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, ProfileFragment.newInstance(userId))
                 .commitNow()
+            val importButton = findViewById<ImageButton>(R.id.import_button)
+            importButton.setOnClickListener {
+                val intent = ImportActivity.newIntent(this, userId)
+                startActivity(intent)
+            }
         }
     }
 

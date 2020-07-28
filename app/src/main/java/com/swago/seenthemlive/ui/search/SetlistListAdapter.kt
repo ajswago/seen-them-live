@@ -1,78 +1,88 @@
 package com.swago.seenthemlive.ui.search
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
-import com.swago.seenthemlive.api.setlistfm.Setlist
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.*
+import com.swago.seenthemlive.util.Utils
 
-class SetlistListAdapter(private val list: List<Setlist>, private val selectListener: OnSelectListener)
+class SetlistListAdapter(
+    private val setlists: List<SetlistItem>,
+    private val setlistSelectedListener: SetlistSelectedListener? = null,
+    private val multiSelect: Boolean = false)
     : RecyclerView.Adapter<SetlistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetlistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return SetlistViewHolder(inflater, parent)
+        return SetlistViewHolder(inflater, parent, multiSelect)
     }
 
     override fun onBindViewHolder(holder: SetlistViewHolder, position: Int) {
-        val setlist: Setlist = list[position]
+        val setlist: SetlistItem = setlists[position]
         holder.bind(setlist)
         holder.itemView.setOnClickListener {
-            val selectedSetlist = list.get(holder.adapterPosition)
-            selectListener.selected(selectedSetlist)
+            val selectedSetlist = setlists[holder.adapterPosition]
+            setlistSelectedListener?.selected(selectedSetlist)
+            if (multiSelect) {
+                val wasSelected = selectedSetlist.selected ?: false
+                selectedSetlist.selected = !wasSelected
+                notifyDataSetChanged()
+            }
         }
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = setlists.size
 
-    interface OnSelectListener {
-        fun selected(setlist: Setlist)
+    fun selectedSetlists(): List<SetlistItem> {
+        return setlists.filter { it.selected ?: false }
+    }
+
+    interface SetlistSelectedListener {
+        fun selected(setlist: SetlistItem)
     }
 }
 
-class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup,
+                        private var multiSelect: Boolean
+) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.setlist_list_item, parent, false)) {
-    private var mArtistView: TextView? = null
-    private var mVenueView: TextView? = null
-    private var mTourView: TextView? = null
-    private var mDateView: TextView? = null
-
+    private var setlistArtist: TextView? = null
+    private var setlistVenue: TextView? = null
+    private var setlistTour: TextView? = null
+    private var setlistDate: TextView? = null
+    private var setlistSelected: CheckBox? = null
 
     init {
-        mArtistView = itemView.findViewById(R.id.setlist_item_artist)
-        mVenueView = itemView.findViewById(R.id.setlist_item_venue)
-        mTourView = itemView.findViewById(R.id.setlist_item_tour)
-        mDateView = itemView.findViewById(R.id.setlist_item_date)
+        setlistArtist = itemView.findViewById(R.id.setlist_item_artist)
+        setlistVenue = itemView.findViewById(R.id.setlist_item_venue)
+        setlistTour = itemView.findViewById(R.id.setlist_item_tour)
+        setlistDate = itemView.findViewById(R.id.setlist_item_date)
+        setlistSelected = itemView.findViewById(R.id.setlist_checkbox)
     }
 
-    fun bind(setlist: Setlist) {
-        mArtistView?.text = setlist.artist?.name
-        var venueString = StringBuilder()
-        venueString.append(setlist.venue?.name)
-        setlist.venue?.city.let {
-            venueString.append(" (")
-            venueString.append(setlist.venue?.city?.name)
-            setlist.venue?.city?.state.let {
-                venueString.append(", ")
-                venueString.append(setlist.venue?.city?.state)
-            }
-            setlist.venue?.city?.country?.name.let {
-                venueString.append(", ")
-                venueString.append(setlist.venue?.city?.country?.name)
-            }
-            venueString.append(")")
+    fun bind(setlist: SetlistItem) {
+        setlistArtist?.text = setlist.artist
+        setlistVenue?.text = setlist.venue
+        setlistTour?.text = setlist.tour
+        setlist.date.let { setlistDate?.text = Utils.formatDateString(it!!) }
+        if (multiSelect) {
+            setlistSelected?.visibility = View.VISIBLE
+        } else {
+            setlistSelected?.visibility = View.GONE
         }
-        mVenueView?.text = venueString.toString()
-        mTourView?.text = setlist.tour?.name
-        val date = LocalDate.parse(
-            setlist.eventDate,
-            DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
-        )
-        mDateView?.text = date.format(DateTimeFormatter.ofPattern("MM-dd-yyyy", Locale.ENGLISH))
+        setlistSelected?.isChecked = setlist.selected ?: false
     }
 
 }
+
+data class SetlistItem(
+    var id: String? = null,
+    var artist: String? = null,
+    var venue: String? = null,
+    var tour: String? = null,
+    var date: String? = null,
+    var selected: Boolean? = false
+)

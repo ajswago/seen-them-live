@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.ui.setlist.SetlistActivity
+import com.swago.seenthemlive.util.Utils
 import kotlinx.android.synthetic.main.activity_search_result.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -21,6 +22,7 @@ import java.util.*
 class SearchResultActivity : AppCompatActivity() {
 
     private val setlists = mutableListOf<Setlist>()
+    private val setlistItems = mutableListOf<SetlistItem>()
 
     private lateinit var searchResultViewModel: SearchResultViewModel
 
@@ -44,11 +46,18 @@ class SearchResultActivity : AppCompatActivity() {
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(this@SearchResultActivity)
             // set the custom adapter to the RecyclerView
-            adapter = SetlistListAdapter(setlists, object : SetlistListAdapter.OnSelectListener {
-                override fun selected(setlist: Setlist) {
+            adapter = SetlistListAdapter(setlistItems, object : SetlistListAdapter.SetlistSelectedListener {
+                override fun selected(setlist: SetlistItem) {
                     Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
-                    val intent = SetlistActivity.newIntent(context, setlist, showOthersAtShow = !nested)
-                    startActivity(intent)
+                    val selectedSetlist = setlists.find { it.id == setlist.id }
+                    selectedSetlist.let {
+                        val intent = SetlistActivity.newIntent(
+                            context,
+                            selectedSetlist!!,
+                            showOthersAtShow = !nested
+                        )
+                        startActivity(intent)
+                    }
                 }
             })
         }
@@ -92,6 +101,11 @@ class SearchResultActivity : AppCompatActivity() {
                         DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.ENGLISH)
                     )
                 })
+                setlistItems.clear()
+                setlistItems.addAll(setlists.map {
+                    var location: String = ""
+                    it.venue.let { location = Utils.formatVenueString(it!!) }
+                    SetlistItem(it.id, it.artist?.name, location, it.tour?.name, it.eventDate) })
                 list_recycler_view.adapter?.notifyDataSetChanged()
                 no_content_view.visibility = View.GONE
                 list_recycler_view.visibility = View.VISIBLE

@@ -11,10 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.friends.ImportActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.friends.FriendProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ui.setlist.SetlistActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.setlist.SetlistActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.search.SearchResultActivity" />
         <activity
             android:name=".ui.search.SearchActivity"
