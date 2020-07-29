@@ -2,6 +2,7 @@ package com.swago.seenthemlive.ui.friends
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.firebase.firestore.UserRepository
 import com.swago.seenthemlive.ui.search.SetlistItem
 import com.swago.seenthemlive.util.Utils
@@ -33,6 +34,30 @@ class ImportViewModel : ViewModel() {
                 var location: String
                 it.venue.let {venue -> location = Utils.formatVenueString(venue!!) }
                 SetlistItem(it.id, it.artist?.name, location, it.tour?.name, it.eventDate) } ?: ArrayList())
+
+            GlobalScope.launch(Dispatchers.Main) {
+                completion()
+            }
+        }
+    }
+
+    fun saveImportedSetlists(
+        userId: String,
+        importProfileId: String,
+        setlistIds: List<String>,
+        completion: () -> Unit) {
+        scope.launch {
+            val user = UserRepository.getUser(userId)
+            val importProfile = UserRepository.getUser(importProfileId)
+
+            val selectedSetlists = importProfile?.setlists
+                ?.filter { setlist -> setlistIds.contains(setlist.id) } ?: ArrayList()
+
+            val savedSetlists = java.util.ArrayList<Setlist>()
+            savedSetlists.addAll(user?.setlists ?: java.util.ArrayList())
+            savedSetlists.addAll(selectedSetlists)
+            user?.setlists = savedSetlists
+            user.let { UserRepository.setUser(it!!) }
 
             GlobalScope.launch(Dispatchers.Main) {
                 completion()

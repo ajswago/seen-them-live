@@ -55,8 +55,12 @@ class ImportFragment : BaseFragment() {
         }
 
         importButton.setOnClickListener {
+            loading?.show()
             val adapter: SetlistListAdapter = importRecyclerView.adapter as SetlistListAdapter
-            Log.d("IMPORT", "Importing Setlist Artists: ${adapter.selectedSetlists().map { it.artist }}")
+            importViewModel.saveImportedSetlists(userId, profileId, adapter.selectedSetlists().map { it.id ?: "" }) {
+                loading?.hide()
+                activity?.finish()
+            }
         }
 
         importViewModel.importSetlists.observe(viewLifecycleOwner, Observer {setlists ->
