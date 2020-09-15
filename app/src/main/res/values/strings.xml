@@ -14,6 +14,7 @@
     <string name="nav_header_subtitle">By Anthony Swago</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="menu_list">My Concerts</string>
+    <string name="menu_artist">My Bands</string>
     <string name="menu_timeline">Timeline</string>
     <string name="menu_map">Map</string>
     <string name="menu_profile">My Profile</string>
@@ -38,6 +39,10 @@
     <string name="setlist_song_list_label">Setlist:</string>
     <string name="setlist_encore_list_label">Encore:</string>
     <string name="setlist_other_artists_at_show">Also At This Show</string>
+
+    <!-- Artist Fragment -->
+    <string name="artist_item_count_format">Times Seen: %d</string>
+    <string name="artist_item_latest_date_format">Last Seen: %s</string>
 
     <!-- Friend Profile Activity -->
     <string name="import_button_content_description">import</string>
