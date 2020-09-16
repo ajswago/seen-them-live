@@ -7,7 +7,7 @@ import com.swago.seenthemlive.ui.common.ArtistItem
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class ArtistViewModel : ViewModel() {
+class ArtistListViewModel : ViewModel() {
 
     private val parentJob = Job()
     private val coroutineContext: CoroutineContext

@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/nav_artist"
-        android:name="com.swago.seenthemlive.ui.artist.ArtistFragment"
+        android:name="com.swago.seenthemlive.ui.artist.ArtistListFragment"
         android:label="@string/menu_artist"
-        tools:layout="@layout/fragment_artist" />
+        tools:layout="@layout/fragment_artist_list" />
 
     <fragment
         android:id="@+id/nav_timeline"

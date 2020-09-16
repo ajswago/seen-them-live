@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.Observer
@@ -14,17 +13,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.common.*
-import kotlinx.android.synthetic.main.fragment_profile.*
 
-class ArtistFragment : BaseFragment() {
+class ArtistListFragment : BaseFragment() {
     
     companion object {
-        fun newInstance(profileId: String) = ArtistFragment().apply { 
+        fun newInstance(profileId: String) = ArtistListFragment().apply {
             this.profileId = profileId
         }
     }
 
-    private lateinit var artistViewModel: ArtistViewModel
+    private lateinit var artistListViewModel: ArtistListViewModel
 
     private var loading: ContentLoadingProgressBar? = null
     private var content: ConstraintLayout? = null
@@ -37,10 +35,10 @@ class ArtistFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        artistViewModel =
-            ViewModelProvider(this).get(ArtistViewModel::class.java)
+        artistListViewModel =
+            ViewModelProvider(this).get(ArtistListViewModel::class.java)
 
-        val root = inflater.inflate(R.layout.fragment_artist, container, false)
+        val root = inflater.inflate(R.layout.fragment_artist_list, container, false)
         val artistRecyclerView: RecyclerView = root.findViewById(R.id.artist_recycler_view)
         content = root.findViewById(R.id.artist_content)
         loading = root.findViewById(R.id.loading)
@@ -54,7 +52,7 @@ class ArtistFragment : BaseFragment() {
             })
         }
 
-        artistViewModel.artists.observe(viewLifecycleOwner, Observer {
+        artistListViewModel.artists.observe(viewLifecycleOwner, Observer {
             artists.clear()
             artists.addAll(it)
             artistRecyclerView.adapter?.notifyDataSetChanged()
@@ -71,7 +69,7 @@ class ArtistFragment : BaseFragment() {
     private fun updateUi() {
         content?.visibility = View.GONE
         loading?.show()
-        artistViewModel.fetchUser(profileId) {
+        artistListViewModel.fetchUser(profileId) {
             content?.visibility = View.VISIBLE
             loading?.hide()
         }
