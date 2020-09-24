@@ -19,6 +19,9 @@
         <activity
             android:name=".ui.setlist.SetlistActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.artist.ArtistDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.search.SearchResultActivity" />
         <activity
             android:name=".ui.search.SearchActivity"

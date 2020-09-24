@@ -1,7 +1,6 @@
 package com.swago.seenthemlive.ui.artist
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
-import com.swago.seenthemlive.ui.common.*
+import com.swago.seenthemlive.ui.common.ArtistItem
+import com.swago.seenthemlive.ui.common.ArtistListAdapter
+import com.swago.seenthemlive.ui.common.BaseFragment
 
 class ArtistListFragment : BaseFragment() {
     
@@ -47,7 +48,8 @@ class ArtistListFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = ArtistListAdapter(artists, object : ArtistListAdapter.ArtistSelectedListener {
                 override fun selected(artistId: String) {
-                    Log.d("ArtistFragment", "Artist Selected ${artistId}")
+                    val intent = ArtistDetailActivity.newIntent(context, artistId)
+                    startActivity(intent)
                 }
             })
         }
