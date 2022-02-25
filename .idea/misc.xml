@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/content_view_concerts.xml" value="0.1" />
         <entry key="app/src/main/res/menu/activity_view_concerts_drawer.xml" value="0.26258503401360545" />
       </map>
     </option>
