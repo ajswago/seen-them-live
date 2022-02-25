@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Seen Them Live.iml" filepath="$PROJECT_DIR$/Seen Them Live.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Seen Them Live-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Seen Them Live-app.iml" group="Seen Them Live/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Seen_Them_Live.iml" filepath="$PROJECT_DIR$/.idea/modules/Seen_Them_Live.iml" group="Seen_Them_Live" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/seen-them-live-app.iml" filepath="$PROJECT_DIR$/app/seen-them-live-app.iml" group="Seen Them Live/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Seen_Them_Live.iml" filepath="$PROJECT_DIR$/.idea/modules/Seen_Them_Live.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Seen_Them_Live.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Seen_Them_Live.app.iml" />
     </modules>
   </component>
 </project>
