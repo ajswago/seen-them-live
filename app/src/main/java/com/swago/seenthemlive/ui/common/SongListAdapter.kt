@@ -1,5 +1,7 @@
 package com.swago.seenthemlive.ui.common
 
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -33,13 +35,24 @@ class SongViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     }
 
     fun bind(song: SongItem) {
-        mSongIndex?.text = context
-            .getString(R.string.counted_item_list_index_format, song.index)
-        mSongName?.text = song.name
+        if (song.index != null) {
+            mSongIndex?.text = context
+                .getString(R.string.counted_item_list_index_format, song.index)
+            mSongName?.setTextColor(Color.DKGRAY)
+        } else {
+            mSongIndex?.text = ""
+            mSongName?.setTextColor(Color.LTGRAY)
+        }
+        if (song.coverArtist != null) {
+            mSongName?.text = "${song.name} (${song.coverArtist} cover)"
+        } else {
+            mSongName?.text = song.name
+        }
     }
 }
 
 data class SongItem(
     val index: Int?,
-    val name: String?
+    val name: String?,
+    val coverArtist: String?
 )

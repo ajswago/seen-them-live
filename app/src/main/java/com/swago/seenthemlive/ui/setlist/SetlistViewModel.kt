@@ -1,5 +1,6 @@
 package com.swago.seenthemlive.ui.setlist
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.swago.seenthemlive.api.setlistfm.Setlist
@@ -38,6 +39,12 @@ class SetlistViewModel : ViewModel() {
     private val _encoreList = MutableLiveData<List<SongItem>>().apply {
         value = ArrayList()
     }
+    private val _encore2List = MutableLiveData<List<SongItem>>().apply {
+        value = ArrayList()
+    }
+    private val _encore3List = MutableLiveData<List<SongItem>>().apply {
+        value = ArrayList()
+    }
 
     val isSaved: MutableLiveData<Boolean> = _isSaved
     val artist: MutableLiveData<String> = _artist
@@ -46,6 +53,8 @@ class SetlistViewModel : ViewModel() {
     val tour: MutableLiveData<String> = _tour
     val songList: MutableLiveData<List<SongItem>> = _songList
     val encoreList: MutableLiveData<List<SongItem>> = _encoreList
+    val encore2List: MutableLiveData<List<SongItem>> = _encore2List
+    val encore3List: MutableLiveData<List<SongItem>> = _encore3List
 
     fun fetchUser(userId: String, setlist: Setlist, completion: () -> Unit) {
         scope.launch {
@@ -57,14 +66,27 @@ class SetlistViewModel : ViewModel() {
                 .venue.let{ Utils.formatVenueString(setlist.venue!!) }
             val songItems = ArrayList<SongItem>()
             val encoreItems = ArrayList<SongItem>()
+            val encore2Items = ArrayList<SongItem>()
+            val encore3Items = ArrayList<SongItem>()
             setlist.sets?.set?.forEach { set ->
+                val songsWithoutTapes = set.song?.filter { it.tape?.not() ?: true }
                 set.song?.map { song ->
+                    var index: Int? = null
+                    val indexInList = songsWithoutTapes?.indexOf(song) ?: -1
+                    if (indexInList >= 0) {
+                        index = indexInList + 1
+                    }
                     val songItem = SongItem(
-                        set.song.indexOf(song) + 1,
-                        song.name
+                        index,
+                        song.name,
+                        song.cover?.name
                     )
                     if (set.encore == 1)
                         encoreItems.add(songItem)
+                    else if (set.encore == 2)
+                        encore2Items.add(songItem)
+                    else if (set.encore == 3)
+                        encore3Items.add(songItem)
                     else
                         songItems.add(songItem)
                 }
@@ -77,6 +99,8 @@ class SetlistViewModel : ViewModel() {
             tour.postValue(setlist.tour?.name)
             songList.postValue(songItems)
             encoreList.postValue(encoreItems)
+            encore2List.postValue(encore2Items)
+            encore3List.postValue(encore3Items)
 
             GlobalScope.launch(Dispatchers.Main) {
                 completion()

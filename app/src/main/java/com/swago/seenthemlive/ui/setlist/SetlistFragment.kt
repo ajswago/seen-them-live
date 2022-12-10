@@ -1,6 +1,7 @@
 package com.swago.seenthemlive.ui.setlist
 
 import android.graphics.drawable.GradientDrawable
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,6 +47,10 @@ class SetlistFragment : BaseFragment() {
     private lateinit var setlistSongListRecyclerView: RecyclerView
     private lateinit var setlistEncoreListLabel: TextView
     private lateinit var setlistEncoreListRecyclerView: RecyclerView
+    private lateinit var setlistEncore2ListLabel: TextView
+    private lateinit var setlistEncore2ListRecyclerView: RecyclerView
+    private lateinit var setlistEncore3ListLabel: TextView
+    private lateinit var setlistEncore3ListRecyclerView: RecyclerView
     private lateinit var setlistOtherArtistAtShowLayout: LinearLayout
 
     private lateinit var setlist: Setlist
@@ -53,6 +58,8 @@ class SetlistFragment : BaseFragment() {
 
     private var songItems = mutableListOf<SongItem>()
     private var encoreItems = mutableListOf<SongItem>()
+    private var encore2Items = mutableListOf<SongItem>()
+    private var encore3Items = mutableListOf<SongItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,6 +84,10 @@ class SetlistFragment : BaseFragment() {
         setlistSongListRecyclerView = view.findViewById(R.id.song_recycler_view)
         setlistEncoreListLabel = view.findViewById(R.id.setlist_label_encore)
         setlistEncoreListRecyclerView = view.findViewById(R.id.encore_recycler_view)
+        setlistEncore2ListLabel = view.findViewById(R.id.setlist_label_encore2)
+        setlistEncore2ListRecyclerView = view.findViewById(R.id.encore2_recycler_view)
+        setlistEncore3ListLabel = view.findViewById(R.id.setlist_label_encore3)
+        setlistEncore3ListRecyclerView = view.findViewById(R.id.encore3_recycler_view)
         setlistOtherArtistAtShowLayout = view.findViewById(R.id.other_artist_button_layout)
 
         setlistSongListRecyclerView.apply {
@@ -87,6 +98,16 @@ class SetlistFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
             adapter =
                 SongListAdapter(encoreItems)
+        }
+        setlistEncore2ListRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter =
+                SongListAdapter(encore2Items)
+        }
+        setlistEncore3ListRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter =
+                SongListAdapter(encore3Items)
         }
 
         if (otherArtistsAtShow) {
@@ -140,6 +161,25 @@ class SetlistFragment : BaseFragment() {
             encoreItems.clear()
             encoreItems.addAll(it)
             encore_recycler_view.adapter?.notifyDataSetChanged()
+            if (encoreItems.isNotEmpty())
+                setlistEncoreListLabel.visibility = View.VISIBLE
+            else setlistEncoreListLabel.visibility = View.GONE
+        })
+        viewModel.encore2List.observe(viewLifecycleOwner, Observer {
+            encore2Items.clear()
+            encore2Items.addAll(it)
+            encore2_recycler_view.adapter?.notifyDataSetChanged()
+            if (encore2Items.isNotEmpty())
+                setlistEncore2ListLabel.visibility = View.VISIBLE
+            else setlistEncore2ListLabel.visibility = View.GONE
+        })
+        viewModel.encore3List.observe(viewLifecycleOwner, Observer {
+            encore3Items.clear()
+            encore3Items.addAll(it)
+            encore3_recycler_view.adapter?.notifyDataSetChanged()
+            if (encore3Items.isNotEmpty())
+                setlistEncore3ListLabel.visibility = View.VISIBLE
+            else setlistEncore3ListLabel.visibility = View.GONE
         })
     }
 
