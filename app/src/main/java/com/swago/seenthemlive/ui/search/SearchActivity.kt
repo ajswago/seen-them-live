@@ -30,7 +30,7 @@ class SearchActivity : AppCompatActivity() {
 //                Toast.makeText(this,"Artist:"+artistField.text, Toast.LENGTH_LONG).show()
                 val intent = SearchResultActivity.newIntent(
                     this,
-                    userId = userId,
+                    userId = userId!!,
                     artistMbid = null, artistName = artistField.text.toString(),
                     venueName = venueField.text.toString(),
                     stateCode = state_spinner.selectedItem as String?)

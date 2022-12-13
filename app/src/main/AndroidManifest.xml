@@ -36,10 +36,10 @@
             android:label="@string/title_activity_view_concerts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.common.BaseActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
