@@ -1,8 +1,10 @@
-apply plugin: 'com.android.application'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.gms.google-services'
+}
 
 android {
     compileSdkVersion 33
@@ -12,9 +14,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        def properties = new Properties()
-        file("../local.properties").withInputStream { properties.load(it) }
-        manifestPlaceholders = [ MAPS_API_KEY:"${properties.getProperty('MAPS_API_KEY')}"]
     }
     buildTypes {
         release {
@@ -34,13 +33,10 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         def setlistfmApiKey = properties.getProperty("setlistfm_api_key", "")
-        def testfairyKey = properties.getProperty("testfairy_key", "")
 
         it.buildConfigField 'String', "SETLISTFM_API_KEY", setlistfmApiKey
-        it.buildConfigField 'String', "TESTFAIRY_KEY", testfairyKey
 
         it.resValue 'string', "setlistfm_api_key", setlistfmApiKey
-        it.resValue 'string', "testfairy_key", testfairyKey
 
     }
 }
@@ -60,12 +56,11 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.1'
-    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
-    implementation 'com.google.maps.android:maps-utils-ktx:3.4.0'
+    implementation 'com.google.maps.android:maps-ktx:3.3.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     testImplementation 'junit:junit:4.13.2'
@@ -90,4 +85,10 @@ dependencies {
 
 }
 
-apply plugin: 'com.google.gms.google-services'
+secrets {
+    // To add your Maps API key to this project:
+    // 1. Open the root project's local.properties file
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    defaultPropertiesFileName 'local.properties'
+}
