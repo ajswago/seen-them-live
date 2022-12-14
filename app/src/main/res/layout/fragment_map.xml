@@ -11,4 +11,13 @@
         android:layout_gravity="center"
         android:layout_height="match_parent"
         />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:padding="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminate="true"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
