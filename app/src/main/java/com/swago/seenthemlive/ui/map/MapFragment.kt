@@ -1,5 +1,7 @@
 package com.swago.seenthemlive.ui.map
 
+import android.location.Geocoder
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +18,9 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.common.BaseFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MapFragment : BaseFragment(), OnMapReadyCallback {
@@ -69,40 +74,88 @@ class MapFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun updateMap() {
+        val geocoder = Geocoder(requireContext())
         var minLat: Double? = null
         var maxLat: Double? = null
         var minLong: Double? = null
         var maxLong: Double? = null
-        mapItems.forEach {
-            Log.d("MAP TEST", "Venue: ${it.name} lat: ${it.lat}, long: ${it.long}")
-            if (it.lat != null && it.long != null) {
-                if (it.lat < (minLat ?: 90.0)) {
-                    Log.d("MAP TEST", "Set new min lat: ${it.lat}")
-                    minLat = it.lat
+        mapItems.forEach { mapItem ->
+            if (mapItem.lat != null && mapItem.long != null) {
+                if (mapItem.lat < (minLat ?: 90.0)) {
+                    minLat = mapItem.lat
                 }
-                if (it.lat > (maxLat ?: -90.0)) {
-                    Log.d("MAP TEST", "Set new max lat: ${it.lat}")
-                    maxLat = it.lat
+                if (mapItem.lat > (maxLat ?: -90.0)) {
+                    maxLat = mapItem.lat
                 }
-                if (it.long < (minLong ?: 180.0)) {
-                    Log.d("MAP TEST", "Set new min long: ${it.long}")
-                    minLong = it.long
+                if (mapItem.long < (minLong ?: 180.0)) {
+                    minLong = mapItem.long
                 }
-                if (it.long > (maxLong ?: -180.0)) {
-                    Log.d("MAP TEST", "Set new min long: ${it.long}")
-                    maxLong = it.long
+                if (mapItem.long > (maxLong ?: -180.0)) {
+                    maxLong = mapItem.long
                 }
-                googleMap?.addMarker(
-                    MarkerOptions()
-                        .position(LatLng(it.lat, it.long)).title("${it.name} (${it.count} Concerts)")
-                )
-                Log.d("MAP TEST", "Bounds: min lat: ${minLat} max lat: ${maxLat} min long: ${minLong} max long: ${maxLong}")
+                mapItem.name.let { name ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        geocoder.getFromLocationName(
+                            name!!,
+                            1,
+                            mapItem.lat - 2.0,
+                            mapItem.long - 2.0,
+                            mapItem.lat + 2.0,
+                            mapItem.long + 2.0
+                        ) { addresses ->
+                            var lat = mapItem.lat
+                            var long = mapItem.long
+                            if (addresses.isNotEmpty()) {
+                                addresses.first().let {
+                                    lat = it.latitude
+                                    long = it.longitude
+                                }
+                            } else {
+                                Log.e("MapFragment", "Address not found for: $name")
+                            }
+                            GlobalScope.launch(Dispatchers.Main) {
+                                googleMap?.addMarker(
+                                    MarkerOptions()
+                                        .position(LatLng(lat!!, long!!))
+                                        .title("${mapItem.name} (${mapItem.count} Concerts)")
+                                )
+                            }
+                        }
+                    } else {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            val addresses = geocoder.getFromLocationName(
+                                name!!,
+                                1,
+                                mapItem.lat - 2.0,
+                                mapItem.long - 2.0,
+                                mapItem.lat + 2.0,
+                                mapItem.long + 2.0
+                            )
+                            var lat = mapItem.lat
+                            var long = mapItem.long
+                            if (addresses?.isNotEmpty() == true) {
+                                addresses.first().let {
+                                    lat = it.latitude
+                                    long = it.longitude
+                                }
+                            } else {
+                                Log.e("MapFragment", "Address not found for: $name")
+                            }
+                            launch(Dispatchers.Main) {
+                                googleMap?.addMarker(
+                                    MarkerOptions()
+                                        .position(LatLng(lat!!, long!!))
+                                        .title("${mapItem.name} (${mapItem.count} Concerts)")
+                                )
+                            }
+                        }
+                    }
+                }
                 if (minLat != null && maxLat != null && minLong != null && maxLong != null) {
                     val bounds = LatLngBounds(
-                        LatLng(minLat!!, minLong!!),  // SW bounds
-                        LatLng(maxLat!!, maxLong!!) // NE bounds
+                        LatLng(minLat!! - 1.0, minLong!! - 1.0),  // SW bounds
+                        LatLng(maxLat!! + 1.0, maxLong!! + 1.0) // NE bounds
                     )
-                    Log.d("MAP TEST", "Update camera")
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0))
                 }
             }
