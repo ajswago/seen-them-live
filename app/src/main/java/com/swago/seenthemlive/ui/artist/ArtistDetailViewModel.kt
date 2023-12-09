@@ -64,7 +64,8 @@ class ArtistDetailViewModel : ViewModel() {
                         group.value.map { it.artist?.name ?: "" })
                 }?.filter { concertItem -> concertItem.artists?.contains(setlists?.first()?.artist?.name) ?: false }
             val allSongs = setlists?.flatMap { setlist -> setlist.sets?.set?.flatMap { set -> set.song?.map { it } ?: ArrayList<Song>() } ?: ArrayList<Song>() }
-            val songsByCount = allSongs?.groupBy { it.name }?.map { CountedItem(it.key, it.value.size) }
+            val songsWithoutTapes = allSongs?.filter { it.tape?.not() ?: true }
+            val songsByCount = songsWithoutTapes?.groupBy { it.name }?.map { CountedItem(it.key, it.value.size) }
 
             artistName.postValue(setlists?.first()?.artist?.name)
             artistSetlistCount.postValue(setlistCount)

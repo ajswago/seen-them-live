@@ -45,15 +45,23 @@ class ArtistDetailFragment : BaseFragment() {
         val artistShowCount: TextView = root.findViewById(R.id.artist_detail_count)
         val artistSetlistsRecyclerView: RecyclerView = root.findViewById(R.id.shows_recycler_view)
         val artistSongsRecyclerView: RecyclerView = root.findViewById(R.id.songs_recycler_view)
-        content = root.findViewById(R.id.profile_content)
+        content = root.findViewById(R.id.artist_detail_content)
         loading = root.findViewById(R.id.loading)
 
         artistSetlistsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically(): Boolean {
+                    return false
+                }
+            }
             adapter = ConcertListAdapter(concerts, individualArtistViews = false)
         }
         artistSongsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically(): Boolean {
+                    return false
+                }
+            }
             adapter = CountedListAdapter(topSongs)
         }
 
