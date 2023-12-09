@@ -57,7 +57,11 @@ class ProfileFragment : BaseFragment() {
         loading = root.findViewById(R.id.loading)
 
         topArtistRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = object : LinearLayoutManager(context) {
+                override fun canScrollVertically(): Boolean {
+                    return false
+                }
+            }
             adapter = CountedListAdapter(topArtists)
         }
 
