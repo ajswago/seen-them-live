@@ -18,12 +18,6 @@
         tools:layout="@layout/fragment_artist_list" />
 
     <fragment
-        android:id="@+id/nav_timeline"
-        android:name="com.swago.seenthemlive.ui.timeline.TimelineFragment"
-        android:label="@string/menu_timeline"
-        tools:layout="@layout/fragment_timeline" />
-
-    <fragment
         android:id="@+id/nav_map"
         android:name="com.swago.seenthemlive.ui.map.MapFragment"
         android:label="@string/menu_map"

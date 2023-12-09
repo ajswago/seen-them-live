@@ -24,6 +24,7 @@
     <string name="title_activity_view_concerts">ViewConcertsActivity</string>
 
     <!-- Profile Fragment -->
+    <string name="profile_stats_header_text">Concert Stats</string>
     <string name="profile_concerts_count_format">Number of Concerts Attended: %d</string>
     <string name="profile_bands_count_format">Number of Bands Seen: %d</string>
     <string name="profile_venues_count_format">Number of Venues Attended: %d</string>

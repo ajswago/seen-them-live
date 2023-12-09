@@ -20,7 +20,8 @@
             android:layout_marginEnd="10dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            style="?android:attr/starStyle"/>
+            style="?android:attr/starStyle"
+            android:theme="@style/checkBoxStyle"/>
 
         <TextView
             android:id="@+id/setlist_detail_artist"

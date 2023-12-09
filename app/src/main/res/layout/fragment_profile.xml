@@ -9,41 +9,62 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/profile_display_name"
+        <RelativeLayout
+            android:id="@+id/profile_name_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="10dp"
-            android:gravity="center_horizontal"
-            android:textStyle="bold"
-            android:textSize="24sp"/>
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:background="@color/colorAccent">
+
+            <TextView
+                android:id="@+id/profile_display_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:textStyle="bold"
+                android:textSize="24sp"/>
+
+            <TextView
+                android:id="@+id/profile_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_display_name"
+                android:gravity="center_horizontal"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/profile_username"
+                android:gravity="center_horizontal"
+                android:textSize="16sp"/>
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/profile_username"
-            android:layout_width="match_parent"
+            android:id="@+id/profile_stats_header"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profile_display_name"
-            android:gravity="center_horizontal"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/profile_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profile_username"
-            android:gravity="center_horizontal"
-            android:textSize="16sp"/>
+            android:text="@string/profile_stats_header_text"
+            app:layout_constraintTop_toBottomOf="@id/profile_name_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/profile_num_shows_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profile_email"
+            app:layout_constraintTop_toBottomOf="@id/profile_stats_header"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="40dp"
-            android:textSize="18sp"/>
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/profile_num_bands_label"
@@ -51,9 +72,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/profile_num_shows_label"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:textSize="18sp"/>
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/profile_num_venues_label"
@@ -61,9 +82,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/profile_num_bands_label"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:textSize="18sp"/>
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"/>
 
         <TextView
             android:id="@+id/top_artist_label"

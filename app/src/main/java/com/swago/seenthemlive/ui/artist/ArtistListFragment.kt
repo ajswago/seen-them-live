@@ -8,8 +8,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.common.ArtistItem
 import com.swago.seenthemlive.ui.common.ArtistListAdapter
@@ -53,6 +55,12 @@ class ArtistListFragment : BaseFragment() {
                 }
             })
         }
+        artistRecyclerView.addItemDecoration(MaterialDividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL).apply {
+            dividerInsetEnd = 56
+            dividerInsetStart = 56
+            dividerThickness = 4
+            dividerColor = resources.getColor(R.color.colorAccent, null)
+        })
 
         artistListViewModel.artists.observe(viewLifecycleOwner, Observer {
             artists.clear()
