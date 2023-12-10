@@ -1,5 +1,6 @@
 package com.swago.seenthemlive.ui.search
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.ui.setlist.SetlistActivity
+import com.swago.seenthemlive.ui.setlist.SetlistActivity.Companion.INTENT_ORIGIN_SETLIST
 import com.swago.seenthemlive.util.Utils
 import kotlinx.android.synthetic.main.activity_search_result.*
 import java.time.LocalDate
@@ -51,12 +53,18 @@ class SearchResultActivity : AppCompatActivity() {
                     Log.d("SEARCH RESULT", "SELECTED SETLIST: ${setlist}")
                     val selectedSetlist = setlists.find { it.id == setlist.id }
                     selectedSetlist.let {
+                        val originSetlist = intent.getSerializableExtra(INTENT_ORIGIN_SETLIST) as Setlist?
                         val intent = SetlistActivity.newIntent(
                             context,
                             selectedSetlist!!,
-                            showOthersAtShow = !nested
+                            showOthersAtShow = !nested,
+                            originSetlist = originSetlist
                         )
-                        startActivity(intent)
+                        if (originSetlist != null) {
+                            startActivityForResult(intent, 0)
+                        } else {
+                            startActivity(intent)
+                        }
                     }
                 }
             })
@@ -75,12 +83,11 @@ class SearchResultActivity : AppCompatActivity() {
         val venueName = intent.getStringExtra(INTENT_VENUE_NAME)
         val date = intent.getStringExtra(INTENT_DATE)
         val excludeArtistMbid = intent.getStringExtra(INTENT_EXCLUDE_ARTIST_MBID)
-//        Toast.makeText(this,"Artist:"+artistName, Toast.LENGTH_LONG).show()
-
-        Log.d("SEARCHRESULT", "Making call!!!")
+        val artistMbid = intent.getStringExtra(INTENT_ARTIST_MBID)
+        val tourName = intent.getStringExtra(INTENT_TOUR_NAME)
 
         loading?.show()
-        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, venueName = venueName, date = date)
+        searchResultViewModel.fetchSetlists(artistName = artistName, stateCode = stateCode, venueId = venueId, venueName = venueName, date = date, artistMbid = artistMbid, tourName = tourName)
 
         searchResultViewModel.setlistsLiveData.observe(this, Observer {
             Log.d("QUERY", "Setlists found: ${it}")
@@ -114,6 +121,14 @@ class SearchResultActivity : AppCompatActivity() {
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data?.getSerializableExtra(SetlistActivity.INTENT_UPDATED_SETLIST) as Setlist? != null) {
+            setResult(Activity.RESULT_OK, data)
+            finish()
+        }
+    }
+
     companion object {
 
         private val INTENT_USER = "user"
@@ -135,6 +150,7 @@ class SearchResultActivity : AppCompatActivity() {
         private val INTENT_YEAR = "year"
         private val INTENT_EXCLUDE_ARTIST_MBID = "excludeArtistMbid"
         private val INTENT_NESTED = "nested"
+        private val INTENT_ORIGIN_SETLIST = SetlistActivity.INTENT_ORIGIN_SETLIST
 
         fun newIntent(context: Context,
                       userId: String,
@@ -155,7 +171,8 @@ class SearchResultActivity : AppCompatActivity() {
                       venueName: String? = null,
                       year: String? = null,
                       excludeArtistMbid: String? = null,
-                      nested: Boolean? = false): Intent {
+                      nested: Boolean? = false,
+                      originSetlist: Setlist? = null): Intent {
             val intent = Intent(context, SearchResultActivity::class.java)
             intent.putExtra(INTENT_USER, userId)
             intent.putExtra(INTENT_ARTIST_MBID, artistMbid)
@@ -176,6 +193,7 @@ class SearchResultActivity : AppCompatActivity() {
             intent.putExtra(INTENT_YEAR, year)
             intent.putExtra(INTENT_EXCLUDE_ARTIST_MBID, excludeArtistMbid)
             intent.putExtra(INTENT_NESTED, nested)
+            intent.putExtra(INTENT_ORIGIN_SETLIST, originSetlist)
             return intent
         }
     }

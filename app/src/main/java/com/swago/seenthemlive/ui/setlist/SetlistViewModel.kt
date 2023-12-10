@@ -129,4 +129,21 @@ class SetlistViewModel : ViewModel() {
             }
         }
     }
+
+    fun overwriteSetlistToUser(userId: String, setlist: Setlist,
+                          completion: () -> Unit) {
+        scope.launch {
+            val user = UserRepository.getUser(userId)
+            val savedSetlists = ArrayList<Setlist>()
+            savedSetlists.addAll(user?.setlists ?: ArrayList())
+            savedSetlists.removeAll { setlistItem -> setlist.id == setlistItem.id }
+            savedSetlists.add(setlist)
+            user?.setlists = savedSetlists
+            user.let{ UserRepository.setUser(it!!) }
+
+            GlobalScope.launch(Dispatchers.Main) {
+                completion()
+            }
+        }
+    }
 }

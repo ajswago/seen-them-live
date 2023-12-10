@@ -1,5 +1,8 @@
 package com.swago.seenthemlive.ui.setlist
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.opengl.Visibility
 import android.os.Bundle
@@ -8,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -28,9 +32,10 @@ import kotlinx.android.synthetic.main.setlist_fragment.*
 class SetlistFragment : BaseFragment() {
 
     companion object {
-        fun newInstance(selectedSetlist: Setlist, showOthersAtShow: Boolean = true) = SetlistFragment().apply {
+        fun newInstance(selectedSetlist: Setlist, showOthersAtShow: Boolean = true, originSetlist: Setlist? = null) = SetlistFragment().apply {
             setlist = selectedSetlist
             otherArtistsAtShow = showOthersAtShow
+            setlistToUpdate = originSetlist
         }
     }
 
@@ -54,9 +59,11 @@ class SetlistFragment : BaseFragment() {
     private lateinit var setlistEncore3ListRecyclerView: RecyclerView
     private lateinit var setlistOtherArtistAtShowLayout: LinearLayout
     private lateinit var setlistOtherArtistAtShowButton: Button
+    private lateinit var setlistEditButton: ImageButton
 
     private lateinit var setlist: Setlist
     private var otherArtistsAtShow: Boolean = true
+    private var setlistToUpdate: Setlist? = null
 
     private var songItems = mutableListOf<SongItem>()
     private var encoreItems = mutableListOf<SongItem>()
@@ -92,6 +99,7 @@ class SetlistFragment : BaseFragment() {
         setlistEncore3ListRecyclerView = view.findViewById(R.id.encore3_recycler_view)
         setlistOtherArtistAtShowLayout = view.findViewById(R.id.setlist_additional_artists_layout)
         setlistOtherArtistAtShowButton = view.findViewById(R.id.setlist_additional_artists_button)
+        setlistEditButton = view.findViewById(R.id.setlist_edit_button)
 
         setlistSongListRecyclerView.apply {
             layoutManager = nonScrollingLayoutManager()
@@ -129,6 +137,30 @@ class SetlistFragment : BaseFragment() {
                     nested = true
                 )
                 startActivity(intent)
+        }
+
+        if(setlistToUpdate != null) {
+            setlistEditButton.setImageDrawable(resources.getDrawable(android.R.drawable.ic_menu_save))
+        } else {
+            setlistEditButton.setImageDrawable(resources.getDrawable(android.R.drawable.ic_menu_edit))
+        }
+        setlistEditButton.setOnClickListener {
+            if(setlistToUpdate != null) {
+                saveOverSetlist()
+            } else {
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage("If your show setlist is missing or incomplete you can try to find setlists from other shows on the same tour. Do you want to proceed?")
+                builder.setTitle("Search For Setlists")
+                builder.setCancelable(true)
+                builder.setPositiveButton("Yes") { dialog, _ ->
+                    setlistSearch()
+                }
+                builder.setNegativeButton("No") { dialog, _ ->
+                    dialog.cancel()
+                }
+                val alertDialog = builder.create()
+                alertDialog.show()
+            }
         }
     }
 
@@ -201,6 +233,34 @@ class SetlistFragment : BaseFragment() {
                     setlistSaveCheckbox.isEnabled = true
                     loading?.hide()
                 }
+            }
+        }
+    }
+
+    private fun setlistSearch() {
+        val intent = SearchResultActivity.newIntent(
+            requireContext(),
+            userId,
+            tourName = setlist.tour?.name,
+            artistMbid = setlist.artist?.mbid,
+            year = setlist.eventDate?.takeLast(4),
+            countryCode = setlist.venue?.city?.country?.code,
+            nested = true,
+            originSetlist = setlist
+        )
+        startActivityForResult(intent, 0)
+    }
+
+    private fun saveOverSetlist() {
+        val updatedSetlist = setlistToUpdate?.copy(sets = setlist.sets)
+        updatedSetlist?.let {
+            loading?.show()
+            viewModel.overwriteSetlistToUser(userId, updatedSetlist) {
+                loading?.hide()
+                val intent = Intent()
+                intent.putExtra(SetlistActivity.INTENT_UPDATED_SETLIST, updatedSetlist)
+                activity?.setResult(Activity.RESULT_OK, intent)
+                activity?.finish()
             }
         }
     }

@@ -19,7 +19,6 @@ class SearchResultViewModel : ViewModel(){
 
     private val repository : SearchRepository = SearchRepository(SetlistfmApiBuilder.search)
 
-
     val setlistsLiveData = MutableLiveData<MutableList<Setlist>>()
 
     fun fetchSetlists(artistMbid: String? = null,
