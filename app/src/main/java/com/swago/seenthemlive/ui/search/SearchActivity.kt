@@ -27,24 +27,28 @@ class SearchActivity : AppCompatActivity() {
         val searchButton: Button = findViewById(R.id.search_button)
         searchButton.setOnClickListener { view ->
             if (validateForm()) {
-//                Toast.makeText(this,"Artist:"+artistField.text, Toast.LENGTH_LONG).show()
+                var stateCode = state_spinner.selectedItem as String?
+                if (stateCode.equals(resources.getString(R.string.state_empty_value))) {
+                    stateCode = null
+                }
                 val intent = SearchResultActivity.newIntent(
                     this,
                     userId = userId!!,
                     artistMbid = null, artistName = artistField.text.toString(),
                     venueName = venueField.text.toString(),
-                    stateCode = state_spinner.selectedItem as String?)
+                    stateCode = stateCode)
                 startActivity(intent)
             }
         }
 
-        val states = resources.getStringArray(R.array.States)
+        val states = mutableListOf<String>()
+        states.add(resources.getString(R.string.state_empty_value))
+        states.addAll(resources.getStringArray(R.array.States))
         state_spinner.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
             states)
-        state_spinner.setSelection(states.indexOf("VA"))
-//        artistField.setText("Iron Maiden")
+        state_spinner.setSelection(0)
     }
 
     fun validateForm(): Boolean {

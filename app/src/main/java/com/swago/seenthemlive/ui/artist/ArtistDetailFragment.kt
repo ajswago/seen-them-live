@@ -49,19 +49,11 @@ class ArtistDetailFragment : BaseFragment() {
         loading = root.findViewById(R.id.loading)
 
         artistSetlistsRecyclerView.apply {
-            layoutManager = object : LinearLayoutManager(context) {
-                override fun canScrollVertically(): Boolean {
-                    return false
-                }
-            }
+            layoutManager = nonScrollingLayoutManager()
             adapter = ConcertListAdapter(concerts, individualArtistViews = false)
         }
         artistSongsRecyclerView.apply {
-            layoutManager = object : LinearLayoutManager(context) {
-                override fun canScrollVertically(): Boolean {
-                    return false
-                }
-            }
+            layoutManager = nonScrollingLayoutManager()
             adapter = CountedListAdapter(topSongs)
         }
 

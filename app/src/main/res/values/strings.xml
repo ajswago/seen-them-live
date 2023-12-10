@@ -31,17 +31,20 @@
     <string name="profile_top_artists_label">Top Artists: (Times Seen)</string>
 
     <!-- Search Activity -->
-    <string name="artist_label">Artist:</string>
-    <string name="venue_label">Venue:</string>
-    <string name="state_label">State:</string>
-    <string name="search">Search</string>
+    <string name="artist_label">Search by artist name</string>
+    <string name="artist_hint">Artist name</string>
+    <string name="venue_label">Search by concert venue</string>
+    <string name="venue_hint">Venue name</string>
+    <string name="state_label">State</string>
+    <string name="state_empty_value">Select a state</string>
+    <string name="search">Perform search</string>
 
     <!-- Setlist Fragment -->
-    <string name="setlist_song_list_label">Setlist:</string>
-    <string name="setlist_encore_list_label">Encore:</string>
+    <string name="setlist_song_list_label">Setlist</string>
+    <string name="setlist_encore_list_label">Encore</string>
     <string name="setlist_encore2_list_label">Encore 2:</string>
     <string name="setlist_encore3_list_label">Encore 3:</string>
-    <string name="setlist_other_artists_at_show">Also At This Show</string>
+    <string name="setlist_other_artists_at_show">Find Other Artists At This Show...</string>
 
     <!-- Artist Fragment -->
     <string name="artist_item_count_format">Times Seen: %d</string>

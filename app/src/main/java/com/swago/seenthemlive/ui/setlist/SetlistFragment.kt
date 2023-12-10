@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -52,6 +53,7 @@ class SetlistFragment : BaseFragment() {
     private lateinit var setlistEncore3ListLabel: TextView
     private lateinit var setlistEncore3ListRecyclerView: RecyclerView
     private lateinit var setlistOtherArtistAtShowLayout: LinearLayout
+    private lateinit var setlistOtherArtistAtShowButton: Button
 
     private lateinit var setlist: Setlist
     private var otherArtistsAtShow: Boolean = true
@@ -88,39 +90,36 @@ class SetlistFragment : BaseFragment() {
         setlistEncore2ListRecyclerView = view.findViewById(R.id.encore2_recycler_view)
         setlistEncore3ListLabel = view.findViewById(R.id.setlist_label_encore3)
         setlistEncore3ListRecyclerView = view.findViewById(R.id.encore3_recycler_view)
-        setlistOtherArtistAtShowLayout = view.findViewById(R.id.other_artist_button_layout)
+        setlistOtherArtistAtShowLayout = view.findViewById(R.id.setlist_additional_artists_layout)
+        setlistOtherArtistAtShowButton = view.findViewById(R.id.setlist_additional_artists_button)
 
         setlistSongListRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = nonScrollingLayoutManager()
             adapter = SongListAdapter(songItems)
         }
         setlistEncoreListRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = nonScrollingLayoutManager()
             adapter =
                 SongListAdapter(encoreItems)
         }
         setlistEncore2ListRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = nonScrollingLayoutManager()
             adapter =
                 SongListAdapter(encore2Items)
         }
         setlistEncore3ListRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = nonScrollingLayoutManager()
             adapter =
                 SongListAdapter(encore3Items)
         }
 
         if (otherArtistsAtShow) {
             setlistOtherArtistAtShowLayout.visibility = View.VISIBLE
-            val bgDrawable = GradientDrawable()
-            bgDrawable.setColor(ContextCompat.getColor(requireContext(), android.R.color.holo_blue_light))
-            bgDrawable.setStroke(4, ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
-            setlistOtherArtistAtShowLayout.background = bgDrawable
         } else {
             setlistOtherArtistAtShowLayout.visibility = View.GONE
         }
 
-        setlistOtherArtistAtShowLayout.setOnClickListener {
+        setlistOtherArtistAtShowButton.setOnClickListener {
                 val intent = SearchResultActivity.newIntent(
                     requireContext(),
                     userId,

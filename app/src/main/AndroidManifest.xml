@@ -27,7 +27,8 @@
         <activity android:name=".ui.search.SearchResultActivity" />
         <activity
             android:name=".ui.search.SearchActivity"
-            android:label="Search" />
+            android:label="Search For Shows"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ViewConcertsActivity"
             android:label="@string/title_activity_view_concerts"
