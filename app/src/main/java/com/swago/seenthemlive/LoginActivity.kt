@@ -1,5 +1,6 @@
 package com.swago.seenthemlive
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +16,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.swago.seenthemlive.api.setlistfm.Setlist
 import com.swago.seenthemlive.ui.common.BaseActivity
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.sign_in_button
 import java.io.Serializable
 
 
@@ -44,6 +45,21 @@ class LoginActivity : BaseActivity() {
         sign_in_button.setOnClickListener({
             signIn()
         })
+
+        val logout = intent.getBooleanExtra(INTENT_LOGOUT, false)
+
+        if (logout) {
+            val editor = getSharedPreferences(
+                getString(
+                    R.string.spotify_shared_pref_key
+                ),
+                MODE_PRIVATE
+            ).edit()
+            editor.remove("token")
+            editor?.apply()
+            mAuth.signOut()
+            mGoogleSignInClient.signOut()
+        }
     }
 
     public override fun onStart() {
@@ -168,4 +184,15 @@ class LoginActivity : BaseActivity() {
         var displayName: String? = null,
         var setlists: List<Setlist>? = null
     ) : Serializable
+
+    companion object {
+
+        private val INTENT_LOGOUT = "logout"
+
+        fun newIntent(context: Context, logout: Boolean): Intent {
+            val intent = Intent(context, LoginActivity::class.java)
+            intent.putExtra(INTENT_LOGOUT, logout)
+            return intent
+        }
+    }
 }

@@ -14,6 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [redirectSchemeName: "com.swago.seenthemlive", redirectHostName: "callback"]
     }
     buildTypes {
         release {
@@ -33,10 +34,13 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         def setlistfmApiKey = properties.getProperty("setlistfm_api_key", "")
+        def spotifyClientId = properties.getProperty("spotify_client_id", "")
 
         it.buildConfigField 'String', "SETLISTFM_API_KEY", setlistfmApiKey
+        it.buildConfigField 'String', "SPOTIFY_CLIENT_ID", spotifyClientId
 
         it.resValue 'string', "setlistfm_api_key", setlistfmApiKey
+        it.resValue 'string', "spotify_client_id", spotifyClientId
 
     }
 }
@@ -61,6 +65,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.4.1'
     implementation 'com.google.maps.android:maps-ktx:3.3.0'
+    implementation 'com.spotify.android:auth:2.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     testImplementation 'junit:junit:4.13.2'
@@ -71,6 +76,7 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
 
     //Retrofit2
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit2_version"
     implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"

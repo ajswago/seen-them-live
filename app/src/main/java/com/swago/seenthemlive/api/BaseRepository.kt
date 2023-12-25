@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.api.setlistfm
+package com.swago.seenthemlive.api
 
 import android.util.Log
 import retrofit2.Response
@@ -24,7 +24,7 @@ open class BaseRepository{
 
     }
 
-    private suspend fun <T: Any> safeApiResult(call: suspend ()-> Response<T>, errorMessage: String) : Result<T>{
+    private suspend fun <T: Any> safeApiResult(call: suspend ()-> Response<T>, errorMessage: String) : Result<T> {
         val response = call.invoke()
         if(response.isSuccessful) return Result.Success(response.body()!!)
 

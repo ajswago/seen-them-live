@@ -1,5 +1,7 @@
 package com.swago.seenthemlive.api.setlistfm
 
+import com.swago.seenthemlive.api.BaseRepository
+
 class SearchRepository(private val api : Search) : BaseRepository() {
 
     suspend fun getSetlists(artistMbid: String? = null,

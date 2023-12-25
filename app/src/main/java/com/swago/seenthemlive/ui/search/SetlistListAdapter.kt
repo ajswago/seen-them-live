@@ -1,13 +1,17 @@
 package com.swago.seenthemlive.ui.search
 
+import android.content.res.Resources
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.util.Utils
+
 
 class SetlistListAdapter(
     private val setlists: List<SetlistItem>,
@@ -47,8 +51,9 @@ class SetlistListAdapter(
 
 class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup,
                         private var multiSelect: Boolean
-) :
-    RecyclerView.ViewHolder(inflater.inflate(R.layout.setlist_list_item, parent, false)) {
+) : RecyclerView.ViewHolder(inflater.inflate(R.layout.setlist_list_item, parent, false)) {
+    private var inflater: LayoutInflater = inflater
+    private var setlistArtistLayout: LinearLayout? = null
     private var setlistArtist: TextView? = null
     private var setlistVenue: TextView? = null
     private var setlistTour: TextView? = null
@@ -56,6 +61,7 @@ class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup,
     private var setlistSelected: CheckBox? = null
 
     init {
+        setlistArtistLayout = itemView.findViewById(R.id.setlist_item_artist_layout)
         setlistArtist = itemView.findViewById(R.id.setlist_item_artist)
         setlistVenue = itemView.findViewById(R.id.setlist_item_venue)
         setlistTour = itemView.findViewById(R.id.setlist_item_tour)
@@ -64,6 +70,17 @@ class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup,
     }
 
     fun bind(setlist: SetlistItem) {
+        if (multiSelect) {
+            val r: Resources =  inflater.context.resources
+            val px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                6.0f,
+                r.displayMetrics
+            ).toInt()
+            (setlistArtistLayout?.layoutParams as LinearLayout.LayoutParams).marginStart = px
+            (setlistVenue?.layoutParams as LinearLayout.LayoutParams).marginStart = px
+            (setlistTour?.layoutParams as LinearLayout.LayoutParams).marginStart = px
+        }
         setlistArtist?.text = setlist.artist
         setlistVenue?.text = setlist.venue
         setlistTour?.text = setlist.tour
@@ -74,6 +91,7 @@ class SetlistViewHolder(inflater: LayoutInflater, parent: ViewGroup,
             setlistSelected?.visibility = View.GONE
         }
         setlistSelected?.isChecked = setlist.selected ?: false
+        setlistSelected?.isClickable = false
     }
 
 }

@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.api.setlistfm
+package com.swago.seenthemlive.api
 
 sealed class Result<out T: Any> {
     data class Success<out T : Any>(val data: T) : Result<T>()

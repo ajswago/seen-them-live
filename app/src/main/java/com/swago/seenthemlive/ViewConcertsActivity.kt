@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.swago.seenthemlive.ui.common.BaseActivity
+import com.swago.seenthemlive.ui.playlist.CreatePlaylistActivity
 import com.swago.seenthemlive.ui.search.SearchActivity
 
 class ViewConcertsActivity : BaseActivity() {
@@ -30,11 +31,6 @@ class ViewConcertsActivity : BaseActivity() {
         val userId = intent.getStringExtra(INTENT_USER)
         mUser = userId
 
-//        val fab: FloatingActionButton = findViewById(R.id.fab)
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//        }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -57,10 +53,20 @@ class ViewConcertsActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_add -> {
+                val intent = CreatePlaylistActivity.newIntent(this, mUser!!)
+                startActivity(intent)
+                return true
+            }
             R.id.menu_search -> {
-//                Toast.makeText(this,"Search", Toast.LENGTH_LONG).show()
                 val intent = SearchActivity.newIntent(this, mUser!!)
                 startActivity(intent)
+                return true
+            }
+            R.id.menu_logout -> {
+                val intent = LoginActivity.newIntent(this, logout = true)
+                startActivity(intent)
+                finish()
                 return true
             }
         }

@@ -16,6 +16,9 @@
             android:name=".ui.friends.ImportActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.playlist.CreatePlaylistActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.friends.FriendProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

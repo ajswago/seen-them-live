@@ -53,6 +53,10 @@
     <!-- Friend Profile Activity -->
     <string name="import_button_content_description">import</string>
 
+    <!-- Spotify -->
+    <string name="spotify_shared_pref_key">Spotify</string>
+    <string name="spotify_auth_redirect_uri">com.swago.seenthemlive://callback</string>
+
     <!-- States -->
     <string-array name="States">
         <item>AL</item>
