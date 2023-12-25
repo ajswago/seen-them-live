@@ -46,7 +46,7 @@ class ImportFragment : BaseFragment() {
         val root = inflater.inflate(R.layout.import_fragment, container, false)
         val importRecyclerView: RecyclerView = root.findViewById(R.id.import_recycler_view)
         val importButton: Button = root.findViewById(R.id.import_button)
-        content = root.findViewById(R.id.profile_content)
+        content = root.findViewById(R.id.import_content)
         loading = root.findViewById(R.id.loading)
 
         importRecyclerView.apply {

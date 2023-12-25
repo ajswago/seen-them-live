@@ -69,12 +69,24 @@ class ProfileViewModel : ViewModel() {
                 ?.groupBy { it.artist?.name }
                 ?.map { CountedItem(it.key, it.value.size) }
 
-            userDisplayName.postValue(user?.displayName)
-            userUsername.postValue(user?.username)
-            userEmail.postValue(user?.email)
-            userConcertCount.postValue(concertCount)
-            userBandCount.postValue(bandCount)
-            userVenueCount.postValue(venueCount)
+            user?.displayName?.let {
+                userDisplayName.postValue(it)
+            }
+            user?.username?.let {
+                userUsername.postValue(it)
+            }
+            user?.email?.let {
+                userEmail.postValue(it)
+            }
+            concertCount?.let {
+                userConcertCount.postValue(it)
+            }
+            bandCount?.let {
+                userBandCount.postValue(it)
+            }
+            venueCount?.let {
+                userVenueCount.postValue(it)
+            }
             setTopArtists(artistsByCount ?: ArrayList())
 
             GlobalScope.launch(Dispatchers.Main) {

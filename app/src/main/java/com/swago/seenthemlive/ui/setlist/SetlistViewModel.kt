@@ -93,10 +93,14 @@ class SetlistViewModel : ViewModel() {
             }
 
             isSaved.postValue(savedToUser ?: false)
-            artist.postValue(setlist.artist?.name)
+            setlist.artist?.name?.let {
+                artist.postValue(it)
+            }
             date.postValue(eventDateString)
             venue.postValue(venueString)
-            tour.postValue(setlist.tour?.name)
+            setlist.tour?.name?.let {
+                tour.postValue(it)
+            }
             songList.postValue(songItems)
             encoreList.postValue(encoreItems)
             encore2List.postValue(encore2Items)

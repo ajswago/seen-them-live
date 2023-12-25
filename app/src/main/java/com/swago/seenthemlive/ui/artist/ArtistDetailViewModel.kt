@@ -67,8 +67,12 @@ class ArtistDetailViewModel : ViewModel() {
             val songsWithoutTapes = allSongs?.filter { it.tape?.not() ?: true }
             val songsByCount = songsWithoutTapes?.groupBy { it.name }?.map { CountedItem(it.key, it.value.size) }
 
-            artistName.postValue(setlists?.first()?.artist?.name)
-            artistSetlistCount.postValue(setlistCount)
+            setlists?.first()?.artist?.name?.let {
+                artistName.postValue(it)
+            }
+            setlistCount?.let {
+                artistSetlistCount.postValue(it)
+            }
             setArtistSetlists(concertItems ?: ArrayList())
             setArtistTopSongs(songsByCount ?: ArrayList())
 
