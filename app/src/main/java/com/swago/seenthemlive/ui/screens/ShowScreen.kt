@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material.icons.outlined.BookmarkRemove
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Divider
@@ -46,13 +47,15 @@ import java.util.Locale
 @Composable
 fun ShowScreen(
     show: Show,
-    alsoAtThisShowArtists: Array<String>,
+    linkedShows: Array<Show>,
     tracks: Array<Track>,
     onEditClicked: () -> Unit,
-    onRemoveClicked: (Show) -> Unit,
+    onAddRemoveClicked: (Show) -> Unit,
     onArtistClicked: (String) -> Unit,
     onFindMoreClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showEdit: Boolean = false,
+    showAddRemove: AddRemove = AddRemove.ADD
 ) {
     Scaffold(
         topBar = {
@@ -73,17 +76,32 @@ fun ShowScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { onEditClicked() }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Edit,
-                            contentDescription = stringResource(R.string.edit_button_description)
-                        )
+                    if (showEdit) {
+                        IconButton(onClick = { onEditClicked() }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Edit,
+                                contentDescription = stringResource(R.string.edit_button_description)
+                            )
+                        }
                     }
-                    IconButton(onClick = { onRemoveClicked(show) }) {
-                        Icon(
-                            imageVector = Icons.Outlined.BookmarkRemove,
-                            contentDescription = stringResource(R.string.remove_button_description)
-                        )
+                    when (showAddRemove) {
+                        AddRemove.ADD -> {
+                            IconButton(onClick = { onAddRemoveClicked(show) }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.BookmarkAdd,
+                                    contentDescription = stringResource(R.string.add_button_description)
+                                )
+                            }
+                        }
+                        AddRemove.REMOVE -> {
+                            IconButton(onClick = { onAddRemoveClicked(show) }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.BookmarkRemove,
+                                    contentDescription = stringResource(R.string.remove_button_description)
+                                )
+                            }
+                        }
+                        AddRemove.NONE -> {}
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -104,7 +122,8 @@ fun ShowScreen(
                     artistName = show.artist,
                     tourName = show.tourName,
                     venueName = show.venueName,
-                    locationName = show.locationName,
+                    city = show.city,
+                    state = show.state,
                     date = show.date,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
@@ -119,19 +138,23 @@ fun ShowScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyColumn {
-                    items(alsoAtThisShowArtists) { artist ->
+                    items(linkedShows) { show ->
                         ArtistListItem(
-                            artistName = artist,
-                            onClick = { onArtistClicked(show.artist) },
+                            artistName = show.artist,
+                            onClick = { onArtistClicked(show.id) },
                             modifier = Modifier
                                 .height(55.dp)
                         )
                         Divider()
                     }
                 }
-                FindMoreListItem(onClick = onFindMoreClicked,
-                    modifier = Modifier
-                        .height(55.dp))
+                if (linkedShows.isNotEmpty()) {
+                    FindMoreListItem(
+                        onClick = onFindMoreClicked,
+                        modifier = Modifier
+                            .height(55.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.setlist_header),
@@ -159,12 +182,18 @@ fun ShowScreen(
     }
 }
 
+enum class AddRemove {
+    ADD, REMOVE, NONE
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ShowScreenPreview() {
     val show = Show(
+        id = "ID1",
         venueName = "The Fillmore Silver Spring",
-        locationName = "Silver Spring, Maryland",
+        city = "Silver Spring",
+        state = "MD",
         date = SimpleDateFormat(
             "yyyy-MM-dd", Locale.US
         ).parse("2024-04-09") ?: Date(),
@@ -182,12 +211,29 @@ fun ShowScreenPreview() {
     )
     ShowScreen(
         show = show,
-        alsoAtThisShowArtists = arrayOf("Nekrogoblikon", "Dethklok"),
+        linkedShows = arrayOf(
+            Show(
+                id = "ID1",
+                artist = "Nekrogoblikon",
+                city = "Silver Spring",
+                state = "MD",
+                venueName = "The Fillmore Silver Spring",
+                date = Date()
+            ),
+            Show(
+                id = "ID2",
+                artist = "Dethklok",
+                city = "Silver Spring",
+                state = "MD",
+                venueName = "The Fillmore Silver Spring",
+                date = Date()
+            )
+        ),
         tracks = tracks,
         onArtistClicked = {},
         onFindMoreClicked = {},
         onEditClicked = {},
-        onRemoveClicked = {},
+        onAddRemoveClicked = {},
         modifier = Modifier
     )
 }

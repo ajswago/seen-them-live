@@ -17,31 +17,34 @@ import java.util.Locale
 @Composable
 fun SelectableShowListGroup(
     venueName: String,
-    locationName: String,
+    city: String,
+    state: String,
     date: Date,
-    artistList: Map<String, Boolean>,
-    modifier: Modifier = Modifier,
-    onArtistSelected: ((String, Boolean) -> Unit)
+    artistList: Array<String>,
+    selections: Map<String, Boolean>,
+    onArtistSelected: ((Int, Boolean) -> Unit),
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(true) }
 
     Column(
         modifier = modifier
     ) {
-        GroupedShowHeader(
+        ExpandableShowHeader(
             venueName = venueName,
-            locationName = locationName,
+            city = city,
+            state = state,
             date = date,
             expanded = expanded,
             onExpandedChange = { expanded = it }
         )
         Divider()
         if (expanded) {
-            artistList.forEach { artistSelection ->
+            artistList.forEachIndexed { index, artist ->
                 SelectableArtistListItem(
-                    artistName = artistSelection.key,
-                    checked = artistSelection.value,
-                    onCheckedChange = { onArtistSelected(artistSelection.key, it) }
+                    artistName = artist,
+                    checked = selections[artist] ?: false,
+                    onCheckedChange = { onArtistSelected(index, it) }
                 )
                 Divider()
             }
@@ -52,18 +55,24 @@ fun SelectableShowListGroup(
 @Preview(showBackground = true)
 @Composable
 fun SelectableShowListGroupPreview() {
+    val artists = arrayOf("Dethklok", "DragonForce", "Nekrogoblikon")
     val artistSelections = remember {
-        mutableStateMapOf("Dethklok" to false, "DragonForce" to false, "Nekrogoblikon" to false)
+        mutableStateMapOf(*artists.map { it to false }.toTypedArray())
     }
+//    val artists = remember {
+//        mutableListOf("Dethklok", "DragonForce", "Nekrogoblikon")
+//    }
     SelectableShowListGroup(
         venueName = "The Fillmore Silver Spring",
-        locationName = "Silver Spring, Maryland",
+        city = "Silver Spring",
+        state = "MD",
         date = SimpleDateFormat(
             "yyyy-MM-dd", Locale.US
         ).parse("2024-04-09") ?: Date(),
-        artistList = artistSelections,
-        onArtistSelected = { artist, selected ->
-            artistSelections[artist] = selected
+        artistList = artists,
+        selections = artistSelections,
+        onArtistSelected = { index, selected ->
+            artistSelections[artists[index]] = selected
         }
     )
 }

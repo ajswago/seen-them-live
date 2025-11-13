@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,7 +29,9 @@ import com.swago.seenthemlive.R
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier
+    onLogin: () -> Unit,
+    loading: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Box(
@@ -57,12 +60,13 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(60.dp))
                 ElevatedButton(
-                    onClick = {},
+                    onClick = { onLogin() },
                     shape = MaterialTheme.shapes.small,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surface,
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
+                    enabled = !loading,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
@@ -75,6 +79,7 @@ fun LoginScreen(
                     Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
                 }
                 Spacer(modifier = Modifier.height(80.dp))
+                CircularProgressIndicator()
             }
         }
     }
@@ -83,5 +88,8 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(modifier = Modifier)
+    LoginScreen(
+        onLogin = {},
+        loading = true
+    )
 }

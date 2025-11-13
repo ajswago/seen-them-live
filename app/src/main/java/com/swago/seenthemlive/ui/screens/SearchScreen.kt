@@ -22,6 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -31,8 +36,13 @@ import androidx.compose.ui.unit.dp
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.cards.SearchCard
+import com.swago.seenthemlive.ui.components.cards.SearchTerms
+import com.swago.seenthemlive.ui.components.listitems.LoadingShowListItem
 import com.swago.seenthemlive.ui.components.listitems.ShowListItem
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.util.Date
 import java.util.Locale
 
@@ -40,9 +50,11 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    shows: Array<Show>,
-    onShowClicked: (Show) -> Unit,
-    modifier: Modifier = Modifier
+    onSearch: ((SearchTerms) -> Unit),
+    results: Array<Show>,
+    onShowClicked: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    resultsStatus: ResultsStatus = ResultsStatus.NOT_LOADED
 ) {
     Scaffold(
         topBar = {
@@ -76,30 +88,48 @@ fun SearchScreen(
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column {
-                SearchCard(onSearch = {},
+                SearchCard(onSearch = { searchTerms ->  onSearch(searchTerms) },
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = stringResource(R.string.shows_list_header),
+                    text = stringResource(R.string.results_list_header),
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(24.dp)
+                        .padding(start = 24.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn {
-                    items(shows) { show ->
-                        ShowListItem(
-                            artistName = show.artist,
-                            venueName = show.venueName,
-                            locationName = show.locationName,
-                            date = show.date,
-                            tourName = show.tourName,
-                            onClick = { onShowClicked(show) }
-                        )
-                        Divider()
+                when (resultsStatus) {
+                    ResultsStatus.NOT_LOADED -> {
+                        Text("Perform a search to see results",
+                            modifier = Modifier.padding(start = 24.dp))
+                    }
+                    ResultsStatus.LOADING -> {
+                        LazyColumn {
+                            items(3) {
+                                LoadingShowListItem()
+                                Divider()
+                            }
+                        }
+                    }
+                    ResultsStatus.LOADED -> {
+                        LazyColumn {
+                            items(results) { show ->
+                                ShowListItem(
+                                    artistName = show.artist,
+                                    venueName = show.venueName,
+                                    city = show.city,
+                                    state = show.state,
+                                    date = show.date,
+                                    onClick = { onShowClicked(show.id) }
+                                )
+                                Divider()
+                            }
+                        }
                     }
                 }
             }
@@ -107,13 +137,19 @@ fun SearchScreen(
     }
 }
 
+enum class ResultsStatus {
+    NOT_LOADED, LOADING, LOADED
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SearchScreenPreview() {
     val shows = arrayOf(
         Show(
+            id = "ID1",
             venueName = "Metlife Stadium",
-            locationName = "East Rutherford, New Jersey",
+            city = "East Rutherford",
+            state = "NJ",
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2023-08-06") ?: Date(),
@@ -121,8 +157,10 @@ fun SearchScreenPreview() {
             artist = "Metallica"
         ),
         Show(
+            id = "ID2",
             venueName = "Metlife Stadium",
-            locationName = "East Rutherford, New Jersey",
+            city = "East Rutherford",
+            state = "NJ",
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2023-08-04") ?: Date(),
@@ -130,8 +168,10 @@ fun SearchScreenPreview() {
             artist = "Metallica"
         ),
         Show(
+            id = "ID3",
             venueName = "Metlife Stadium",
-            locationName = "East Rutherford, New Jersey",
+            city = "East Rutherford",
+            state = "NJ",
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2023-05-14") ?: Date(),
@@ -139,9 +179,21 @@ fun SearchScreenPreview() {
             artist = "Metallica"
         ),
     )
+    val coroutineScope = rememberCoroutineScope()
+    var results by remember { mutableStateOf<Array<Show>>(arrayOf()) }
+    var status by remember { mutableStateOf(ResultsStatus.NOT_LOADED) }
     SearchScreen(
-        shows = shows,
+        onSearch = {
+            status = ResultsStatus.LOADING
+            coroutineScope.launch {
+                delay(Duration.ofMillis(2000))
+                results = shows
+                status = ResultsStatus.LOADED
+            }
+        },
+        results = results,
         onShowClicked = {},
-        modifier = Modifier
+        modifier = Modifier,
+        resultsStatus = status
     )
 }

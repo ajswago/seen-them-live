@@ -44,7 +44,7 @@ fun SearchCard(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
             Text(
                 text = stringResource(R.string.search_shows_title),

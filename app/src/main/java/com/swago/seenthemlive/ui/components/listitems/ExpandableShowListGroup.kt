@@ -16,32 +16,35 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun CollapsibleShowListGroup(
+fun ExpandableShowListGroup(
     venueName: String,
-    locationName: String,
+    city: String,
+    state: String,
     date: Date,
     artistList: Array<String>,
     modifier: Modifier = Modifier,
-    onArtistClick: ((String) -> Unit)
+    onArtistClick: ((Int) -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(true) }
 
     Column(
         modifier = modifier
     ) {
-        GroupedShowHeader(
+        ExpandableShowHeader(
             venueName = venueName,
-            locationName = locationName,
+            city = city,
+            state = state,
             date = date,
             expanded = expanded,
             onExpandedChange = { expanded = it }
         )
         Divider()
         if (expanded) {
-            artistList.forEach {
+            artistList.forEachIndexed { index, name ->
                 ArtistListItem(
-                    artistName = it,
-                    onClick = { onArtistClick(it) },
+                    artistName = name,
+                    indent = true,
+                    onClick = { onArtistClick?.invoke(index) },
                     modifier = Modifier
                         .height(50.dp)
                 )
@@ -51,30 +54,46 @@ fun CollapsibleShowListGroup(
     }
 }
 
+@Composable
+fun LoadingExpandableShowListGroup() {
+    LoadingExpandableShowHeader()
+    Divider()
+    LoadingArtistListItem()
+    Divider()
+    LoadingArtistListItem()
+    Divider()
+}
+
 @Preview(showBackground = true)
 @Composable
-fun CollapsibleShowListGroupPreview() {
-    CollapsibleShowListGroup(
+fun ExpandableShowListGroupPreview() {
+    ExpandableShowListGroup(
         venueName = "Capital One Hall",
-        locationName = "Tysons Corner, Virginia",
+        city = "Tysons Corner",
+        state = "VA",
         date = SimpleDateFormat(
             "yyyy-MM-dd", Locale.US
         ).parse("2024-04-25") ?: Date(),
         artistList = arrayOf("Rodrigo y Gabriela"),
-        onArtistClick = {}
+        onArtistClick = {
+            println("Index tapped: $it")
+        }
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun CollapsibleShowListGroupMultiplePreview() {
-    CollapsibleShowListGroup(
+fun ExpandableShowListGroupMultiplePreview() {
+    ExpandableShowListGroup(
         venueName = "The Fillmore Silver Spring",
-        locationName = "Silver Spring, Maryland",
+        city = "Silver Spring",
+        state = "MD",
         date = SimpleDateFormat(
             "yyyy-MM-dd", Locale.US
         ).parse("2024-04-09") ?: Date(),
         artistList = arrayOf("Dethklok", "DragonForce", "Nekrogoblikon"),
-        onArtistClick = {}
+        onArtistClick = {
+            println("Index tapped: $it")
+        }
     )
 }

@@ -35,6 +35,8 @@ import com.swago.seenthemlive.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
+    version: String,
+    year: String,
     modifier: Modifier
 ) {
     Scaffold(
@@ -93,7 +95,7 @@ fun AboutScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = stringResource(R.string.version_label),
+                    text = stringResource(R.string.version_format, version, year),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(160.dp))
@@ -105,5 +107,8 @@ fun AboutScreen(
 @Preview(showBackground = true)
 @Composable
 fun AboutScreenPreview() {
-    AboutScreen(modifier = Modifier)
+    AboutScreen(
+        modifier = Modifier,
+        version = "2.1",
+        year = "2025")
 }

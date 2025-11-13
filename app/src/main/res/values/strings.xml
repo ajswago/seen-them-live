@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SeenThemLiveCompose</string>
 
+    <string name="location_format">%s, %s</string>
     <string name="last_show_date_format">Last Show on %s</string>
     <string name="count_times_seen_format">Seen %d Times</string>
     <string name="count_unique_songs_format">%d Unique Songs Played</string>
@@ -22,17 +23,24 @@
     <string name="search_button_label">Search</string>
 
     <string name="search_title">Search</string>
+    <string name="results_list_header">Results</string>
     <string name="shows_list_header">Shows</string>
     <string name="show_title">Show</string>
     <string name="also_at_show_header">Also at this Show</string>
     <string name="setlist_header">Setlist</string>
     <string name="about_title">About</string>
     <string name="create_playlist_screen_title">Create Playlist</string>
+    <string name="playlist_select_shows_header">Select Shows</string>
+    <string name="playlist_select_shows_secondary_label">All songs from selected shows will be added</string>
+    <string name="create_playlist_progress_title">Creating Playlist</string>
+    <string name="cancel_button_label">Cancel</string>
+    <string name="retry_button_label">Retry</string>
+    <string name="dismiss_button_label">Dismiss</string>
 
     <string name="find_more_headline">Find More</string>
 
     <string name="author_label">By Anthony Swago</string>
-    <string name="version_label">v2.0 – 2024</string>
+    <string name="version_format">v%s – %s</string>
 
     <string name="cancel_button_description">Cancel</string>
     <string name="more_content_icon_description">More Content</string>
@@ -42,5 +50,6 @@
     <string name="back_button_description">Back</string>
     <string name="account_button_description">Account</string>
     <string name="edit_button_description">Edit</string>
+    <string name="add_button_description">Add</string>
     <string name="remove_button_description">Remove</string>
 </resources>

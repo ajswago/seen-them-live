@@ -11,9 +11,11 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 import com.swago.seenthemlive.util.formatForDisplay
 import java.text.SimpleDateFormat
@@ -26,7 +28,8 @@ fun ShowCard(
     modifier: Modifier = Modifier,
     tourName: String? = null,
     venueName: String,
-    locationName: String,
+    city: String,
+    state: String,
     date: Date
 ) {
     OutlinedCard(
@@ -36,7 +39,7 @@ fun ShowCard(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
             Text(
                 text = artistName,
@@ -45,16 +48,24 @@ fun ShowCard(
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            tourName?.let { tourName ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = tourName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = date.formatForDisplay(),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+//            tourName?.let { tourName ->
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(
+//                    text = tourName,
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    textAlign = TextAlign.Center,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                )
+//            }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = venueName,
@@ -65,20 +76,22 @@ fun ShowCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = locationName,
+                text = stringResource(R.string.location_format, city, state),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = date.formatForDisplay(),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+            tourName?.let { tourName ->
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = tourName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -91,7 +104,8 @@ fun ShowCardPreview() {
             artistName = "DragonForce",
             tourName = "Warp Speed Warriors",
             venueName = "The Fillmore Silver Spring",
-            locationName = "Silver Spring, Maryland",
+            city = "Silver Spring",
+            state = "MD",
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2024-04-09") ?: Date()
