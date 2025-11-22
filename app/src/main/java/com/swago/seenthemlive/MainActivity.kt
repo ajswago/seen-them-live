@@ -1,33 +1,20 @@
 package com.swago.seenthemlive
 
-import AppBarWithProfile
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.swago.seenthemlive.models.Show
-import com.swago.seenthemlive.ui.components.cards.SearchCard
-import com.swago.seenthemlive.ui.screens.CreatePlaylistScreen
-import com.swago.seenthemlive.ui.screens.CreatePlaylistStep
 import com.swago.seenthemlive.ui.screens.ShowsListScreen
 import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.Date
 import java.util.Locale
 

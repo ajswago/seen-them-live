@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
@@ -25,7 +27,7 @@ import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.components.TextAvatar
 import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 import com.swago.seenthemlive.util.formatForDisplay
-import shimmerLoading
+import com.swago.seenthemlive.util.shimmerLoading
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -79,7 +81,53 @@ fun ArtistListItem(
 }
 
 @Composable
-fun LoadingArtistListItem() {
+fun LoadingArtistListItemDetailed() {
+    ListItem(
+        headlineContent = { Box(
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .width(200.dp)
+                .height(20.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(2.dp))
+                .shimmerLoading()
+        ) },
+        supportingContent = { Box(
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .width(200.dp)
+                .height(12.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(2.dp))
+                .shimmerLoading()
+        ) },
+        leadingContent = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 2.dp)
+                    .size(40.dp)
+                    .fillMaxWidth()
+                    .clip(CircleShape)
+                    .shimmerLoading()
+            )
+        },
+        trailingContent = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 2.dp)
+                    .padding(end = 20.dp)
+                    .width(20.dp)
+                    .height(12.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(2.dp))
+                    .shimmerLoading()
+            )
+        },
+    )
+}
+
+@Composable
+fun LoadingArtistListItemSimple() {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -143,5 +191,21 @@ fun ArtistListItemAvatarPreview() {
             showAvatar = true,
             onClick = {}
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ArtistListItemLoadingSimplePreview() {
+    SeenThemLiveComposeTheme {
+        LoadingArtistListItemSimple()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ArtistListItemLoadingDetailedPreview() {
+    SeenThemLiveComposeTheme {
+        LoadingArtistListItemDetailed()
     }
 }

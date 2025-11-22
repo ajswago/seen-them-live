@@ -1,3 +1,5 @@
+package com.swago.seenthemlive.ui.components
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -76,7 +78,7 @@ fun AppBarWithProfile(
                 )
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     )

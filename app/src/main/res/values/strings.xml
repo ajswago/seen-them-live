@@ -3,11 +3,26 @@
 
     <string name="location_format">%s, %s</string>
     <string name="last_show_date_format">Last Show on %s</string>
-    <string name="count_times_seen_format">Seen %d Times</string>
-    <string name="count_unique_songs_format">%d Unique Songs Played</string>
-    <string name="count_shows_format">%d Shows Attended</string>
-    <string name="count_artists_format">%d Artists Seen</string>
-    <string name="count_venues_format">%d Venues Attended</string>
+    <plurals name="count_times_seen_format">
+        <item quantity="one">Seen %d Time</item>
+        <item quantity="other">Seen %d Times</item>
+    </plurals>
+    <plurals name="count_unique_songs_format">
+        <item quantity="one">%d Unique Song Played</item>
+        <item quantity="other">%d Unique Songs Played</item>
+    </plurals>
+    <plurals name="count_shows_format">
+        <item quantity="one">%d Show Attended</item>
+        <item quantity="other">%d Shows Attended</item>
+    </plurals>
+    <plurals name="count_artists_format">
+        <item quantity="one">%d Artist Seen</item>
+        <item quantity="other">%d Artists Seen</item>
+    </plurals>
+    <plurals name="count_venues_format">
+        <item quantity="one">%d Venue Attended</item>
+        <item quantity="other">%d Venues Attended</item>
+    </plurals>
     <string name="track_number_format">%d.</string>
     <string name="cover_artist_format">%s cover</string>
 

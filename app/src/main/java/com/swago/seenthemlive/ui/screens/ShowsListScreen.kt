@@ -1,7 +1,5 @@
 package com.swago.seenthemlive.ui.screens
 
-import AppBarWithProfile
-import ProfileMenuItem
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,9 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
+import com.swago.seenthemlive.ui.components.AppBarWithProfile
+import com.swago.seenthemlive.ui.components.ProfileMenuItem
 import com.swago.seenthemlive.ui.components.listitems.ExpandableShowListGroup
 import com.swago.seenthemlive.ui.components.listitems.LoadingExpandableShowListGroup
-import com.swago.seenthemlive.ui.components.listitems.LoadingShowListItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

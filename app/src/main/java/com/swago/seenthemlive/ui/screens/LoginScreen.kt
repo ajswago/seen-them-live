@@ -30,8 +30,8 @@ import com.swago.seenthemlive.R
 @Composable
 fun LoginScreen(
     onLogin: () -> Unit,
-    loading: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    loading: Boolean = false
 ) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Box(

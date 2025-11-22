@@ -58,9 +58,9 @@ fun ExpandableShowListGroup(
 fun LoadingExpandableShowListGroup() {
     LoadingExpandableShowHeader()
     Divider()
-    LoadingArtistListItem()
+    LoadingArtistListItemSimple()
     Divider()
-    LoadingArtistListItem()
+    LoadingArtistListItemSimple()
     Divider()
 }
 

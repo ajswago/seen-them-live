@@ -11,6 +11,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,9 +59,8 @@ fun ArtistCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = String.format(
-                    stringResource(R.string.count_times_seen_format),
-                    showCount),
+                text = pluralStringResource(R.plurals.count_times_seen_format,
+                    showCount, showCount),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -68,9 +68,8 @@ fun ArtistCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = String.format(
-                    stringResource(R.string.count_unique_songs_format),
-                    songCount),
+                text = pluralStringResource(R.plurals.count_unique_songs_format,
+                    songCount, songCount),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 import com.swago.seenthemlive.util.formatForDisplay
-import shimmerLoading
+import com.swago.seenthemlive.util.shimmerLoading
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

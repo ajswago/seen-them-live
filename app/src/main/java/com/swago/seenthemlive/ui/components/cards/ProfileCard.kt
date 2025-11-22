@@ -11,7 +11,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,9 +53,8 @@ fun ProfileCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = String.format(
-                    stringResource(R.string.count_shows_format),
-                    showCount),
+                text = pluralStringResource(R.plurals.count_shows_format,
+                    showCount, showCount),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -63,9 +62,8 @@ fun ProfileCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = String.format(
-                    stringResource(R.string.count_artists_format),
-                    artistCount),
+                text = pluralStringResource(R.plurals.count_artists_format,
+                    artistCount, artistCount),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -73,9 +71,8 @@ fun ProfileCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = String.format(
-                    stringResource(R.string.count_venues_format),
-                    venueCount),
+                text = pluralStringResource(R.plurals.count_venues_format,
+                    venueCount, venueCount),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -93,7 +90,7 @@ fun ProfileCardPreview() {
             profileName = "Anthony Swago",
             email = "ajswago@gmail.com",
             showCount = 67,
-            artistCount = 113,
+            artistCount = 1113,
             venueCount = 29
         )
     }
