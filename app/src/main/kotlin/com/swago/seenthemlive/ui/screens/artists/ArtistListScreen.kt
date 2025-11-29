@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.artists
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.swago.seenthemlive.models.Artist
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
 import com.swago.seenthemlive.ui.components.ProfileMenuItem
@@ -37,6 +38,20 @@ import com.swago.seenthemlive.ui.components.listitems.LoadingArtistListItemDetai
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+@Composable
+fun ArtistListRoute(
+    modifier: Modifier = Modifier,
+    viewModel: ArtistListViewModel = hiltViewModel()
+) {
+    ArtistListScreen(
+        artists = viewModel.artists,
+        onProfileMenuOption = {},
+        onArtistClicked = {},
+        modifier = modifier,
+        loading = viewModel.loading,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

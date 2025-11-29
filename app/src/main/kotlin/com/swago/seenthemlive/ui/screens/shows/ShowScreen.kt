@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.shows
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

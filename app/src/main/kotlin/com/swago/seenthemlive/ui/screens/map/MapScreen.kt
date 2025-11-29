@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.map
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,27 +16,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
 import com.swago.seenthemlive.ui.components.ProfileMenuItem
+
+@Composable
+fun MapRoute(
+    modifier: Modifier = Modifier,
+    viewModel: MapViewModel = hiltViewModel()
+) {
+    MapScreen(
+        onProfileMenuOption = {},
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.Companion
 ) {
     Scaffold(
         topBar = {
             AppBarWithProfile(
-                "Artists",
+                "Map",
                 onProfileMenuOption = onProfileMenuOption
             )
         },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
+            contentAlignment = Alignment.Companion.Center,
+            modifier = Modifier.Companion
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
@@ -44,7 +55,7 @@ fun MapScreen(
             Icon(
                 imageVector = Icons.Outlined.Map,
                 contentDescription = "Map Icon",
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .size(200.dp)
             )
         }

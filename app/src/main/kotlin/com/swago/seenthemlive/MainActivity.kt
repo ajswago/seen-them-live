@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.swago.seenthemlive.data.util.NetworkMonitor
 import com.swago.seenthemlive.ui.StlApp
-import com.swago.seenthemlive.ui.rememberStlAppState
+import com.swago.seenthemlive.ui.screens.login.rememberLoginState
 import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,11 +25,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val appState = rememberStlAppState(
+            val loginState = rememberLoginState(
                 networkMonitor = networkMonitor
             )
             SeenThemLiveComposeTheme {
-                StlApp(appState = appState)
+                StlApp(loginState = loginState)
             }
         }
     }

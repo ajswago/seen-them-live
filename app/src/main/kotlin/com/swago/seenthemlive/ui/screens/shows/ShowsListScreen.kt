@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.shows
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
@@ -28,6 +29,21 @@ import com.swago.seenthemlive.ui.components.listitems.LoadingExpandableShowListG
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+@Composable
+fun ShowsListRoute(
+    modifier: Modifier = Modifier,
+    viewModel: ShowsListViewModel = hiltViewModel()
+) {
+    ShowsListScreen(
+        shows = viewModel.shows,
+        onProfileMenuOption = {},
+        onShowClicked = {},
+        onAddButton = {},
+        modifier = modifier,
+        loading = viewModel.loading,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

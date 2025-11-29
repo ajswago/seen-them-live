@@ -1,25 +1,16 @@
 package com.swago.seenthemlive.ui
 
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.swago.seenthemlive.navigation.StlNavHost
+import com.swago.seenthemlive.navigation.LoginNavHost
+import com.swago.seenthemlive.ui.screens.login.LoginState
 
 @Composable
 fun StlApp(
-    appState: StlAppState,
-    modifier: Modifier = Modifier,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    loginState: LoginState,
+    modifier: Modifier = Modifier
 ) {
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-//            appState.topLevelDestinations
-        }
-    ) {
-        StlNavHost(
-            appState = appState
-        )
-    }
+    LoginNavHost(
+        loginState = loginState, modifier = modifier
+    )
 }
