@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -54,21 +53,17 @@ class HomeState(
             } ?: previousDestination.value
         }
 
-    val currentTopLevelDestination: TopLevelDestination?
-        @Composable get() {
-            return TopLevelDestination.entries.firstOrNull { topLevelDestination ->
-                currentDestination?.hasRoute(route = topLevelDestination.route) == true
-            }
-        }
+    var currentTopLevelDestination = mutableStateOf<TopLevelDestination?>(TopLevelDestination.SHOWS_LIST)
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
 
     fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
+        currentTopLevelDestination.value = topLevelDestination
         val topLevelNavOptions = navOptions {
             // Pop up to the start destination of the graph to
             // avoid building up a large stack of destinations
             // on the back stack as users select items
-            popUpTo(navController.currentBackStack.value.first().destination.id) {
+            popUpTo(navController.graph.id) {
                 inclusive = true
                 saveState = true
             }

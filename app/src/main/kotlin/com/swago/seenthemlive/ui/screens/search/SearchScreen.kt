@@ -66,7 +66,7 @@ fun SearchRoute(
 fun SearchScreen(
     onSearch: ((SearchTerms) -> Unit),
     onShowClicked: (String) -> Unit,
-    modifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
     results: Array<Show> = arrayOf(),
     resultsStatus: ResultsStatus = ResultsStatus.NOT_LOADED,
     onBackClick: () -> Unit = {}

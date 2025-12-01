@@ -35,7 +35,7 @@ fun MapRoute(
 @Composable
 fun MapScreen(
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
-    modifier: Modifier = Modifier.Companion
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {

@@ -8,7 +8,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import com.swago.seenthemlive.navigation.HomeNavHost
 
 @Composable
@@ -27,11 +26,11 @@ fun HomeScaffold(
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
+    val currentTopLevelDestination = homeState.currentTopLevelDestination
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             homeState.topLevelDestinations.forEach { destination ->
-                val selected = homeState.navController
-                    .isRouteInBackStack(destination.baseRoute.qualifiedName)
+                val selected = destination == currentTopLevelDestination.value
                 item(
                     selected = selected,
                     onClick = { homeState.navigateToTopLevelDestination(destination) },
@@ -53,11 +52,5 @@ fun HomeScaffold(
             homeState = homeState,
             modifier = modifier
         )
-    }
-}
-
-fun NavController.isRouteInBackStack(routeToCheck: String?): Boolean {
-    return this.currentBackStack.value.any { entry ->
-        entry.destination.route == routeToCheck
     }
 }
