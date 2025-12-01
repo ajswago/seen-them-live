@@ -1,7 +1,7 @@
 package com.swago.seenthemlive.ui.components.listitems
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -38,7 +38,7 @@ fun SelectableShowListGroup(
             expanded = expanded,
             onExpandedChange = { expanded = it }
         )
-        Divider()
+        HorizontalDivider()
         if (expanded) {
             artistList.forEachIndexed { index, artist ->
                 SelectableArtistListItem(
@@ -46,7 +46,7 @@ fun SelectableShowListGroup(
                     checked = selections[artist] ?: false,
                     onCheckedChange = { onArtistSelected(index, it) }
                 )
-                Divider()
+                HorizontalDivider()
             }
         }
     }

@@ -58,30 +58,30 @@ fun LoginScreen(
 ) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Box(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(
-                horizontalAlignment = Alignment.Companion.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .fillMaxSize()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = "logo",
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .clip(CircleShape)
                         .size(140.dp)
                 )
-                Spacer(modifier = Modifier.Companion.height(30.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 Text(
                     text = "Seen Them Live",
                     style = MaterialTheme.typography.headlineLarge
                 )
-                Spacer(modifier = Modifier.Companion.height(60.dp))
+                Spacer(modifier = Modifier.height(60.dp))
                 ElevatedButton(
                     onClick = { onLogin() },
                     shape = MaterialTheme.shapes.small,
@@ -90,26 +90,26 @@ fun LoginScreen(
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
                     enabled = !loading && !isOffline,
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_logo_google),
                         contentDescription = "",
-                        modifier = Modifier.Companion.size(20.dp)
+                        modifier = Modifier.size(20.dp)
                     )
-                    Spacer(modifier = Modifier.Companion.width(8.dp))
-                    Text(text = "Sign in with Google", modifier = Modifier.Companion.padding(6.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
                 }
-                Spacer(modifier = Modifier.Companion.height(80.dp))
+                Spacer(modifier = Modifier.height(80.dp))
                 if (isOffline) {
-                    Row(verticalAlignment = Alignment.Companion.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Filled.Error,
                             tint = MaterialTheme.colorScheme.error,
                             contentDescription = "Warning"
                         )
-                        Spacer(modifier = Modifier.Companion.width(8.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text("Not connected")
                     }
                 } else if (loading) {

@@ -12,7 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -78,7 +78,7 @@ fun SearchScreen(
                     Text(
                         stringResource(R.string.search_title),
                         maxLines = 1,
-                        overflow = TextOverflow.Companion.Ellipsis
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
@@ -97,7 +97,7 @@ fun SearchScreen(
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Box(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
@@ -105,25 +105,25 @@ fun SearchScreen(
             Column {
                 SearchCard(
                     onSearch = { searchTerms -> onSearch(searchTerms) },
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .padding(horizontal = 8.dp)
                 )
-                Spacer(modifier = Modifier.Companion.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.results_list_header),
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Companion.Start,
-                    modifier = Modifier.Companion
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(24.dp)
                         .padding(start = 24.dp)
                 )
-                Spacer(modifier = Modifier.Companion.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 when (resultsStatus) {
                     ResultsStatus.NOT_LOADED -> {
                         Text(
                             "Perform a search to see results",
-                            modifier = Modifier.Companion.padding(start = 24.dp)
+                            modifier = Modifier.padding(start = 24.dp)
                         )
                     }
 
@@ -131,7 +131,7 @@ fun SearchScreen(
                         LazyColumn {
                             items(3) {
                                 LoadingShowListItem()
-                                Divider()
+                                HorizontalDivider()
                             }
                         }
                     }
@@ -147,7 +147,7 @@ fun SearchScreen(
                                     date = show.date,
                                     onClick = { onShowClicked(show.id) }
                                 )
-                                Divider()
+                                HorizontalDivider()
                             }
                         }
                     }
@@ -213,7 +213,7 @@ fun SearchScreenPreview() {
         },
         results = results,
         onShowClicked = {},
-        modifier = Modifier.Companion,
+        modifier = Modifier,
         resultsStatus = status
     )
 }

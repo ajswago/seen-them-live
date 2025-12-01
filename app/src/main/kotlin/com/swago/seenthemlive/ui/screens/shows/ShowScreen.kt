@@ -15,7 +15,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material.icons.outlined.BookmarkRemove
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -145,7 +145,7 @@ fun ShowScreen(
                             modifier = Modifier
                                 .height(55.dp)
                         )
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
                 if (linkedShows.isNotEmpty()) {
@@ -174,7 +174,7 @@ fun ShowScreen(
                             modifier = Modifier
                                 .height(55.dp)
                         )
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }

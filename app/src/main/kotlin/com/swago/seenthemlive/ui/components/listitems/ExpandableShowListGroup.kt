@@ -2,7 +2,7 @@ package com.swago.seenthemlive.ui.components.listitems
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +38,7 @@ fun ExpandableShowListGroup(
             expanded = expanded,
             onExpandedChange = { expanded = it }
         )
-        Divider()
+        HorizontalDivider()
         if (expanded) {
             artistList.forEachIndexed { index, name ->
                 ArtistListItem(
@@ -48,7 +48,7 @@ fun ExpandableShowListGroup(
                     modifier = Modifier
                         .height(50.dp)
                 )
-                Divider()
+                HorizontalDivider()
             }
         }
     }
@@ -57,11 +57,11 @@ fun ExpandableShowListGroup(
 @Composable
 fun LoadingExpandableShowListGroup() {
     LoadingExpandableShowHeader()
-    Divider()
+    HorizontalDivider()
     LoadingArtistListItemSimple()
-    Divider()
+    HorizontalDivider()
     LoadingArtistListItemSimple()
-    Divider()
+    HorizontalDivider()
 }
 
 @Preview(showBackground = true)

@@ -60,7 +60,7 @@ class LoginState(
         .map(Boolean::not)
         .stateIn(
             scope = coroutineScope,
-            started = SharingStarted.Companion.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false,
         )
 }
