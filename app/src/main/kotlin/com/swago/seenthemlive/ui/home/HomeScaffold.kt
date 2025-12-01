@@ -8,11 +8,8 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavController
 import com.swago.seenthemlive.navigation.HomeNavHost
-import kotlin.reflect.KClass
 
 @Composable
 fun HomeRoute(
@@ -30,13 +27,11 @@ fun HomeScaffold(
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    val currentDestination = homeState.currentDestination
-
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             homeState.topLevelDestinations.forEach { destination ->
-                val selected = currentDestination
-                    .isRouteInHierarchy(destination.baseRoute)
+                val selected = homeState.navController
+                    .isRouteInBackStack(destination.baseRoute.qualifiedName)
                 item(
                     selected = selected,
                     onClick = { homeState.navigateToTopLevelDestination(destination) },
@@ -61,7 +56,8 @@ fun HomeScaffold(
     }
 }
 
-private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
-    this?.hierarchy?.any {
-        it.hasRoute(route)
-    } ?: false
+fun NavController.isRouteInBackStack(routeToCheck: String?): Boolean {
+    return this.currentBackStack.value.any { entry ->
+        entry.destination.route == routeToCheck
+    }
+}

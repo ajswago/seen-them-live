@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,16 +23,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.cards.SearchCard
@@ -46,15 +47,29 @@ import java.time.Duration
 import java.util.Date
 import java.util.Locale
 
+@Composable
+fun SearchRoute(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SearchViewModel = hiltViewModel()
+) {
+    SearchScreen(
+        modifier = modifier,
+        onSearch = {},
+        onShowClicked = {},
+        onBackClick = onBackClick,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     onSearch: ((SearchTerms) -> Unit),
-    results: Array<Show>,
     onShowClicked: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    resultsStatus: ResultsStatus = ResultsStatus.NOT_LOADED
+    modifier: Modifier = Modifier.Companion,
+    results: Array<Show> = arrayOf(),
+    resultsStatus: ResultsStatus = ResultsStatus.NOT_LOADED,
+    onBackClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -63,11 +78,11 @@ fun SearchScreen(
                     Text(
                         stringResource(R.string.search_title),
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Companion.Ellipsis
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_description)
@@ -82,32 +97,36 @@ fun SearchScreen(
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Box(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column {
-                SearchCard(onSearch = { searchTerms ->  onSearch(searchTerms) },
-                    modifier = Modifier
+                SearchCard(
+                    onSearch = { searchTerms -> onSearch(searchTerms) },
+                    modifier = Modifier.Companion
                         .padding(horizontal = 8.dp)
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.Companion.height(16.dp))
                 Text(
                     text = stringResource(R.string.results_list_header),
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
+                    textAlign = TextAlign.Companion.Start,
+                    modifier = Modifier.Companion
                         .fillMaxWidth()
                         .height(24.dp)
                         .padding(start = 24.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.Companion.height(8.dp))
                 when (resultsStatus) {
                     ResultsStatus.NOT_LOADED -> {
-                        Text("Perform a search to see results",
-                            modifier = Modifier.padding(start = 24.dp))
+                        Text(
+                            "Perform a search to see results",
+                            modifier = Modifier.Companion.padding(start = 24.dp)
+                        )
                     }
+
                     ResultsStatus.LOADING -> {
                         LazyColumn {
                             items(3) {
@@ -116,6 +135,7 @@ fun SearchScreen(
                             }
                         }
                     }
+
                     ResultsStatus.LOADED -> {
                         LazyColumn {
                             items(results) { show ->
@@ -193,7 +213,7 @@ fun SearchScreenPreview() {
         },
         results = results,
         onShowClicked = {},
-        modifier = Modifier,
+        modifier = Modifier.Companion,
         resultsStatus = status
     )
 }

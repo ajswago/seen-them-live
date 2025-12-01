@@ -27,6 +27,7 @@ fun MapRoute(
 ) {
     MapScreen(
         onProfileMenuOption = {},
+        modifier = modifier
     )
 }
 
@@ -46,8 +47,8 @@ fun MapScreen(
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Box(
-            contentAlignment = Alignment.Companion.Center,
-            modifier = Modifier.Companion
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
@@ -55,7 +56,7 @@ fun MapScreen(
             Icon(
                 imageVector = Icons.Outlined.Map,
                 contentDescription = "Map Icon",
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .size(200.dp)
             )
         }

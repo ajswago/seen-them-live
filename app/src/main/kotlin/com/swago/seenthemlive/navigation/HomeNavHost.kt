@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import com.swago.seenthemlive.ui.home.HomeState
 import com.swago.seenthemlive.ui.screens.artists.artistListScreen
 import com.swago.seenthemlive.ui.screens.map.mapScreen
+import com.swago.seenthemlive.ui.screens.search.navigateToSearch
+import com.swago.seenthemlive.ui.screens.search.searchScreen
 import com.swago.seenthemlive.ui.screens.shows.ShowsListRoute
 import com.swago.seenthemlive.ui.screens.shows.showsListScreen
 
@@ -20,8 +22,9 @@ fun HomeNavHost(
         startDestination = ShowsListRoute,
         modifier = modifier
     ) {
-        showsListScreen()
+        showsListScreen(onAddClick = navController::navigateToSearch)
         artistListScreen()
         mapScreen()
+        searchScreen(onBackClick = navController::popBackStack)
     }
 }

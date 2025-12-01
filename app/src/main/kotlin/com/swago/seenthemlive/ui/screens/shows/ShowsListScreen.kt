@@ -32,6 +32,7 @@ import java.util.Locale
 
 @Composable
 fun ShowsListRoute(
+    onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ShowsListViewModel = hiltViewModel()
 ) {
@@ -39,7 +40,7 @@ fun ShowsListRoute(
         shows = viewModel.shows,
         onProfileMenuOption = {},
         onShowClicked = {},
-        onAddButton = {},
+        onAddClick = onAddClick,
         modifier = modifier,
         loading = viewModel.loading,
     )
@@ -51,8 +52,8 @@ fun ShowsListScreen(
     shows: Array<Show>,
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
     onShowClicked: (String) -> Unit,
-    onAddButton: () -> Unit,
     modifier: Modifier = Modifier,
+    onAddClick: () -> Unit = {},
     loading: Boolean = false
 ) {
     val groupedShows = shows.groupBy { it.date }
@@ -95,7 +96,7 @@ fun ShowsListScreen(
                 }
             }
             FloatingActionButton(
-                onClick = { onAddButton() },
+                onClick = { onAddClick() },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 8.dp, end = 8.dp)
@@ -178,7 +179,7 @@ fun ShowsListScreenPreview() {
         shows = shows,
         onProfileMenuOption = { print("Option clicked: $it") },
         onShowClicked = { print("Show clicked: $it") },
-        onAddButton = {},
+        onAddClick = {},
         modifier = Modifier,
         loading = false
     )

@@ -11,8 +11,12 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToShowsList(navOptions: NavOptions) =
     navigate(route = ShowsListRoute, navOptions)
 
-fun NavGraphBuilder.showsListScreen() {
+fun NavGraphBuilder.showsListScreen(
+    onAddClick: () -> Unit
+) {
     composable<ShowsListRoute> {
-        ShowsListRoute()
+        ShowsListRoute(
+            onAddClick = onAddClick
+        )
     }
 }
