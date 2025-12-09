@@ -14,12 +14,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
@@ -33,30 +35,29 @@ import java.util.Locale
 @Composable
 fun ShowsListRoute(
     onAddClick: () -> Unit,
+    onShowClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ShowsListViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ShowsListScreen(
-        shows = viewModel.shows,
+        uiState = uiState,
         onProfileMenuOption = {},
-        onShowClicked = {},
         onAddClick = onAddClick,
+        onShowClick = onShowClick,
         modifier = modifier,
-        loading = viewModel.loading,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowsListScreen(
-    shows: Array<Show>,
+    uiState: ShowsListUiState,
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
-    onShowClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
     onAddClick: () -> Unit = {},
-    loading: Boolean = false
+    onShowClick: (String) -> Unit = {},
 ) {
-    val groupedShows = shows.groupBy { it.date }
     Scaffold(
         topBar = {
             AppBarWithProfile(
@@ -72,25 +73,29 @@ fun ShowsListScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            if (loading) {
-                LazyColumn {
-                    items(3) {
-                        LoadingExpandableShowListGroup()
+            when (uiState) {
+                ShowsListUiState.Loading -> {
+                    LazyColumn {
+                        items(3) {
+                            LoadingExpandableShowListGroup()
+                        }
                     }
                 }
-            } else {
-                LazyColumn {
-                    items(groupedShows.keys.toTypedArray()) { date ->
-                        groupedShows[date]?.let { show ->
-                            val artists = show.map { it.artist }.toTypedArray()
-                            ExpandableShowListGroup(
-                                venueName = show.first().venueName,
-                                city = show.first().city,
-                                state = show.first().state,
-                                date = date,
-                                artistList = artists,
-                                onArtistClick = { index -> onShowClicked(show[index].id) }
-                            )
+                is ShowsListUiState.Loaded -> {
+                    val groupedShows = uiState.shows.groupBy { it.date }
+                    LazyColumn {
+                        items(groupedShows.keys.toTypedArray()) { date ->
+                            groupedShows[date]?.let { show ->
+                                val artists = show.map { it.artist }.toTypedArray()
+                                ExpandableShowListGroup(
+                                    venueName = show.first().venueName,
+                                    city = show.first().city,
+                                    state = show.first().state,
+                                    date = date,
+                                    artistList = artists,
+                                    onArtistClick = { index -> onShowClick(show[index].id) }
+                                )
+                            }
                         }
                     }
                 }
@@ -176,11 +181,10 @@ fun ShowsListScreenPreview() {
         )
     )
     ShowsListScreen(
-        shows = shows,
+        uiState = ShowsListUiState.Loaded(shows),
         onProfileMenuOption = { print("Option clicked: $it") },
-        onShowClicked = { print("Show clicked: $it") },
+        onShowClick = { print("Show clicked: $it") },
         onAddClick = {},
         modifier = Modifier,
-        loading = false
     )
 }

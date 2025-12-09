@@ -50,13 +50,15 @@ import java.util.Locale
 @Composable
 fun SearchRoute(
     onBackClick: () -> Unit,
+    onShowClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     SearchScreen(
         modifier = modifier,
-        onSearch = {},
-        onShowClicked = {},
+        onSearch = { viewModel.performSearch() },
+        uiState = viewModel.uiState,
+        onShowClick = onShowClick,
         onBackClick = onBackClick,
     )
 }
@@ -65,10 +67,9 @@ fun SearchRoute(
 @Composable
 fun SearchScreen(
     onSearch: ((SearchTerms) -> Unit),
-    onShowClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
-    results: Array<Show> = arrayOf(),
-    resultsStatus: ResultsStatus = ResultsStatus.NOT_LOADED,
+    uiState: SearchUiState,
+    onShowClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     Scaffold(
@@ -119,15 +120,15 @@ fun SearchScreen(
                         .padding(start = 24.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                when (resultsStatus) {
-                    ResultsStatus.NOT_LOADED -> {
+                when (uiState) {
+                    SearchUiState.Empty -> {
                         Text(
                             "Perform a search to see results",
                             modifier = Modifier.padding(start = 24.dp)
                         )
                     }
 
-                    ResultsStatus.LOADING -> {
+                    SearchUiState.Loading -> {
                         LazyColumn {
                             items(3) {
                                 LoadingShowListItem()
@@ -136,16 +137,16 @@ fun SearchScreen(
                         }
                     }
 
-                    ResultsStatus.LOADED -> {
+                    is SearchUiState.Results -> {
                         LazyColumn {
-                            items(results) { show ->
+                            items(uiState.shows) { show ->
                                 ShowListItem(
                                     artistName = show.artist,
                                     venueName = show.venueName,
                                     city = show.city,
                                     state = show.state,
                                     date = show.date,
-                                    onClick = { onShowClicked(show.id) }
+                                    onClick = { onShowClick(show.id) }
                                 )
                                 HorizontalDivider()
                             }
@@ -155,10 +156,6 @@ fun SearchScreen(
             }
         }
     }
-}
-
-enum class ResultsStatus {
-    NOT_LOADED, LOADING, LOADED
 }
 
 @Preview(showBackground = true)
@@ -200,20 +197,17 @@ fun SearchScreenPreview() {
         ),
     )
     val coroutineScope = rememberCoroutineScope()
-    var results by remember { mutableStateOf<Array<Show>>(arrayOf()) }
-    var status by remember { mutableStateOf(ResultsStatus.NOT_LOADED) }
+    var uiState : SearchUiState by remember { mutableStateOf(SearchUiState.Empty) }
     SearchScreen(
         onSearch = {
-            status = ResultsStatus.LOADING
+            uiState = SearchUiState.Loading
             coroutineScope.launch {
                 delay(Duration.ofMillis(2000))
-                results = shows
-                status = ResultsStatus.LOADED
+                uiState = SearchUiState.Results(shows)
             }
         },
-        results = results,
-        onShowClicked = {},
-        modifier = Modifier,
-        resultsStatus = status
+        uiState = uiState,
+        onShowClick = {},
+        modifier = Modifier
     )
 }

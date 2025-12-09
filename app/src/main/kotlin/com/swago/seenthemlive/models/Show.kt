@@ -9,5 +9,6 @@ data class Show(
     val city: String,
     val state: String,
     val date: Date,
-    val tourName: String? = null
+    val tourName: String? = null,
+    val saved: Boolean = false
 )

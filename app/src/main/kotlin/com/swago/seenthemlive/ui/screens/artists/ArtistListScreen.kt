@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.models.Artist
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
 import com.swago.seenthemlive.ui.components.ProfileMenuItem
@@ -44,23 +45,22 @@ fun ArtistListRoute(
     modifier: Modifier = Modifier,
     viewModel: ArtistListViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ArtistListScreen(
-        artists = viewModel.artists,
+        uiState = uiState,
         onProfileMenuOption = {},
         onArtistClicked = {},
         modifier = modifier,
-        loading = viewModel.loading,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistListScreen(
-    artists: Array<Artist>,
+    uiState: ArtistListUiState,
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
     onArtistClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
-    loading: Boolean = false
 ) {
     Scaffold(
         topBar = {
@@ -116,33 +116,39 @@ fun ArtistListScreen(
                         )
                     }
                 }
-                if (loading) {
-                    LazyColumn {
-                        items(3) {
-                            LoadingArtistListItemDetailed()
+                when (uiState) {
+                    ArtistListUiState.Loading -> {
+                        LazyColumn {
+                            items(3) {
+                                LoadingArtistListItemDetailed()
+                            }
                         }
                     }
-                } else {
-                    val artistsSorted = when (artistSort) {
-                        ArtistSort.NAME ->
-                            if (sortAscending) artists.sortedBy { it.name }
-                            else artists.sortedByDescending { it.name }
-                        ArtistSort.RECENT ->
-                            if (sortAscending) artists.sortedBy { it.lastShow }
-                            else artists.sortedByDescending { it.lastShow }
-                        ArtistSort.SHOW_COUNT ->
-                            if (sortAscending) artists.sortedBy { it.showCount }
-                            else artists.sortedByDescending { it.showCount }
+                    is ArtistListUiState.Loaded -> {
+                        val artists = uiState.artists
+                        val artistsSorted = when (artistSort) {
+                            ArtistSort.NAME ->
+                                if (sortAscending) artists.sortedBy { it.name }
+                                else artists.sortedByDescending { it.name }
+
+                            ArtistSort.RECENT ->
+                                if (sortAscending) artists.sortedBy { it.lastShow }
+                                else artists.sortedByDescending { it.lastShow }
+
+                            ArtistSort.SHOW_COUNT ->
+                                if (sortAscending) artists.sortedBy { it.showCount }
+                                else artists.sortedByDescending { it.showCount }
                         }
-                    LazyColumn {
-                        items(artistsSorted) { artist ->
-                            ArtistListItem(
-                                artist.name,
-                                lastShow = artist.lastShow,
-                                showAvatar = true,
-                                showCount = artist.showCount,
-                                onClick = { onArtistClicked(artist.id) }
-                            )
+                        LazyColumn {
+                            items(artistsSorted) { artist ->
+                                ArtistListItem(
+                                    artist.name,
+                                    lastShow = artist.lastShow,
+                                    showAvatar = true,
+                                    showCount = artist.showCount,
+                                    onClick = { onArtistClicked(artist.id) }
+                                )
+                            }
                         }
                     }
                 }
@@ -195,9 +201,8 @@ fun ArtistListScreenPreview() {
         )
     )
     ArtistListScreen(
-        artists = artists,
+        uiState = ArtistListUiState.Loaded(artists),
         onProfileMenuOption = {},
         onArtistClicked = {},
-        loading = false
     )
 }

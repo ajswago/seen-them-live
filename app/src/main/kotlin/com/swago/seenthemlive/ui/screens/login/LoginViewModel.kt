@@ -10,13 +10,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.time.delay
+import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     networkMonitor: NetworkMonitor
 ) : ViewModel() {
-    var loading by mutableStateOf(false)
+    var uiState: LoginUiState by mutableStateOf(LoginUiState.Ready)
 
     val isOffline = networkMonitor.isOnline
         .map(Boolean::not)
@@ -25,4 +28,17 @@ class LoginViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = false,
         )
+
+    fun performLogin(completion: () -> Unit) {
+        uiState = LoginUiState.Loading
+        viewModelScope.launch {
+            delay(Duration.ofMillis(2000))
+            completion()
+        }
+    }
+}
+
+sealed interface LoginUiState {
+    data object Ready : LoginUiState
+    data object Loading : LoginUiState
 }

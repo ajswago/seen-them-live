@@ -42,19 +42,19 @@ fun LoginRoute(
 ) {
     val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
     LoginScreen(
-        onLogin = onLogin,
         modifier = modifier,
-        loading = viewModel.loading,
-        isOffline = isOffline
+        uiState = viewModel.uiState,
+        isOffline = isOffline,
+        onLoginClick = { viewModel.performLogin { onLogin() } },
     )
 }
 
 @Composable
 fun LoginScreen(
-    onLogin: () -> Unit,
+    uiState: LoginUiState,
     modifier: Modifier = Modifier,
-    loading: Boolean = false,
-    isOffline: Boolean = false
+    isOffline: Boolean = false,
+    onLoginClick: () -> Unit = {},
 ) {
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         Box(
@@ -83,13 +83,13 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(60.dp))
                 ElevatedButton(
-                    onClick = { onLogin() },
+                    onClick = { onLoginClick() },
                     shape = MaterialTheme.shapes.small,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.surface,
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
-                    enabled = !loading && !isOffline,
+                    enabled = uiState !is LoginUiState.Loading && !isOffline,
                     modifier = Modifier
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
@@ -102,18 +102,22 @@ fun LoginScreen(
                     Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
                 }
                 Spacer(modifier = Modifier.height(80.dp))
-                if (isOffline) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Filled.Error,
-                            tint = MaterialTheme.colorScheme.error,
-                            contentDescription = "Warning"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Not connected")
+                Row(
+                    modifier = Modifier.height(80.dp)
+                ) {
+                    if (isOffline) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Filled.Error,
+                                tint = MaterialTheme.colorScheme.error,
+                                contentDescription = "Warning"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Not connected")
+                        }
+                    } else if (uiState is LoginUiState.Loading) {
+                        CircularProgressIndicator()
                     }
-                } else if (loading) {
-                    CircularProgressIndicator()
                 }
             }
         }
@@ -124,7 +128,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        onLogin = {}
+        uiState = LoginUiState.Ready,
     )
 }
 
@@ -132,8 +136,7 @@ fun LoginScreenPreview() {
 @Composable
 fun LoginScreenLoadingPreview() {
     LoginScreen(
-        onLogin = {},
-        loading = true
+        uiState = LoginUiState.Loading,
     )
 }
 
@@ -141,7 +144,7 @@ fun LoginScreenLoadingPreview() {
 @Composable
 fun LoginScreenOfflinePreview() {
     LoginScreen(
-        onLogin = {},
+        uiState = LoginUiState.Ready,
         isOffline = true
     )
 }

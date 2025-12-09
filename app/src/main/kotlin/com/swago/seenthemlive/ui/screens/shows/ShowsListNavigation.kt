@@ -12,11 +12,13 @@ fun NavController.navigateToShowsList(navOptions: NavOptions) =
     navigate(route = ShowsListRoute, navOptions)
 
 fun NavGraphBuilder.showsListScreen(
-    onAddClick: () -> Unit
+    onAddClick: () -> Unit,
+    onShowClick: (String) -> Unit,
 ) {
     composable<ShowsListRoute> {
         ShowsListRoute(
-            onAddClick = onAddClick
+            onAddClick = onAddClick,
+            onShowClick = onShowClick,
         )
     }
 }

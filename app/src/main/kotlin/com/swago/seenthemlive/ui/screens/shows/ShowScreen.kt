@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
@@ -42,6 +43,29 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Composable
+fun ShowRoute(
+    showId: String,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ShowViewModel = hiltViewModel<ShowViewModel, ShowViewModel.Factory>(
+        key = showId,
+    ) { factory ->
+        factory.create(showId)
+    }
+) {
+    ShowScreen(
+        show = viewModel.show,
+        linkedShows = viewModel.linkedShows,
+        tracks = viewModel.tracks,
+        onEditClicked = {},
+        onToggleSaved = {},
+        onArtistClicked = {},
+        onFindMoreClicked = {},
+        onBackClick = onBackClick,
+        modifier = modifier,
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,12 +74,13 @@ fun ShowScreen(
     linkedShows: Array<Show>,
     tracks: Array<Track>,
     onEditClicked: () -> Unit,
-    onAddRemoveClicked: (Show) -> Unit,
+    onToggleSaved: (String) -> Unit,
     onArtistClicked: (String) -> Unit,
     onFindMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
     showEdit: Boolean = false,
-    showAddRemove: AddRemove = AddRemove.ADD
+    showToggleSaved: Boolean = true,
+    onBackClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -68,7 +93,7 @@ fun ShowScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { onBackClick() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_description)
@@ -84,24 +109,23 @@ fun ShowScreen(
                             )
                         }
                     }
-                    when (showAddRemove) {
-                        AddRemove.ADD -> {
-                            IconButton(onClick = { onAddRemoveClicked(show) }) {
+                    if (showToggleSaved) {
+                        if(!show.saved) {
+                            IconButton(onClick = { onToggleSaved(show.id) }) {
                                 Icon(
                                     imageVector = Icons.Outlined.BookmarkAdd,
                                     contentDescription = stringResource(R.string.add_button_description)
                                 )
                             }
                         }
-                        AddRemove.REMOVE -> {
-                            IconButton(onClick = { onAddRemoveClicked(show) }) {
+                        else {
+                            IconButton(onClick = { onToggleSaved(show.id) }) {
                                 Icon(
                                     imageVector = Icons.Outlined.BookmarkRemove,
                                     contentDescription = stringResource(R.string.remove_button_description)
                                 )
                             }
                         }
-                        AddRemove.NONE -> {}
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -182,10 +206,6 @@ fun ShowScreen(
     }
 }
 
-enum class AddRemove {
-    ADD, REMOVE, NONE
-}
-
 @Preview(showBackground = true)
 @Composable
 fun ShowScreenPreview() {
@@ -233,7 +253,7 @@ fun ShowScreenPreview() {
         onArtistClicked = {},
         onFindMoreClicked = {},
         onEditClicked = {},
-        onAddRemoveClicked = {},
+        onToggleSaved = {},
         modifier = Modifier
     )
 }

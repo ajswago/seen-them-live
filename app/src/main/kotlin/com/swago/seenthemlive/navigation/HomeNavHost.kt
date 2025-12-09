@@ -9,6 +9,8 @@ import com.swago.seenthemlive.ui.screens.map.mapScreen
 import com.swago.seenthemlive.ui.screens.search.navigateToSearch
 import com.swago.seenthemlive.ui.screens.search.searchScreen
 import com.swago.seenthemlive.ui.screens.shows.ShowsListRoute
+import com.swago.seenthemlive.ui.screens.shows.navigateToShow
+import com.swago.seenthemlive.ui.screens.shows.showScreen
 import com.swago.seenthemlive.ui.screens.shows.showsListScreen
 
 @Composable
@@ -22,9 +24,16 @@ fun HomeNavHost(
         startDestination = ShowsListRoute,
         modifier = modifier
     ) {
-        showsListScreen(onAddClick = navController::navigateToSearch)
+        showsListScreen(
+            onAddClick = navController::navigateToSearch,
+            onShowClick = { navController.navigateToShow(it) }
+        )
         artistListScreen()
         mapScreen()
-        searchScreen(onBackClick = navController::popBackStack)
+        searchScreen(
+            onShowClick = { navController.navigateToShow(it) },
+            onBackClick = navController::popBackStack
+        )
+        showScreen(onBackClick = navController::popBackStack)
     }
 }
