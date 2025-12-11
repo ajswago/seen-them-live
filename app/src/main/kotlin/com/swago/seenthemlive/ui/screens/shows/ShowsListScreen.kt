@@ -62,6 +62,7 @@ fun ShowsListScreen(
         topBar = {
             AppBarWithProfile(
                 stringResource(R.string.shows_list_header),
+                enabled = uiState !is ShowsListUiState.Loading,
                 onProfileMenuOption = onProfileMenuOption
             )
         },
@@ -100,16 +101,18 @@ fun ShowsListScreen(
                     }
                 }
             }
-            FloatingActionButton(
-                onClick = { onAddClick() },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 8.dp, end = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Add,
-                    contentDescription = "Add"
-                )
+            if (uiState !is ShowsListUiState.Loading) {
+                FloatingActionButton(
+                    onClick = { onAddClick() },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 8.dp, end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "Add"
+                    )
+                }
             }
         }
     }

@@ -66,6 +66,7 @@ fun ArtistListScreen(
         topBar = {
             AppBarWithProfile(
                 "Artists",
+                enabled = uiState !is ArtistListUiState.Loading,
                 onProfileMenuOption = onProfileMenuOption
             )
         },
@@ -105,11 +106,15 @@ fun ArtistListScreen(
                                     sortAscending = sort.defaultAscending
                                 },
                                 selected = index == selectedIndex,
-                                label = { Text(sort.label) }
+                                label = { Text(sort.label) },
+                                enabled = uiState !is ArtistListUiState.Loading
                             )
                         }
                     }
-                    IconButton(onClick = { sortAscending = !sortAscending }, modifier = Modifier.align(Alignment.CenterEnd)) {
+                    IconButton(
+                        onClick = { sortAscending = !sortAscending },
+                        enabled = uiState !is ArtistListUiState.Loading,
+                        modifier = Modifier.align(Alignment.CenterEnd)) {
                         Icon(
                             imageVector = Icons.Outlined.SwapVert,
                             contentDescription = "Sort Direction"

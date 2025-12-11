@@ -32,7 +32,8 @@ import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 @Composable
 fun SearchCard(
     onSearch: ((SearchTerms) -> Unit),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     var artist by remember { mutableStateOf<String?>(null) }
     var venue by remember { mutableStateOf<String?>(null) }
@@ -55,6 +56,7 @@ fun SearchCard(
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
+                enabled = enabled,
                 value = artist ?: "",
                 onValueChange = { artist = it },
                 modifier = Modifier
@@ -73,6 +75,7 @@ fun SearchCard(
                 }
             )
             OutlinedTextField(
+                enabled = enabled,
                 value = venue ?: "",
                 onValueChange = { venue = it },
                 modifier = Modifier
@@ -91,11 +94,13 @@ fun SearchCard(
                 }
             )
             UsStateSelectionDropdownMenu(
+                enabled = enabled,
                 selectedText = usState,
                 onSelectionChange = { usState = it }
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
+                enabled = enabled,
                 onClick = { onSearch(
                     SearchTerms(
                         artist = artist,

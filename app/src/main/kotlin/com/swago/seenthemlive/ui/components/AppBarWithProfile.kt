@@ -25,7 +25,8 @@ import com.swago.seenthemlive.R
 @Composable
 fun AppBarWithProfile(
     title: String,
-    onProfileMenuOption: (ProfileMenuItem) -> Unit
+    enabled: Boolean = true,
+    onProfileMenuOption: (ProfileMenuItem) -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
@@ -37,7 +38,9 @@ fun AppBarWithProfile(
             )
         },
         actions = {
-            IconButton(onClick = { showMenu = !showMenu }) {
+            IconButton(
+                onClick = { showMenu = !showMenu },
+                enabled = enabled) {
                 Icon(
                     imageVector = Icons.Outlined.AccountCircle,
                     contentDescription = stringResource(R.string.account_button_description)
@@ -92,4 +95,10 @@ enum class ProfileMenuItem {
 @Composable
 fun AppBarWithProfilePreview() {
     AppBarWithProfile("Shows") { }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppBarWithProfileDisabledPreview() {
+    AppBarWithProfile("Shows", enabled = false) { }
 }

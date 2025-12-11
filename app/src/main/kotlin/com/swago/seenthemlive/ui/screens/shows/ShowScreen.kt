@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,12 +33,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
+import com.swago.seenthemlive.ui.components.cards.LoadingShowCard
 import com.swago.seenthemlive.ui.components.cards.ShowCard
 import com.swago.seenthemlive.ui.components.listitems.ArtistListItem
 import com.swago.seenthemlive.ui.components.listitems.FindMoreListItem
+import com.swago.seenthemlive.ui.components.listitems.LoadingArtistListItemSimple
+import com.swago.seenthemlive.ui.components.listitems.LoadingTrackListItemNumbered
 import com.swago.seenthemlive.ui.components.listitems.TrackListItem
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -54,10 +59,9 @@ fun ShowRoute(
         factory.create(showId)
     }
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ShowScreen(
-        show = viewModel.show,
-        linkedShows = viewModel.linkedShows,
-        tracks = viewModel.tracks,
+        uiState = uiState,
         onEditClicked = {},
         onToggleSaved = {},
         onArtistClicked = {},
@@ -70,9 +74,7 @@ fun ShowRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowScreen(
-    show: Show,
-    linkedShows: Array<Show>,
-    tracks: Array<Track>,
+    uiState: ShowUiState,
     onEditClicked: () -> Unit,
     onToggleSaved: (String) -> Unit,
     onArtistClicked: (String) -> Unit,
@@ -110,20 +112,32 @@ fun ShowScreen(
                         }
                     }
                     if (showToggleSaved) {
-                        if(!show.saved) {
-                            IconButton(onClick = { onToggleSaved(show.id) }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.BookmarkAdd,
-                                    contentDescription = stringResource(R.string.add_button_description)
-                                )
+                        when (uiState) {
+                            ShowUiState.Loading -> {
+                                IconButton(onClick = {}, enabled = false) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.BookmarkAdd,
+                                        contentDescription = stringResource(R.string.add_button_description)
+                                    )
+                                }
                             }
-                        }
-                        else {
-                            IconButton(onClick = { onToggleSaved(show.id) }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.BookmarkRemove,
-                                    contentDescription = stringResource(R.string.remove_button_description)
-                                )
+                            is ShowUiState.Loaded -> {
+                                val show = uiState.show
+                                if (!show.saved) {
+                                    IconButton(onClick = { onToggleSaved(show.id) }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.BookmarkAdd,
+                                            contentDescription = stringResource(R.string.add_button_description)
+                                        )
+                                    }
+                                } else {
+                                    IconButton(onClick = { onToggleSaved(show.id) }) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.BookmarkRemove,
+                                            contentDescription = stringResource(R.string.remove_button_description)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -142,16 +156,24 @@ fun ShowScreen(
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column {
-                ShowCard(
-                    artistName = show.artist,
-                    tourName = show.tourName,
-                    venueName = show.venueName,
-                    city = show.city,
-                    state = show.state,
-                    date = show.date,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                )
+                when (uiState) {
+                    ShowUiState.Loading -> {
+                        LoadingShowCard()
+                    }
+                    is ShowUiState.Loaded -> {
+                        val show = uiState.show
+                        ShowCard(
+                            artistName = show.artist,
+                            tourName = show.tourName,
+                            venueName = show.venueName,
+                            city = show.city,
+                            state = show.state,
+                            date = show.date,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.also_at_show_header),
@@ -161,23 +183,41 @@ fun ShowScreen(
                         .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn {
-                    items(linkedShows) { show ->
-                        ArtistListItem(
-                            artistName = show.artist,
-                            onClick = { onArtistClicked(show.id) },
-                            modifier = Modifier
-                                .height(55.dp)
-                        )
-                        HorizontalDivider()
+                when (uiState) {
+                    ShowUiState.Loading -> {
+                        LazyColumn {
+                            items(2) {
+                                LoadingArtistListItemSimple()
+                                HorizontalDivider()
+                            }
+                        }
+//                        FindMoreListItem(
+//                            onClick = {},
+//                            modifier = Modifier
+//                                .height(55.dp)
+//                        )
                     }
-                }
-                if (linkedShows.isNotEmpty()) {
-                    FindMoreListItem(
-                        onClick = onFindMoreClicked,
-                        modifier = Modifier
-                            .height(55.dp)
-                    )
+                    is ShowUiState.Loaded -> {
+                        val linkedShows = uiState.linkedShows
+                        LazyColumn {
+                            items(linkedShows) { show ->
+                                ArtistListItem(
+                                    artistName = show.artist,
+                                    onClick = { onArtistClicked(show.id) },
+                                    modifier = Modifier
+                                        .height(55.dp)
+                                )
+                                HorizontalDivider()
+                            }
+                        }
+                        if (linkedShows.isNotEmpty()) {
+                            FindMoreListItem(
+                                onClick = onFindMoreClicked,
+                                modifier = Modifier
+                                    .height(55.dp)
+                            )
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
@@ -188,17 +228,30 @@ fun ShowScreen(
                         .fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn {
-                    items(tracks) { track ->
-                        TrackListItem(
-                            trackName = track.trackName,
-                            trackNumber = track.trackNumber,
-                            coverArtistName = track.coverArtistName,
-                            isTapeTrack = track.isTapeTrack,
-                            modifier = Modifier
-                                .height(55.dp)
-                        )
-                        HorizontalDivider()
+                when (uiState) {
+                    ShowUiState.Loading -> {
+                        LazyColumn {
+                            items(4) {
+                                LoadingTrackListItemNumbered()
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                    is ShowUiState.Loaded -> {
+                        val tracks = uiState.tracks
+                        LazyColumn {
+                            items(tracks) { track ->
+                                TrackListItem(
+                                    trackName = track.trackName,
+                                    trackNumber = track.trackNumber,
+                                    coverArtistName = track.coverArtistName,
+                                    isTapeTrack = track.isTapeTrack,
+                                    modifier = Modifier
+                                        .height(55.dp)
+                                )
+                                HorizontalDivider()
+                            }
+                        }
                     }
                 }
             }
@@ -229,31 +282,46 @@ fun ShowScreenPreview() {
         Track("My Heart Will Go On", trackNumber = 6, coverArtistName = "Celine Dion"),
         Track("Through the Fire and Flames", trackNumber = 7)
     )
-    ShowScreen(
-        show = show,
-        linkedShows = arrayOf(
-            Show(
-                id = "ID1",
-                artist = "Nekrogoblikon",
-                city = "Silver Spring",
-                state = "MD",
-                venueName = "The Fillmore Silver Spring",
-                date = Date()
-            ),
-            Show(
-                id = "ID2",
-                artist = "Dethklok",
-                city = "Silver Spring",
-                state = "MD",
-                venueName = "The Fillmore Silver Spring",
-                date = Date()
-            )
+    val linkedShows = arrayOf(
+        Show(
+            id = "ID1",
+            artist = "Nekrogoblikon",
+            city = "Silver Spring",
+            state = "MD",
+            venueName = "The Fillmore Silver Spring",
+            date = Date()
         ),
-        tracks = tracks,
+        Show(
+            id = "ID2",
+            artist = "Dethklok",
+            city = "Silver Spring",
+            state = "MD",
+            venueName = "The Fillmore Silver Spring",
+            date = Date()
+        )
+    )
+    ShowScreen(
+        uiState = ShowUiState.Loaded(
+            show = show,
+            linkedShows = linkedShows,
+            tracks = tracks
+        ),
         onArtistClicked = {},
         onFindMoreClicked = {},
         onEditClicked = {},
         onToggleSaved = {},
         modifier = Modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingShowScreenPreview() {
+    ShowScreen(
+        uiState = ShowUiState.Loading,
+        onArtistClicked = {},
+        onFindMoreClicked = {},
+        onEditClicked = {},
+        onToggleSaved = {},
     )
 }

@@ -106,6 +106,7 @@ fun SearchScreen(
             Column {
                 SearchCard(
                     onSearch = { searchTerms -> onSearch(searchTerms) },
+                    enabled = uiState !is SearchUiState.Loading,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                 )

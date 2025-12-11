@@ -27,7 +27,8 @@ import com.swago.seenthemlive.R
 fun UsStateSelectionDropdownMenu(
     selectedText: String?,
     onSelectionChange: ((String?) -> Unit),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -38,12 +39,15 @@ fun UsStateSelectionDropdownMenu(
             .padding(vertical = 16.dp)
     ) {
         ExposedDropdownMenuBox(
-            expanded = expanded,
+            expanded = enabled && expanded,
             onExpandedChange = {
-                expanded = !expanded
+                if (enabled) {
+                    expanded = !expanded
+                }
             },
         ) {
             TextField(
+                enabled = enabled,
                 value = selectedText ?: stringResource(R.string.state_no_selection_label),
                 onValueChange = {},
                 readOnly = true,
