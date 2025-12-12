@@ -122,3 +122,11 @@ fun ExpandableShowHeaderPreview() {
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingExpandableShowHeaderPreview() {
+    SeenThemLiveComposeTheme {
+        LoadingExpandableShowHeader()
+    }
+}

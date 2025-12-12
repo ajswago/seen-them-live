@@ -32,7 +32,8 @@ import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 @Composable
 fun CreatePlaylistCard(
     onCreate: ((String?) -> Unit),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     var playlistName by remember { mutableStateOf<String?>(null) }
     OutlinedCard(
@@ -53,6 +54,7 @@ fun CreatePlaylistCard(
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
+                enabled = enabled,
                 value = playlistName ?: "",
                 onValueChange = { playlistName = it },
                 modifier = Modifier
@@ -72,6 +74,7 @@ fun CreatePlaylistCard(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
+                enabled = enabled,
                 onClick = { onCreate(playlistName) },
                 modifier = Modifier
                     .align(Alignment.End)
@@ -87,5 +90,13 @@ fun CreatePlaylistCard(
 fun CreatePlaylistCardPreview() {
     SeenThemLiveComposeTheme {
         CreatePlaylistCard(onCreate = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CreatePlaylistCardDisabledPreview() {
+    SeenThemLiveComposeTheme {
+        CreatePlaylistCard(onCreate = {}, enabled = false)
     }
 }

@@ -31,12 +31,12 @@ import java.util.Locale
 @Composable
 fun ShowCard(
     artistName: String,
-    modifier: Modifier = Modifier,
-    tourName: String? = null,
     venueName: String,
     city: String,
     state: String,
-    date: Date
+    date: Date,
+    modifier: Modifier = Modifier,
+    tourName: String? = null,
 ) {
     OutlinedCard(
         colors = CardDefaults.cardColors(
@@ -107,7 +107,6 @@ fun LoadingShowCard() {
             Box(
                 modifier = Modifier
                     .padding(vertical = 2.dp)
-//                    .padding(start = 24.dp)
                     .width(240.dp)
                     .height(30.dp)
                     .fillMaxWidth()
@@ -118,7 +117,6 @@ fun LoadingShowCard() {
             Box(
                 modifier = Modifier
                     .padding(vertical = 2.dp)
-//                    .padding(start = 24.dp)
                     .width(100.dp)
                     .height(12.dp)
                     .fillMaxWidth()
@@ -129,7 +127,6 @@ fun LoadingShowCard() {
             Box(
                 modifier = Modifier
                     .padding(vertical = 2.dp)
-//                    .padding(start = 24.dp)
                     .width(200.dp)
                     .height(16.dp)
                     .fillMaxWidth()
@@ -140,7 +137,6 @@ fun LoadingShowCard() {
             Box(
                 modifier = Modifier
                     .padding(vertical = 2.dp)
-//                    .padding(start = 24.dp)
                     .width(200.dp)
                     .height(16.dp)
                     .fillMaxWidth()
@@ -151,7 +147,6 @@ fun LoadingShowCard() {
             Box(
                 modifier = Modifier
                     .padding(vertical = 2.dp)
-//                    .padding(start = 24.dp)
                     .width(200.dp)
                     .height(16.dp)
                     .fillMaxWidth()
@@ -181,7 +176,7 @@ fun ShowCardPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun ShowCardLoadingPreview() {
+fun LoadingShowCardPreview() {
     SeenThemLiveComposeTheme {
         LoadingShowCard()
     }

@@ -196,7 +196,7 @@ fun ArtistListItemAvatarPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun ArtistListItemLoadingSimplePreview() {
+fun LoadingArtistListItemSimplePreview() {
     SeenThemLiveComposeTheme {
         LoadingArtistListItemSimple()
     }
@@ -204,7 +204,7 @@ fun ArtistListItemLoadingSimplePreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun ArtistListItemLoadingDetailedPreview() {
+fun LoadingArtistListItemDetailedPreview() {
     SeenThemLiveComposeTheme {
         LoadingArtistListItemDetailed()
     }

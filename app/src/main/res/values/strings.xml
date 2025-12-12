@@ -41,7 +41,7 @@
     <string name="results_list_header">Results</string>
     <string name="shows_list_header">Shows</string>
     <string name="show_title">Show</string>
-    <string name="also_at_show_header">Also at this Show</string>
+    <string name="also_at_show_header">Other Artists At This Show</string>
     <string name="setlist_header">Setlist</string>
     <string name="about_title">About</string>
     <string name="create_playlist_screen_title">Create Playlist</string>
@@ -52,7 +52,7 @@
     <string name="retry_button_label">Retry</string>
     <string name="dismiss_button_label">Dismiss</string>
 
-    <string name="find_more_headline">Find More</string>
+    <string name="find_more_headline">Search Other Artists</string>
 
     <string name="author_label">By Anthony Swago</string>
     <string name="version_format">v%s – %s</string>

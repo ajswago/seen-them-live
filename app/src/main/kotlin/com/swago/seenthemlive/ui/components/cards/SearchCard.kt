@@ -130,3 +130,11 @@ fun SearchCardPreview() {
         SearchCard(onSearch = {})
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun SearchCardDisabledPreview() {
+    SeenThemLiveComposeTheme {
+        SearchCard(onSearch = {}, enabled = false)
+    }
+}

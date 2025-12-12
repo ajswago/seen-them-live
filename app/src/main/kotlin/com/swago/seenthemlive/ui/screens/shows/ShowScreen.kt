@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
@@ -178,9 +178,11 @@ fun ShowScreen(
                 Text(
                     text = stringResource(R.string.also_at_show_header),
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(24.dp)
+                        .padding(start = 24.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 when (uiState) {
@@ -191,11 +193,13 @@ fun ShowScreen(
                                 HorizontalDivider()
                             }
                         }
-//                        FindMoreListItem(
-//                            onClick = {},
-//                            modifier = Modifier
-//                                .height(55.dp)
-//                        )
+                        FindMoreListItem(
+                            enabled = false,
+                            onClick = {},
+                            modifier = Modifier
+                                .height(55.dp)
+                        )
+                        HorizontalDivider()
                     }
                     is ShowUiState.Loaded -> {
                         val linkedShows = uiState.linkedShows
@@ -210,22 +214,23 @@ fun ShowScreen(
                                 HorizontalDivider()
                             }
                         }
-                        if (linkedShows.isNotEmpty()) {
-                            FindMoreListItem(
-                                onClick = onFindMoreClicked,
-                                modifier = Modifier
-                                    .height(55.dp)
-                            )
-                        }
+                        FindMoreListItem(
+                            onClick = onFindMoreClicked,
+                            modifier = Modifier
+                                .height(55.dp)
+                        )
+                        HorizontalDivider()
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.setlist_header),
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(24.dp)
+                        .padding(start = 24.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 when (uiState) {

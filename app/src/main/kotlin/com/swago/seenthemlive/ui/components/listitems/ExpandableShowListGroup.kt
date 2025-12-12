@@ -97,3 +97,11 @@ fun ExpandableShowListGroupMultiplePreview() {
         }
     )
 }
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingExpandableShowListGroupPreview() {
+    Column {
+        LoadingExpandableShowListGroup()
+    }
+}

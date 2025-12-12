@@ -75,13 +75,40 @@ fun LoadingTrackListItemNumbered() {
         leadingContent = { Box(
             modifier = Modifier
                 .padding(vertical = 2.dp)
-//                .padding(start = 24.dp)
                 .width(20.dp)
                 .height(20.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(2.dp))
                 .shimmerLoading()
         ) }
+    )
+}
+
+@Composable
+fun LoadingTrackListItemCount() {
+    ListItem(
+        headlineContent = { Box(
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .padding(start = 8.dp)
+                .width(200.dp)
+                .height(20.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(2.dp))
+                .shimmerLoading()
+        ) },
+        trailingContent = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 2.dp)
+                    .padding(end = 4.dp)
+                    .width(20.dp)
+                    .height(12.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(2.dp))
+                    .shimmerLoading()
+            )
+        },
     )
 }
 
@@ -121,8 +148,16 @@ fun TrackListItemCountPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun TrackListItemLoadingNumberedPreview() {
+fun LoadingTrackListItemNumberedPreview() {
     SeenThemLiveComposeTheme {
         LoadingTrackListItemNumbered()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingTrackListItemCountPreview() {
+    SeenThemLiveComposeTheme {
+        LoadingTrackListItemCount()
     }
 }

@@ -52,6 +52,16 @@ fun SelectableShowListGroup(
     }
 }
 
+@Composable
+fun LoadingSelectableShowListGroup() {
+    LoadingExpandableShowHeader()
+    HorizontalDivider()
+    LoadingSelectableArtistListItem()
+    HorizontalDivider()
+    LoadingSelectableArtistListItem()
+    HorizontalDivider()
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SelectableShowListGroupPreview() {
@@ -59,9 +69,6 @@ fun SelectableShowListGroupPreview() {
     val artistSelections = remember {
         mutableStateMapOf(*artists.map { it to false }.toTypedArray())
     }
-//    val artists = remember {
-//        mutableListOf("Dethklok", "DragonForce", "Nekrogoblikon")
-//    }
     SelectableShowListGroup(
         venueName = "The Fillmore Silver Spring",
         city = "Silver Spring",
@@ -75,4 +82,12 @@ fun SelectableShowListGroupPreview() {
             artistSelections[artists[index]] = selected
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingSelectableShowListGroupPreview() {
+    Column {
+        LoadingSelectableShowListGroup()
+    }
 }
