@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -82,29 +83,47 @@ fun ArtistListScreen(
                     onArtistSortOrderChanged = { sortAscending = !sortAscending },
                     enabled = uiState !is ArtistListUiState.Loading,
                 )
-                when (uiState) {
-                    ArtistListUiState.Loading -> {
-                        LoadingArtistList()
-                    }
-                    is ArtistListUiState.Loaded -> {
-                        LoadedArtistList(
-                            uiState = uiState,
-                            artistSort = artistSort,
-                            sortAscending = sortAscending,
-                            onArtistClicked = onArtistClicked
-                        )
-                    }
-                }
+                ArtistList(
+                    uiState = uiState,
+                    artistSort = artistSort,
+                    sortAscending = sortAscending,
+                    onArtistClicked = onArtistClicked
+                )
             }
         }
     }
 }
 
 @Composable
-fun LoadingArtistList() {
-    LazyColumn {
+fun ArtistList(
+    uiState: ArtistListUiState,
+    artistSort: ArtistSort,
+    sortAscending: Boolean,
+    modifier: Modifier = Modifier,
+    onArtistClicked: (String) -> Unit = {}
+) {
+    when (uiState) {
+        ArtistListUiState.Loading -> {
+            LoadingArtistList(modifier = modifier)
+        }
+        is ArtistListUiState.Loaded -> {
+            LoadedArtistList(
+                uiState = uiState,
+                artistSort = artistSort,
+                sortAscending = sortAscending,
+                onArtistClicked = onArtistClicked,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingArtistList(modifier: Modifier = Modifier) {
+    LazyColumn(modifier = modifier) {
         items(3) {
             LoadingArtistListItemDetailed()
+            HorizontalDivider()
         }
     }
 }
@@ -114,6 +133,7 @@ fun LoadedArtistList(
     uiState: ArtistListUiState.Loaded,
     artistSort: ArtistSort,
     sortAscending: Boolean,
+    modifier: Modifier = Modifier,
     onArtistClicked: (String) -> Unit = {}
 ) {
     val artists = uiState.artists
@@ -130,7 +150,7 @@ fun LoadedArtistList(
             if (sortAscending) artists.sortedBy { it.showCount }
             else artists.sortedByDescending { it.showCount }
     }
-    LazyColumn {
+    LazyColumn(modifier = modifier) {
         items(artistsSorted) { artist ->
             ArtistListItem(
                 artist.name,
@@ -139,6 +159,7 @@ fun LoadedArtistList(
                 showCount = artist.showCount,
                 onClick = { onArtistClicked(artist.id) }
             )
+            HorizontalDivider()
         }
     }
 }

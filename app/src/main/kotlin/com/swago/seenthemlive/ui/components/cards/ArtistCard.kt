@@ -86,12 +86,12 @@ fun ArtistCard(
 }
 
 @Composable
-fun LoadingArtistCard() {
+fun LoadingArtistCard(modifier: Modifier = Modifier) {
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(24.dp)

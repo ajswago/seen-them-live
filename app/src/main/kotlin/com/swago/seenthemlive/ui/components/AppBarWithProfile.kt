@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +26,7 @@ import com.swago.seenthemlive.R
 @Composable
 fun AppBarWithProfile(
     title: String,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
 ) {
@@ -83,7 +85,8 @@ fun AppBarWithProfile(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        ),
+        modifier = modifier
     )
 }
 

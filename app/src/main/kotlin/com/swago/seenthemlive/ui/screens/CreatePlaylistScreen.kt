@@ -77,7 +77,7 @@ fun CreatePlaylistScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
@@ -164,10 +164,13 @@ fun CreatePlaylistProgressDialog(
     onDismissRequest: () -> Unit,
     onRetry: () -> Unit,
     step: CreatePlaylistStep,
+    modifier: Modifier = Modifier
 ) {
-    Dialog(onDismissRequest = { onDismissRequest() }) {
+    Dialog(
+        onDismissRequest = { onDismissRequest() }
+    ) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(300.dp)
                 .padding(16.dp),

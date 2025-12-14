@@ -65,7 +65,7 @@ fun ShowListItem(
 }
 
 @Composable
-fun LoadingShowListItem() {
+fun LoadingShowListItem(modifier: Modifier = Modifier) {
     ListItem(
         overlineContent = { Box(
             modifier = Modifier
@@ -106,6 +106,7 @@ fun LoadingShowListItem() {
                     .shimmerLoading()
             )
         },
+        modifier = modifier
     )
 }
 

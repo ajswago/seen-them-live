@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -81,7 +82,7 @@ fun ArtistListItem(
 }
 
 @Composable
-fun LoadingArtistListItemDetailed() {
+fun LoadingArtistListItemDetailed(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -123,11 +124,12 @@ fun LoadingArtistListItemDetailed() {
                     .shimmerLoading()
             )
         },
+        modifier = modifier
     )
 }
 
 @Composable
-fun LoadingArtistListItemSimple() {
+fun LoadingArtistListItemSimple(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -138,7 +140,8 @@ fun LoadingArtistListItemSimple() {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(2.dp))
                 .shimmerLoading()
-        ) }
+        ) },
+        modifier = modifier
     )
 }
 

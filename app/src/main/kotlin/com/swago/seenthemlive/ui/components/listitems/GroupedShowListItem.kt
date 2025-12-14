@@ -65,7 +65,7 @@ fun GroupedShowListItem(
 }
 
 @Composable
-fun LoadingGroupedShowListItem() {
+fun LoadingGroupedShowListItem(modifier: Modifier = Modifier) {
     ListItem(
         overlineContent = { Box(
             modifier = Modifier
@@ -107,6 +107,7 @@ fun LoadingGroupedShowListItem() {
                     .shimmerLoading()
             )
         },
+        modifier = modifier
     )
 }
 

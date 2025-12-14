@@ -53,8 +53,8 @@ fun ShowsListRoute(
 @Composable
 fun ShowsListScreen(
     uiState: ShowsListUiState,
-    onProfileMenuOption: (ProfileMenuItem) -> Unit,
     modifier: Modifier = Modifier,
+    onProfileMenuOption: (ProfileMenuItem) -> Unit = {},
     onAddClick: () -> Unit = {},
     onShowClick: (String) -> Unit = {},
 ) {
@@ -74,33 +74,10 @@ fun ShowsListScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            when (uiState) {
-                ShowsListUiState.Loading -> {
-                    LazyColumn {
-                        items(3) {
-                            LoadingExpandableShowListGroup()
-                        }
-                    }
-                }
-                is ShowsListUiState.Loaded -> {
-                    val groupedShows = uiState.shows.groupBy { it.date }
-                    LazyColumn {
-                        items(groupedShows.keys.toTypedArray()) { date ->
-                            groupedShows[date]?.let { show ->
-                                val artists = show.map { it.artist }.toTypedArray()
-                                ExpandableShowListGroup(
-                                    venueName = show.first().venueName,
-                                    city = show.first().city,
-                                    state = show.first().state,
-                                    date = date,
-                                    artistList = artists,
-                                    onArtistClick = { index -> onShowClick(show[index].id) }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            ShowsList(
+                uiState = uiState,
+                onShowClick = onShowClick
+            )
             if (uiState !is ShowsListUiState.Loading) {
                 FloatingActionButton(
                     onClick = { onAddClick() },
@@ -113,6 +90,59 @@ fun ShowsListScreen(
                         contentDescription = "Add"
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ShowsList(
+    uiState: ShowsListUiState,
+    onShowClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (uiState) {
+        ShowsListUiState.Loading -> {
+            LoadingShowsList(modifier = modifier)
+        }
+        is ShowsListUiState.Loaded -> {
+            LoadedShowsList(
+                uiState = uiState,
+                onShowClick = onShowClick,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingShowsList(modifier: Modifier = Modifier) {
+    LazyColumn(modifier) {
+        items(3) {
+            LoadingExpandableShowListGroup()
+        }
+    }
+}
+
+@Composable
+fun LoadedShowsList(
+    uiState: ShowsListUiState.Loaded,
+    onShowClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val groupedShows = uiState.shows.groupBy { it.date }
+    LazyColumn(modifier = modifier) {
+        items(groupedShows.keys.toTypedArray()) { date ->
+            groupedShows[date]?.let { show ->
+                val artists = show.map { it.artist }.toTypedArray()
+                ExpandableShowListGroup(
+                    venueName = show.first().venueName,
+                    city = show.first().city,
+                    state = show.first().state,
+                    date = date,
+                    artistList = artists,
+                    onArtistClick = { index -> onShowClick(show[index].id) }
+                )
             }
         }
     }
@@ -190,4 +220,10 @@ fun ShowsListScreenPreview() {
         onAddClick = {},
         modifier = Modifier,
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingShowsListScreenPreview() {
+    ShowsListScreen(ShowsListUiState.Loading)
 }

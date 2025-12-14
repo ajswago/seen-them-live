@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
+import com.swago.seenthemlive.ui.components.ListHeaderLabel
 import com.swago.seenthemlive.ui.components.cards.SearchCard
 import com.swago.seenthemlive.ui.components.cards.SearchTerms
 import com.swago.seenthemlive.ui.components.listitems.LoadingShowListItem
@@ -55,22 +56,22 @@ fun SearchRoute(
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     SearchScreen(
-        modifier = modifier,
-        onSearch = { viewModel.performSearch() },
         uiState = viewModel.uiState,
-        onShowClick = onShowClick,
         onBackClick = onBackClick,
+        onSearch = { viewModel.performSearch() },
+        onShowClick = onShowClick,
+        modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    onSearch: ((SearchTerms) -> Unit),
-    modifier: Modifier = Modifier,
     uiState: SearchUiState,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+    onSearch: ((SearchTerms) -> Unit) = {},
     onShowClick: (String) -> Unit = {},
-    onBackClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -90,7 +91,7 @@ fun SearchScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             )
@@ -111,15 +112,7 @@ fun SearchScreen(
                         .padding(horizontal = 8.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.results_list_header),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .padding(start = 24.dp)
-                )
+                ListHeaderLabel(R.string.results_list_header)
                 Spacer(modifier = Modifier.height(8.dp))
                 when (uiState) {
                     SearchUiState.Empty -> {
@@ -130,31 +123,48 @@ fun SearchScreen(
                     }
 
                     SearchUiState.Loading -> {
-                        LazyColumn {
-                            items(3) {
-                                LoadingShowListItem()
-                                HorizontalDivider()
-                            }
-                        }
+                        LoadingSearchResultsList()
                     }
 
                     is SearchUiState.Results -> {
-                        LazyColumn {
-                            items(uiState.shows) { show ->
-                                ShowListItem(
-                                    artistName = show.artist,
-                                    venueName = show.venueName,
-                                    city = show.city,
-                                    state = show.state,
-                                    date = show.date,
-                                    onClick = { onShowClick(show.id) }
-                                )
-                                HorizontalDivider()
-                            }
-                        }
+                        LoadedSearchResultsList(
+                            uiState = uiState,
+                            onShowClick = onShowClick
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun LoadingSearchResultsList(modifier: Modifier = Modifier) {
+    LazyColumn(modifier = modifier) {
+        items(3) {
+            LoadingShowListItem()
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable
+fun LoadedSearchResultsList(
+    uiState: SearchUiState.Results,
+    modifier: Modifier = Modifier,
+    onShowClick: (String) -> Unit = {},
+) {
+    LazyColumn(modifier = modifier) {
+        items(uiState.shows) { show ->
+            ShowListItem(
+                artistName = show.artist,
+                venueName = show.venueName,
+                city = show.city,
+                state = show.state,
+                date = show.date,
+                onClick = { onShowClick(show.id) }
+            )
+            HorizontalDivider()
         }
     }
 }
@@ -208,6 +218,64 @@ fun SearchScreenPreview() {
             }
         },
         uiState = uiState,
+        onShowClick = {},
+        modifier = Modifier
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingSearchScreenPreview() {
+    SearchScreen(SearchUiState.Loading)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmptyResultsSearchScreenPreview() {
+    SearchScreen(SearchUiState.Empty)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadedResultsSearchScreenPreview() {
+    val shows = arrayOf(
+        Show(
+            id = "ID1",
+            venueName = "Metlife Stadium",
+            city = "East Rutherford",
+            state = "NJ",
+            date = SimpleDateFormat(
+                "yyyy-MM-dd", Locale.US
+            ).parse("2023-08-06") ?: Date(),
+            tourName = "M72 World Tour",
+            artist = "Metallica"
+        ),
+        Show(
+            id = "ID2",
+            venueName = "Metlife Stadium",
+            city = "East Rutherford",
+            state = "NJ",
+            date = SimpleDateFormat(
+                "yyyy-MM-dd", Locale.US
+            ).parse("2023-08-04") ?: Date(),
+            tourName = "M72 World Tour",
+            artist = "Metallica"
+        ),
+        Show(
+            id = "ID3",
+            venueName = "Metlife Stadium",
+            city = "East Rutherford",
+            state = "NJ",
+            date = SimpleDateFormat(
+                "yyyy-MM-dd", Locale.US
+            ).parse("2023-05-14") ?: Date(),
+            tourName = "Worldwired Tour",
+            artist = "Metallica"
+        ),
+    )
+    SearchScreen(
+        onSearch = {},
+        uiState = SearchUiState.Results(shows),
         onShowClick = {},
         modifier = Modifier
     )

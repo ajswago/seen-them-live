@@ -53,13 +53,15 @@ fun SelectableShowListGroup(
 }
 
 @Composable
-fun LoadingSelectableShowListGroup() {
-    LoadingExpandableShowHeader()
-    HorizontalDivider()
-    LoadingSelectableArtistListItem()
-    HorizontalDivider()
-    LoadingSelectableArtistListItem()
-    HorizontalDivider()
+fun LoadingSelectableShowListGroup(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        LoadingExpandableShowHeader()
+        HorizontalDivider()
+        LoadingSelectableArtistListItem()
+        HorizontalDivider()
+        LoadingSelectableArtistListItem()
+        HorizontalDivider()
+    }
 }
 
 @Preview(showBackground = true)
@@ -87,7 +89,5 @@ fun SelectableShowListGroupPreview() {
 @Preview(showBackground = true)
 @Composable
 fun LoadingSelectableShowListGroupPreview() {
-    Column {
-        LoadingSelectableShowListGroup()
-    }
+    LoadingSelectableShowListGroup()
 }

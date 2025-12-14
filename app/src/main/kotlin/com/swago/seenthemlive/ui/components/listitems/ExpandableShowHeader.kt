@@ -64,7 +64,7 @@ fun ExpandableShowHeader(
 }
 
 @Composable
-fun LoadingExpandableShowHeader() {
+fun LoadingExpandableShowHeader(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -102,6 +102,7 @@ fun LoadingExpandableShowHeader() {
                     .shimmerLoading()
             )
         },
+        modifier = modifier
     )
 }
 

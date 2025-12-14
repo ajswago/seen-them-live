@@ -60,7 +60,7 @@ fun TrackListItem(
 }
 
 @Composable
-fun LoadingTrackListItemNumbered() {
+fun LoadingTrackListItemNumbered(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -80,12 +80,13 @@ fun LoadingTrackListItemNumbered() {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(2.dp))
                 .shimmerLoading()
-        ) }
+        ) },
+        modifier = modifier
     )
 }
 
 @Composable
-fun LoadingTrackListItemCount() {
+fun LoadingTrackListItemCount(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -109,6 +110,7 @@ fun LoadingTrackListItemCount() {
                     .shimmerLoading()
             )
         },
+        modifier = modifier
     )
 }
 

@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
+import com.swago.seenthemlive.ui.components.ListHeaderLabel
 import com.swago.seenthemlive.ui.components.cards.LoadingShowCard
 import com.swago.seenthemlive.ui.components.cards.ShowCard
 import com.swago.seenthemlive.ui.components.listitems.ArtistListItem
@@ -75,78 +76,24 @@ fun ShowRoute(
 @Composable
 fun ShowScreen(
     uiState: ShowUiState,
-    onEditClicked: () -> Unit,
-    onToggleSaved: (String) -> Unit,
-    onArtistClicked: (String) -> Unit,
-    onFindMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    showEdit: Boolean = false,
+    onBackClick: () -> Unit = {},
     showToggleSaved: Boolean = true,
-    onBackClick: () -> Unit = {}
+    showEdit: Boolean = false,
+    onToggleSaved: (String) -> Unit = {},
+    onEditClicked: () -> Unit = {},
+    onArtistClicked: (String) -> Unit = {},
+    onFindMoreClicked: () -> Unit = {},
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.show_title),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onBackClick() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = stringResource(R.string.back_button_description)
-                        )
-                    }
-                },
-                actions = {
-                    if (showEdit) {
-                        IconButton(onClick = { onEditClicked() }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Edit,
-                                contentDescription = stringResource(R.string.edit_button_description)
-                            )
-                        }
-                    }
-                    if (showToggleSaved) {
-                        when (uiState) {
-                            ShowUiState.Loading -> {
-                                IconButton(onClick = {}, enabled = false) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.BookmarkAdd,
-                                        contentDescription = stringResource(R.string.add_button_description)
-                                    )
-                                }
-                            }
-                            is ShowUiState.Loaded -> {
-                                val show = uiState.show
-                                if (!show.saved) {
-                                    IconButton(onClick = { onToggleSaved(show.id) }) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.BookmarkAdd,
-                                            contentDescription = stringResource(R.string.add_button_description)
-                                        )
-                                    }
-                                } else {
-                                    IconButton(onClick = { onToggleSaved(show.id) }) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.BookmarkRemove,
-                                            contentDescription = stringResource(R.string.remove_button_description)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            )
-        },
+        topBar = { ShowAppBar(
+            uiState = uiState,
+            onBackClick = onBackClick,
+            showToggleSaved = showToggleSaved,
+            showEdit = showEdit,
+            onToggleSaved = onToggleSaved,
+            onEditClicked = onEditClicked
+        ) },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Box(
@@ -156,110 +103,164 @@ fun ShowScreen(
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column {
-                when (uiState) {
-                    ShowUiState.Loading -> {
-                        LoadingShowCard()
-                    }
-                    is ShowUiState.Loaded -> {
-                        val show = uiState.show
-                        ShowCard(
-                            artistName = show.artist,
-                            tourName = show.tourName,
-                            venueName = show.venueName,
-                            city = show.city,
-                            state = show.state,
-                            date = show.date,
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                        )
-                    }
-                }
+                ShowCard(uiState)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.also_at_show_header),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .padding(start = 24.dp)
-                )
+                ListHeaderLabel(R.string.also_at_show_header)
                 Spacer(modifier = Modifier.height(8.dp))
-                when (uiState) {
-                    ShowUiState.Loading -> {
-                        LazyColumn {
-                            items(2) {
-                                LoadingArtistListItemSimple()
-                                HorizontalDivider()
-                            }
-                        }
-                        FindMoreListItem(
-                            enabled = false,
-                            onClick = {},
-                            modifier = Modifier
-                                .height(55.dp)
-                        )
-                        HorizontalDivider()
-                    }
-                    is ShowUiState.Loaded -> {
-                        val linkedShows = uiState.linkedShows
-                        LazyColumn {
-                            items(linkedShows) { show ->
-                                ArtistListItem(
-                                    artistName = show.artist,
-                                    onClick = { onArtistClicked(show.id) },
-                                    modifier = Modifier
-                                        .height(55.dp)
-                                )
-                                HorizontalDivider()
-                            }
-                        }
-                        FindMoreListItem(
-                            onClick = onFindMoreClicked,
-                            modifier = Modifier
-                                .height(55.dp)
-                        )
-                        HorizontalDivider()
-                    }
-                }
+                LinkedShowsList(
+                    uiState = uiState,
+                    onArtistClicked = onArtistClicked,
+                    onFindMoreClicked = onFindMoreClicked
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.setlist_header),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .padding(start = 24.dp)
-                )
+                ListHeaderLabel(R.string.setlist_header)
                 Spacer(modifier = Modifier.height(8.dp))
-                when (uiState) {
-                    ShowUiState.Loading -> {
-                        LazyColumn {
-                            items(4) {
-                                LoadingTrackListItemNumbered()
-                                HorizontalDivider()
-                            }
-                        }
-                    }
-                    is ShowUiState.Loaded -> {
-                        val tracks = uiState.tracks
-                        LazyColumn {
-                            items(tracks) { track ->
-                                TrackListItem(
-                                    trackName = track.trackName,
-                                    trackNumber = track.trackNumber,
-                                    coverArtistName = track.coverArtistName,
-                                    isTapeTrack = track.isTapeTrack,
-                                    modifier = Modifier
-                                        .height(55.dp)
-                                )
-                                HorizontalDivider()
-                            }
-                        }
-                    }
-                }
+                TrackList(uiState = uiState)
             }
+        }
+    }
+}
+
+@Composable
+fun ShowCard(
+    uiState: ShowUiState,
+    modifier: Modifier = Modifier
+) {
+    when (uiState) {
+        ShowUiState.Loading -> {
+            LoadingShowCard()
+        }
+        is ShowUiState.Loaded -> {
+            val show = uiState.show
+            ShowCard(
+                artistName = show.artist,
+                tourName = show.tourName,
+                venueName = show.venueName,
+                city = show.city,
+                state = show.state,
+                date = show.date,
+                modifier = modifier
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun LinkedShowsList(
+    uiState: ShowUiState,
+    onArtistClicked: (String) -> Unit,
+    onFindMoreClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    when (uiState) {
+        ShowUiState.Loading -> {
+            LoadingLinkedShowsList(modifier = modifier)
+        }
+        is ShowUiState.Loaded -> {
+            LoadedLinkedShowsList(
+                uiState = uiState,
+                onArtistClicked = onArtistClicked,
+                onFindMoreClicked = onFindMoreClicked,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingLinkedShowsList(
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
+        items(2) {
+            LoadingArtistListItemSimple()
+            HorizontalDivider()
+        }
+    }
+    FindMoreListItem(
+        enabled = false,
+        onClick = {},
+        modifier = Modifier
+            .height(55.dp)
+    )
+    HorizontalDivider()
+}
+
+@Composable
+fun LoadedLinkedShowsList(
+    uiState: ShowUiState.Loaded,
+    modifier: Modifier = Modifier,
+    onArtistClicked: (String) -> Unit = {},
+    onFindMoreClicked: () -> Unit = {},
+) {
+    val linkedShows = uiState.linkedShows
+    LazyColumn(modifier = modifier) {
+        items(linkedShows) { show ->
+            ArtistListItem(
+                artistName = show.artist,
+                onClick = { onArtistClicked(show.id) },
+                modifier = Modifier
+                    .height(55.dp)
+            )
+            HorizontalDivider()
+        }
+    }
+    FindMoreListItem(
+        onClick = onFindMoreClicked,
+        modifier = Modifier
+            .height(55.dp)
+    )
+    HorizontalDivider()
+}
+
+@Composable
+fun TrackList(
+    uiState: ShowUiState,
+    modifier: Modifier = Modifier
+) {
+    when (uiState) {
+        ShowUiState.Loading -> {
+            LoadingTrackList(modifier = modifier)
+        }
+        is ShowUiState.Loaded -> {
+            LoadedTrackList(
+                uiState = uiState,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingTrackList(
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
+        items(4) {
+            LoadingTrackListItemNumbered()
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable
+fun LoadedTrackList(
+    uiState: ShowUiState.Loaded,
+    modifier: Modifier = Modifier
+) {
+    val tracks = uiState.tracks
+    LazyColumn {
+        items(tracks) { track ->
+            TrackListItem(
+                trackName = track.trackName,
+                trackNumber = track.trackNumber,
+                coverArtistName = track.coverArtistName,
+                isTapeTrack = track.isTapeTrack,
+                modifier = Modifier
+                    .height(55.dp)
+            )
+            HorizontalDivider()
         }
     }
 }

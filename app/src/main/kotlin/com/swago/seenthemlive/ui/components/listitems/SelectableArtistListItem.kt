@@ -41,7 +41,7 @@ fun SelectableArtistListItem(
 }
 
 @Composable
-fun LoadingSelectableArtistListItem() {
+fun LoadingSelectableArtistListItem(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = { Box(
             modifier = Modifier
@@ -64,6 +64,7 @@ fun LoadingSelectableArtistListItem() {
                     .shimmerLoading()
             )
         },
+        modifier = modifier
     )
 }
 
