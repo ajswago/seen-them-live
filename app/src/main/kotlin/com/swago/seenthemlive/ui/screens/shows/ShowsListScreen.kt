@@ -34,6 +34,7 @@ import java.util.Locale
 
 @Composable
 fun ShowsListRoute(
+    onProfileMenuOption: (ProfileMenuItem) -> Unit,
     onAddClick: () -> Unit,
     onShowClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -42,7 +43,7 @@ fun ShowsListRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ShowsListScreen(
         uiState = uiState,
-        onProfileMenuOption = {},
+        onProfileMenuOption = onProfileMenuOption,
         onAddClick = onAddClick,
         onShowClick = onShowClick,
         modifier = modifier,

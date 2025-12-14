@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,31 +22,50 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Artist
+import com.swago.seenthemlive.models.Profile
+import com.swago.seenthemlive.ui.components.ListHeaderLabel
+import com.swago.seenthemlive.ui.components.cards.LoadingProfileCard
 import com.swago.seenthemlive.ui.components.cards.ProfileCard
 import com.swago.seenthemlive.ui.components.listitems.ArtistListItem
+import com.swago.seenthemlive.ui.components.listitems.LoadingArtistListItemDetailed
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Composable
+fun ProfileRoute(
+    onBackClick: () -> Unit,
+    onArtistClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    ProfileScreen(
+        uiState = uiState,
+        onArtistClick = onArtistClick,
+        onBackClick = onBackClick,
+        modifier = modifier
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    profileName: String,
-    email: String,
-    showCount: Int,
-    artistCount: Int,
-    venueCount: Int,
-    topArtists: Array<Artist>,
-    onArtistClicked: (String) -> Unit,
-    modifier: Modifier = Modifier
+    uiState: ProfileUiState,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+    onArtistClick: (String) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -59,7 +78,7 @@ fun ProfileScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_description)
@@ -81,38 +100,94 @@ fun ProfileScreen(
         ) {
             Column {
                 ProfileCard(
-                    profileName = profileName,
-                    email = email,
-                    showCount = showCount,
-                    artistCount = artistCount,
-                    venueCount = venueCount,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
+                    uiState = uiState
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Top Artists",
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .padding(start = 24.dp)
-                )
+                ListHeaderLabel("Top Artists")
                 Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn {
-                    items(topArtists) { artist ->
-                        ArtistListItem(
-                            artistName = artist.name,
-                            lastShow = artist.lastShow,
-                            showCount = artist.showCount,
-                            showAvatar = true,
-                            onClick = { onArtistClicked(artist.id) }
-                        )
-                        HorizontalDivider()
-                    }
-                }
+                ArtistsList(
+                    uiState = uiState,
+                    onArtistClicked = onArtistClick
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun ProfileCard(
+    uiState: ProfileUiState,
+    modifier: Modifier = Modifier
+) {
+    when (uiState) {
+        ProfileUiState.Loading -> {
+            LoadingProfileCard(modifier = modifier
+                .padding(horizontal = 8.dp))
+        }
+        is ProfileUiState.Loaded -> {
+            val profile = uiState.profile
+            ProfileCard(
+                profileName = profile.name,
+                email = profile.email,
+                showCount = profile.showCount,
+                artistCount = profile.artistCount,
+                venueCount = profile.venueCount,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun ArtistsList(
+    uiState: ProfileUiState,
+    onArtistClicked: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    when (uiState) {
+        ProfileUiState.Loading -> {
+            LoadingArtistsList(modifier = modifier)
+        }
+        is ProfileUiState.Loaded -> {
+            LoadedArtistsList(
+                uiState = uiState,
+                onArtistClicked = onArtistClicked,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingArtistsList(
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
+        items(4) {
+            LoadingArtistListItemDetailed()
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable
+fun LoadedArtistsList(
+    uiState: ProfileUiState.Loaded,
+    modifier: Modifier = Modifier,
+    onArtistClicked: (String) -> Unit = {},
+) {
+    val artists = uiState.artists
+    LazyColumn(modifier = modifier) {
+        items(artists) { artist ->
+            ArtistListItem(
+                artistName = artist.name,
+                lastShow = artist.lastShow,
+                showCount = artist.showCount,
+                showAvatar = true,
+                onClick = { onArtistClicked(artist.id) }
+            )
+            HorizontalDivider()
         }
     }
 }
@@ -154,13 +229,26 @@ fun ProfileScreenPreview() {
             showCount = 4
         )
     )
-    ProfileScreen(
-        profileName = "Anthony Swago",
+    val profile = Profile(
+        name = "Anthony Swago",
         email = "ajswago@gmail.com",
         showCount = 72,
         venueCount = 34,
         artistCount = 78,
-        topArtists = artists,
-        onArtistClicked = {}
+    )
+    ProfileScreen(
+        uiState = ProfileUiState.Loaded(
+            profile = profile,
+            artists = artists
+        ),
+        onArtistClick = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingProfileScreenPreview() {
+    ProfileScreen(
+        uiState = ProfileUiState.Loading
     )
 }

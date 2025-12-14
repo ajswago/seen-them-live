@@ -22,11 +22,12 @@ import com.swago.seenthemlive.ui.components.ProfileMenuItem
 
 @Composable
 fun MapRoute(
+    onProfileMenuOption: (ProfileMenuItem) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MapViewModel = hiltViewModel()
 ) {
     MapScreen(
-        onProfileMenuOption = {},
+        onProfileMenuOption = onProfileMenuOption,
         modifier = modifier
     )
 }
