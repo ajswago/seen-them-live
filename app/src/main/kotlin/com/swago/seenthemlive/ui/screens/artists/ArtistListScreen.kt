@@ -32,6 +32,7 @@ import java.util.Locale
 
 @Composable
 fun ArtistListRoute(
+    onArtistClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ArtistListViewModel = hiltViewModel()
 ) {
@@ -39,7 +40,7 @@ fun ArtistListRoute(
     ArtistListScreen(
         uiState = uiState,
         onProfileMenuOption = {},
-        onArtistClicked = {},
+        onArtistClicked = onArtistClick,
         modifier = modifier,
     )
 }

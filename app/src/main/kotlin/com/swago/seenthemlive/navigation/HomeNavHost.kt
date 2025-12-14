@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.swago.seenthemlive.ui.home.HomeState
 import com.swago.seenthemlive.ui.screens.artists.artistListScreen
+import com.swago.seenthemlive.ui.screens.artists.artistScreen
+import com.swago.seenthemlive.ui.screens.artists.navigateToArtist
 import com.swago.seenthemlive.ui.screens.map.mapScreen
 import com.swago.seenthemlive.ui.screens.search.navigateToSearch
 import com.swago.seenthemlive.ui.screens.search.searchScreen
@@ -28,12 +30,15 @@ fun HomeNavHost(
             onAddClick = navController::navigateToSearch,
             onShowClick = { navController.navigateToShow(it) }
         )
-        artistListScreen()
+        artistListScreen(
+            onArtistClick = { navController.navigateToArtist(it) }
+        )
         mapScreen()
         searchScreen(
             onShowClick = { navController.navigateToShow(it) },
             onBackClick = navController::popBackStack
         )
         showScreen(onBackClick = navController::popBackStack)
+        artistScreen(onBackClick = navController::popBackStack)
     }
 }

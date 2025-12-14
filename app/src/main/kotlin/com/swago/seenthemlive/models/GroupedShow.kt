@@ -7,5 +7,6 @@ data class GroupedShow(
     val venueName: String,
     val city: String,
     val state: String,
-    val date: Date
+    val date: Date,
+    val artists: Array<String>
 )

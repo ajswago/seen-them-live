@@ -11,8 +11,12 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToArtistList(navOptions: NavOptions) =
     navigate(route = ArtistListRoute, navOptions)
 
-fun NavGraphBuilder.artistListScreen() {
+fun NavGraphBuilder.artistListScreen(
+    onArtistClick: (String) -> Unit,
+) {
     composable<ArtistListRoute> {
-        ArtistListRoute()
+        ArtistListRoute(
+            onArtistClick = onArtistClick
+        )
     }
 }
