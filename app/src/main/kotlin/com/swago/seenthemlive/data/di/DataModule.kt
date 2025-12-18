@@ -1,7 +1,11 @@
 package com.swago.seenthemlive.data.di
 
+import com.swago.seenthemlive.data.repository.FirebaseRepository
+import com.swago.seenthemlive.data.repository.NetworkFirebaseRepository
 import com.swago.seenthemlive.data.util.ConnectivityManagerNetworkMonitor
 import com.swago.seenthemlive.data.util.NetworkMonitor
+import com.swago.seenthemlive.network.FakeFirebaseApiService
+import com.swago.seenthemlive.network.FirebaseApiService
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,4 +18,14 @@ abstract class DataModule {
     internal abstract fun bindsNetworkMonitor(
         networkMonitor: ConnectivityManagerNetworkMonitor,
     ): NetworkMonitor
+
+    @Binds
+    internal abstract fun bindsFirebaseRepository(
+        firebaseRepository: NetworkFirebaseRepository
+    ): FirebaseRepository
+
+    @Binds
+    internal abstract fun bindsFirebaseApiService(
+        firebaseApiService: FakeFirebaseApiService
+    ): FirebaseApiService
 }

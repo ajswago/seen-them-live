@@ -152,7 +152,7 @@ fun LoadedShowsList(
 @Preview(showBackground = true)
 @Composable
 fun ShowsListScreenPreview() {
-    val shows = arrayOf(
+    val shows = listOf(
         Show(
             id="ID1",
             venueName = "Capital One Hall",
