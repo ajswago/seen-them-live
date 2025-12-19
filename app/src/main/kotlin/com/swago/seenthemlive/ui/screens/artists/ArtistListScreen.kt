@@ -169,7 +169,7 @@ fun LoadedArtistList(
 @Preview(showBackground = true)
 @Composable
 fun LoadedArtistListPreview() {
-    val artists = arrayOf(
+    val artists = listOf(
         Artist(
             id = "ID1",
             name = "AC/DC",
@@ -220,7 +220,7 @@ fun LoadingArtistListPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ArtistListScreenPreview() {
-    val artists = arrayOf(
+    val artists = listOf(
         Artist(
             id = "ID1",
             name = "AC/DC",

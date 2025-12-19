@@ -107,10 +107,10 @@ fun UnsavedShowAppBarPreview() {
         artist = "DragonForce",
         saved = false
     )
-    val tracks = arrayOf(
+    val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
     )
-    val linkedShows = arrayOf<Show>()
+    val linkedShows = listOf<Show>()
     ShowAppBar(
         uiState = ShowUiState.Loaded(
             show,
@@ -140,10 +140,10 @@ fun SavedShowAppBarPreview() {
         artist = "DragonForce",
         saved = true
     )
-    val tracks = arrayOf(
+    val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
     )
-    val linkedShows = arrayOf<Show>()
+    val linkedShows = listOf<Show>()
     ShowAppBar(
         uiState = ShowUiState.Loaded(
             show,

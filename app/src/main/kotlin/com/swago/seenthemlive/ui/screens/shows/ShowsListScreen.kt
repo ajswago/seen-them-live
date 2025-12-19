@@ -133,7 +133,7 @@ fun LoadedShowsList(
 ) {
     val groupedShows = uiState.shows.groupBy { it.date }
     LazyColumn(modifier = modifier) {
-        items(groupedShows.keys.toTypedArray()) { date ->
+        items(groupedShows.keys.toTypedArray().sortedDescending()) { date ->
             groupedShows[date]?.let { show ->
                 val artists = show.map { it.artist }.toTypedArray()
                 ExpandableShowListGroup(

@@ -266,7 +266,7 @@ fun ShowScreenPreview() {
         tourName = "Warp Speed Warriors",
         artist = "DragonForce"
     )
-    val tracks = arrayOf(
+    val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1),
         Track("Cry Thunder", trackNumber = 2),
         Track("Power of the Triforce", trackNumber = 3),
@@ -275,7 +275,7 @@ fun ShowScreenPreview() {
         Track("My Heart Will Go On", trackNumber = 6, coverArtistName = "Celine Dion"),
         Track("Through the Fire and Flames", trackNumber = 7)
     )
-    val linkedShows = arrayOf(
+    val linkedShows = listOf(
         Show(
             id = "ID1",
             artist = "Nekrogoblikon",

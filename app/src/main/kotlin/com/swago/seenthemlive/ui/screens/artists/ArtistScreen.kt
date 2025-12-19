@@ -189,7 +189,7 @@ fun LoadedShowsList(
 ) {
     LazyColumn(modifier = modifier) {
         val shows = uiState.shows
-        items(shows) { show ->
+        items(shows.sortedByDescending { it.date }) { show ->
             GroupedShowListItem(
                 venueName = show.venueName,
                 city = show.city,
@@ -240,7 +240,7 @@ fun LoadedTrackList(
 ) {
     val tracks = uiState.tracks
     LazyColumn(modifier = modifier) {
-        items(tracks) { track ->
+        items(tracks.sortedBy{ it.trackName }.sortedByDescending { it.trackCount }) { track ->
             TrackListItem(
                 trackName = track.trackName,
                 trackCount = track.trackCount,
@@ -254,7 +254,7 @@ fun LoadedTrackList(
 @Preview(showBackground = true)
 @Composable
 fun ArtistScreenPreview() {
-    val shows = arrayOf(
+    val shows = listOf(
         GroupedShow(
             id = "ID1",
             venueName = "Jiffy Lube Live",
@@ -276,7 +276,7 @@ fun ArtistScreenPreview() {
             arrayOf("Megadeth", "Trivium")
         )
     )
-    val tracks = arrayOf(
+    val tracks = listOf(
         Track("Ruin", trackCount = 5),
         Track("Walk With Me in Hell", trackCount = 5),
         Track("Now You've Got Something to Die For", trackCount = 5),
