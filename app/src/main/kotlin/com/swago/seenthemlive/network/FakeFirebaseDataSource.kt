@@ -167,7 +167,10 @@ object FakeFirebaseDataSource {
         Track("The Last Dragonborn", trackNumber = 4),
         Track("Doomsday Party", trackNumber = 5),
         Track("My Heart Will Go On", trackNumber = 6, coverArtistName = "Celine Dion"),
-        Track("Through the Fire and Flames", trackNumber = 7)
+    )
+
+    val encoreTracksForShow = listOf(
+        Track("Through the Fire and Flames", trackNumber = 1)
     )
 
     val relatedShowsForShow = listOf(

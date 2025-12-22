@@ -17,6 +17,7 @@ interface FirebaseApiService {
     suspend fun getTracksForArtist(artistId: String): List<Track>
     suspend fun getShow(showId: String): Show
     suspend fun getTracksForShow(showId: String): List<Track>
+    suspend fun getEncoreTracksForShow(showId: String): List<Track>
     suspend fun getLinkedShows(showId: String): List<Show>
     suspend fun getProfile(): Profile
     suspend fun getTopArtistsForProfile(): List<Artist>
@@ -48,6 +49,10 @@ class NetworkFirebaseApiService : FirebaseApiService {
     }
 
     override suspend fun getTracksForShow(showId: String): List<Track> {
+        return listOf()
+    }
+
+    override suspend fun getEncoreTracksForShow(showId: String): List<Track> {
         return listOf()
     }
 
@@ -91,6 +96,10 @@ class FakeFirebaseApiService @Inject constructor() : FirebaseApiService {
 
     override suspend fun getTracksForShow(showId: String): List<Track> {
         return FakeFirebaseDataSource.tracksForShow
+    }
+
+    override suspend fun getEncoreTracksForShow(showId: String): List<Track> {
+        return FakeFirebaseDataSource.encoreTracksForShow
     }
 
     override suspend fun getLinkedShows(showId: String): List<Show> {

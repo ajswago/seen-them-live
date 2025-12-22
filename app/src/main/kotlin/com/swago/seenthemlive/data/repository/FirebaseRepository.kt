@@ -16,6 +16,7 @@ interface FirebaseRepository {
     suspend fun getTracksForArtist(artistId: String): List<Track>
     suspend fun getShow(showId: String): Show
     suspend fun getTracksForShow(showId: String): List<Track>
+    suspend fun getEncoreTracksForShow(showId: String): List<Track>
     suspend fun getLinkedShows(showId: String): List<Show>
     suspend fun getProfile(): Profile
     suspend fun getTopArtistsForProfile(): List<Artist>
@@ -31,6 +32,7 @@ class NetworkFirebaseRepository @Inject constructor(
     override suspend fun getTracksForArtist(artistId: String): List<Track> = firebaseApiService.getTracksForArtist(artistId)
     override suspend fun getShow(showId: String): Show = firebaseApiService.getShow(showId)
     override suspend fun getTracksForShow(showId: String): List<Track> = firebaseApiService.getTracksForShow(showId)
+    override suspend fun getEncoreTracksForShow(showId: String): List<Track> = firebaseApiService.getEncoreTracksForShow(showId)
     override suspend fun getLinkedShows(showId: String): List<Show> = firebaseApiService.getLinkedShows(showId)
     override suspend fun getProfile(): Profile = firebaseApiService.getProfile()
     override suspend fun getTopArtistsForProfile(): List<Artist> = firebaseApiService.getTopArtistsForProfile()

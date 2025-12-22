@@ -1,8 +1,8 @@
-package com.swago.seenthemlive.ui.screens.shows
+package com.swago.seenthemlive.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.swago.seenthemlive.data.repository.FirebaseRepository
+import com.swago.seenthemlive.data.repository.SetlistFmRepository
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
 import dagger.assisted.Assisted
@@ -18,58 +18,51 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.time.delay
 import java.time.Duration
 
-@HiltViewModel(assistedFactory = ShowViewModel.Factory::class)
-class ShowViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = SearchResultViewModel.Factory::class)
+class SearchResultViewModel @AssistedInject constructor(
     @Assisted val showId: String,
-    firebaseRepository: FirebaseRepository
+    setlistFmRepository: SetlistFmRepository
 ) : ViewModel() {
 
     val showFlow: Flow<Show> = flow {
         delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getShow(showId = showId))
+        emit(setlistFmRepository.getShow(showId = showId))
     }
 
     val tracksFlow: Flow<List<Track>> = flow {
         delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getTracksForShow(showId = showId))
+        emit(setlistFmRepository.getTracksForShow(showId = showId))
     }
 
     val encoreTracksFlow: Flow<List<Track>> = flow {
         delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getEncoreTracksForShow(showId = showId))
+        emit(setlistFmRepository.getEncoreTracksForShow(showId = showId))
     }
 
-    val linkedShowsFlow: Flow<List<Show>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getLinkedShows(showId = showId))
-    }
-
-    val uiState: StateFlow<ShowUiState> = combine(
+    val uiState: StateFlow<SearchResultUiState> = combine(
         showFlow,
         tracksFlow,
         encoreTracksFlow,
-        linkedShowsFlow,
-        ShowUiState::Loaded
+        SearchResultUiState::Loaded
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ShowUiState.Loading
+        initialValue = SearchResultUiState.Loading
     )
 
     @AssistedFactory
     interface Factory {
         fun create(
             showId: String,
-        ): ShowViewModel
+        ): SearchResultViewModel
     }
 }
 
-sealed interface ShowUiState {
-    data object Loading : ShowUiState
+sealed interface SearchResultUiState {
+    data object Loading : SearchResultUiState
     data class Loaded(
         val show: Show,
         val tracks: List<Track>,
         val encoreTracks: List<Track>,
-        val linkedShows: List<Show>
-    ) : ShowUiState
+    ) : SearchResultUiState
 }

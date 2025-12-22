@@ -1,10 +1,9 @@
-package com.swago.seenthemlive.ui.screens.shows
+package com.swago.seenthemlive.ui.screens.search
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material.icons.outlined.BookmarkRemove
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,17 +25,15 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowAppBar(
-    uiState: ShowUiState,
+fun SearchResultAppBar(
+    uiState: SearchResultUiState,
     onBackClick: () -> Unit,
     showToggleSaved: Boolean,
-    showEdit: Boolean,
     onToggleSaved: (String) -> Unit,
-    onEditClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val enabled = uiState !is ShowUiState.Loading
-    val show = (uiState as? ShowUiState.Loaded).let { it?.show }
+    val enabled = uiState !is SearchResultUiState.Loading
+    val show = (uiState as? SearchResultUiState.Loaded).let { it?.show }
     val showSaved = show?.saved ?: false
     TopAppBar(
         title = {
@@ -55,14 +52,6 @@ fun ShowAppBar(
             }
         },
         actions = {
-            if (showEdit) {
-                IconButton(onClick = { onEditClicked() }, enabled = enabled) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = stringResource(R.string.edit_button_description)
-                    )
-                }
-            }
             if (showToggleSaved) {
                 IconButton(onClick = { show?.let{onToggleSaved(it.id)} }, enabled = enabled) {
                     Icon(
@@ -81,20 +70,18 @@ fun ShowAppBar(
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingShowAppBarPreview() {
-    ShowAppBar(
-        uiState = ShowUiState.Loading,
+fun LoadingSearchResultAppBarPreview() {
+    SearchResultAppBar(
+        uiState = SearchResultUiState.Loading,
         onBackClick = {},
         showToggleSaved = true,
-        showEdit = false,
         onToggleSaved = {},
-        onEditClicked = {}
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun UnsavedShowAppBarPreview() {
+fun UnsavedSearchResultAppBarPreview() {
     val show = Show(
         id = "ID1",
         venueName = "The Fillmore Silver Spring",
@@ -110,26 +97,21 @@ fun UnsavedShowAppBarPreview() {
     val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
     )
-    val encore = listOf<Track>()
-    val linkedShows = listOf<Show>()
-    ShowAppBar(
-        uiState = ShowUiState.Loaded(
+    SearchResultAppBar(
+        uiState = SearchResultUiState.Loaded(
             show,
             tracks,
-            encore,
-            linkedShows
+            listOf()
         ),
         onBackClick = {},
         showToggleSaved = true,
-        showEdit = false,
         onToggleSaved = {},
-        onEditClicked = {}
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun SavedShowAppBarPreview() {
+fun SavedSearchResultAppBarPreview() {
     val show = Show(
         id = "ID1",
         venueName = "The Fillmore Silver Spring",
@@ -145,18 +127,14 @@ fun SavedShowAppBarPreview() {
     val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
     )
-    val linkedShows = listOf<Show>()
-    ShowAppBar(
-        uiState = ShowUiState.Loaded(
+    SearchResultAppBar(
+        uiState = SearchResultUiState.Loaded(
             show,
             tracks,
-            listOf(),
-            linkedShows
+            listOf()
         ),
         onBackClick = {},
         showToggleSaved = true,
-        showEdit = true,
         onToggleSaved = {},
-        onEditClicked = {}
     )
 }

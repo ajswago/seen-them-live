@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens.shows
+package com.swago.seenthemlive.ui.screens.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -26,9 +26,6 @@ import com.swago.seenthemlive.models.Track
 import com.swago.seenthemlive.ui.components.ListHeaderLabel
 import com.swago.seenthemlive.ui.components.cards.LoadingShowCard
 import com.swago.seenthemlive.ui.components.cards.ShowCard
-import com.swago.seenthemlive.ui.components.listitems.ArtistListItem
-import com.swago.seenthemlive.ui.components.listitems.FindMoreListItem
-import com.swago.seenthemlive.ui.components.listitems.LoadingArtistListItemSimple
 import com.swago.seenthemlive.ui.components.listitems.LoadingTrackListItemNumbered
 import com.swago.seenthemlive.ui.components.listitems.TrackListItem
 import java.text.SimpleDateFormat
@@ -36,23 +33,20 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun ShowRoute(
+fun SearchResultRoute(
     showId: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ShowViewModel = hiltViewModel<ShowViewModel, ShowViewModel.Factory>(
+    viewModel: SearchResultViewModel = hiltViewModel<SearchResultViewModel, SearchResultViewModel.Factory>(
         key = showId,
     ) { factory ->
         factory.create(showId)
     }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    ShowScreen(
+    SearchResultScreen(
         uiState = uiState,
-        onEditClicked = {},
         onToggleSaved = {},
-        onArtistClicked = {},
-        onFindMoreClicked = {},
         onBackClick = onBackClick,
         modifier = modifier,
     )
@@ -60,25 +54,19 @@ fun ShowRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowScreen(
-    uiState: ShowUiState,
+fun SearchResultScreen(
+    uiState: SearchResultUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     showToggleSaved: Boolean = true,
-    showEdit: Boolean = false,
     onToggleSaved: (String) -> Unit = {},
-    onEditClicked: () -> Unit = {},
-    onArtistClicked: (String) -> Unit = {},
-    onFindMoreClicked: () -> Unit = {},
 ) {
     Scaffold(
-        topBar = { ShowAppBar(
+        topBar = { SearchResultAppBar(
             uiState = uiState,
             onBackClick = onBackClick,
             showToggleSaved = showToggleSaved,
-            showEdit = showEdit,
             onToggleSaved = onToggleSaved,
-            onEditClicked = onEditClicked
         ) },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
@@ -88,20 +76,11 @@ fun ShowScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
             ) {
                 ShowCard(uiState)
-                Spacer(modifier = Modifier.height(16.dp))
-                ListHeaderLabel(R.string.also_at_show_header)
-                Spacer(modifier = Modifier.height(8.dp))
-                LinkedShowsList(
-                    uiState = uiState,
-                    onArtistClicked = onArtistClicked,
-                    onFindMoreClicked = onFindMoreClicked
-                )
                 Spacer(modifier = Modifier.height(16.dp))
                 ListHeaderLabel(R.string.setlist_header)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -115,15 +94,15 @@ fun ShowScreen(
 
 @Composable
 fun ShowCard(
-    uiState: ShowUiState,
+    uiState: SearchResultUiState,
     modifier: Modifier = Modifier
 ) {
     when (uiState) {
-        ShowUiState.Loading -> {
+        SearchResultUiState.Loading -> {
             LoadingShowCard(modifier = modifier
                 .padding(horizontal = 8.dp))
         }
-        is ShowUiState.Loaded -> {
+        is SearchResultUiState.Loaded -> {
             val show = uiState.show
             ShowCard(
                 artistName = show.artist,
@@ -140,83 +119,15 @@ fun ShowCard(
 }
 
 @Composable
-fun LinkedShowsList(
-    uiState: ShowUiState,
-    onArtistClicked: (String) -> Unit,
-    onFindMoreClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    when (uiState) {
-        ShowUiState.Loading -> {
-            LoadingLinkedShowsList(modifier = modifier)
-        }
-        is ShowUiState.Loaded -> {
-            LoadedLinkedShowsList(
-                uiState = uiState,
-                onArtistClicked = onArtistClicked,
-                onFindMoreClicked = onFindMoreClicked,
-                modifier = modifier
-            )
-        }
-    }
-}
-
-@Composable
-fun LoadingLinkedShowsList(
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
-        for (i in 1..2) {
-            LoadingArtistListItemSimple()
-            HorizontalDivider()
-        }
-    }
-    FindMoreListItem(
-        enabled = false,
-        onClick = {},
-        modifier = Modifier
-            .height(55.dp)
-    )
-    HorizontalDivider()
-}
-
-@Composable
-fun LoadedLinkedShowsList(
-    uiState: ShowUiState.Loaded,
-    modifier: Modifier = Modifier,
-    onArtistClicked: (String) -> Unit = {},
-    onFindMoreClicked: () -> Unit = {},
-) {
-    val linkedShows = uiState.linkedShows
-    Column(modifier = modifier) {
-        for(show in linkedShows) {
-            ArtistListItem(
-                artistName = show.artist,
-                onClick = { onArtistClicked(show.id) },
-                modifier = Modifier
-                    .height(55.dp)
-            )
-            HorizontalDivider()
-        }
-    }
-    FindMoreListItem(
-        onClick = onFindMoreClicked,
-        modifier = Modifier
-            .height(55.dp)
-    )
-    HorizontalDivider()
-}
-
-@Composable
 fun TrackList(
-    uiState: ShowUiState,
+    uiState: SearchResultUiState,
     modifier: Modifier = Modifier
 ) {
     when (uiState) {
-        ShowUiState.Loading -> {
+        SearchResultUiState.Loading -> {
             LoadingTrackList(modifier = modifier)
         }
-        is ShowUiState.Loaded -> {
+        is SearchResultUiState.Loaded -> {
             LoadedTrackList(
                 uiState = uiState,
                 modifier = modifier
@@ -230,7 +141,7 @@ fun LoadingTrackList(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        for(i in 1..4) {
+        for (i in 1..4) {
             LoadingTrackListItemNumbered()
             HorizontalDivider()
         }
@@ -239,7 +150,7 @@ fun LoadingTrackList(
 
 @Composable
 fun LoadedTrackList(
-    uiState: ShowUiState.Loaded,
+    uiState: SearchResultUiState.Loaded,
     modifier: Modifier = Modifier
 ) {
     val tracks = uiState.tracks
@@ -260,10 +171,10 @@ fun LoadedTrackList(
 
 @Composable
 fun EncoreTrackList(
-    uiState: ShowUiState,
+    uiState: SearchResultUiState,
     modifier: Modifier = Modifier
 ) {
-    if (uiState is ShowUiState.Loaded && uiState.encoreTracks.isNotEmpty()) {
+    if (uiState is SearchResultUiState.Loaded && uiState.encoreTracks.isNotEmpty()) {
         val tracks = uiState.encoreTracks
         Column(modifier = modifier) {
             ListHeaderLabel("Encore")
@@ -287,7 +198,7 @@ fun EncoreTrackList(
 
 @Preview(showBackground = true)
 @Composable
-fun ShowScreenPreview() {
+fun SearchResultScreenPreview() {
     val show = Show(
         id = "ID1",
         venueName = "The Fillmore Silver Spring",
@@ -307,37 +218,15 @@ fun ShowScreenPreview() {
         Track("Doomsday Party", trackNumber = 5),
         Track("My Heart Will Go On", trackNumber = 6, coverArtistName = "Celine Dion"),
     )
-    val encoreTracks = listOf(
+    val encore = listOf(
         Track("Through the Fire and Flames", trackNumber = 1)
     )
-    val linkedShows = listOf(
-        Show(
-            id = "ID1",
-            artist = "Nekrogoblikon",
-            city = "Silver Spring",
-            state = "MD",
-            venueName = "The Fillmore Silver Spring",
-            date = Date()
-        ),
-        Show(
-            id = "ID2",
-            artist = "Dethklok",
-            city = "Silver Spring",
-            state = "MD",
-            venueName = "The Fillmore Silver Spring",
-            date = Date()
-        )
-    )
-    ShowScreen(
-        uiState = ShowUiState.Loaded(
+    SearchResultScreen(
+        uiState = SearchResultUiState.Loaded(
             show = show,
-            linkedShows = linkedShows,
             tracks = tracks,
-            encoreTracks = encoreTracks,
+            encoreTracks = encore
         ),
-        onArtistClicked = {},
-        onFindMoreClicked = {},
-        onEditClicked = {},
         onToggleSaved = {},
         modifier = Modifier
     )
@@ -345,12 +234,9 @@ fun ShowScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingShowScreenPreview() {
-    ShowScreen(
-        uiState = ShowUiState.Loading,
-        onArtistClicked = {},
-        onFindMoreClicked = {},
-        onEditClicked = {},
+fun LoadingSearchResultScreenPreview() {
+    SearchResultScreen(
+        uiState = SearchResultUiState.Loading,
         onToggleSaved = {},
     )
 }

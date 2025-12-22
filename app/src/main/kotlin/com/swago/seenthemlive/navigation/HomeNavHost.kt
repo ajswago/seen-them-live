@@ -13,6 +13,8 @@ import com.swago.seenthemlive.ui.screens.map.mapScreen
 import com.swago.seenthemlive.ui.screens.profile.navigateToProfile
 import com.swago.seenthemlive.ui.screens.profile.profileScreen
 import com.swago.seenthemlive.ui.screens.search.navigateToSearch
+import com.swago.seenthemlive.ui.screens.search.navigateToSearchResult
+import com.swago.seenthemlive.ui.screens.search.searchResultScreen
 import com.swago.seenthemlive.ui.screens.search.searchScreen
 import com.swago.seenthemlive.ui.screens.shows.ShowsListRoute
 import com.swago.seenthemlive.ui.screens.shows.navigateToShow
@@ -43,9 +45,10 @@ fun HomeNavHost(
             onProfileMenuOption = { onProfileMenuOption(it, navController = navController) },
         )
         searchScreen(
-            onShowClick = { navController.navigateToShow(it) },
+            onShowClick = { navController.navigateToSearchResult(it) },
             onBackClick = navController::popBackStack
         )
+        searchResultScreen(onBackClick = navController::popBackStack)
         showScreen(onBackClick = navController::popBackStack)
         artistScreen(onBackClick = navController::popBackStack)
         profileScreen(
