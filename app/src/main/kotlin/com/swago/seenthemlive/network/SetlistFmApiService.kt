@@ -40,7 +40,7 @@ data class Setlist(
     val versionId: String? = null,
     val eventDate: String? = null,
     val lastUpdated: String? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Artist(
     val mbid: String? = null,
@@ -49,14 +49,14 @@ data class Artist(
     val sortName: String? = null,
     val disambiguation: String? = null,
     val url: String? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Venue(
     val city: City? = null,
     val url: String? = null,
     val id: String? = null,
     val name: String? = null
-) : java.io.Serializable
+) : Serializable
 
 data class City(
     val id: String? = null,
@@ -65,31 +65,31 @@ data class City(
     val state: String? = null,
     val coords: Coords? = null,
     val country: Country? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Coords(
     val long: Double? = null,
     val lat: Double? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Country(
     val code: String? = null,
     val name: String? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Tour(
     val name: String? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Sets(
     val set: List<Set>? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Set(
     val name: String? = null,
     val encore: Int? = null,
     val song: List<Song>? = null
-) : java.io.Serializable
+) : Serializable
 
 data class Song(
     val name: String? = null,

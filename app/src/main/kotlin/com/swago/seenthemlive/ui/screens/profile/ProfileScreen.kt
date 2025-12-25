@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.HorizontalDivider
@@ -96,7 +96,10 @@ fun ProfileScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
                 ProfileCard(
                     uiState = uiState
                 )
@@ -161,8 +164,8 @@ fun ArtistsList(
 fun LoadingArtistsList(
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        items(4) {
+    Column(modifier = modifier) {
+        for (i in 1..4) {
             LoadingArtistListItemDetailed()
             HorizontalDivider()
         }
@@ -176,8 +179,8 @@ fun LoadedArtistsList(
     onArtistClicked: (String) -> Unit = {},
 ) {
     val artists = uiState.artists
-    LazyColumn(modifier = modifier) {
-        items(artists.sortedBy { it.name }.sortedByDescending { it.showCount }) { artist ->
+    Column(modifier = modifier) {
+        for (artist in artists.sortedBy { it.name }.sortedByDescending { it.showCount }.take(10)) {
             ArtistListItem(
                 artistName = artist.name,
                 lastShow = artist.lastShow,

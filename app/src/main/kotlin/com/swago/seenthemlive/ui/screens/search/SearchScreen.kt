@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.HorizontalDivider
@@ -102,7 +102,10 @@ fun SearchScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
                 SearchCard(
                     onSearch = { searchTerms -> onSearch(searchTerms) },
                     enabled = uiState !is SearchUiState.Loading,
@@ -138,8 +141,8 @@ fun SearchScreen(
 
 @Composable
 fun LoadingSearchResultsList(modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
-        items(3) {
+    Column(modifier = modifier) {
+        for (i in 1..3) {
             LoadingShowListItem()
             HorizontalDivider()
         }
@@ -152,8 +155,8 @@ fun LoadedSearchResultsList(
     modifier: Modifier = Modifier,
     onShowClick: (String) -> Unit = {},
 ) {
-    LazyColumn(modifier = modifier) {
-        items(uiState.shows.sortedByDescending { it.date }) { show ->
+    Column(modifier = modifier) {
+        for (show in uiState.shows.sortedByDescending { it.date }) {
             ShowListItem(
                 artistName = show.artist,
                 venueName = show.venueName,

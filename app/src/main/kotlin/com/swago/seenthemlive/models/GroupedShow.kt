@@ -8,5 +8,5 @@ data class GroupedShow(
     val city: String,
     val state: String,
     val date: Date,
-    val artists: Array<String>
+    val artists: List<String>
 )

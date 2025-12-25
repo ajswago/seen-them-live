@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.HorizontalDivider
@@ -103,7 +103,10 @@ fun ArtistScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
                 ArtistCard(
                     uiState = uiState
                 )
@@ -173,8 +176,8 @@ fun ShowsList(
 fun LoadingShowsList(
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        items(2) {
+    Column(modifier = modifier) {
+        for (i in 1..2) {
             LoadingGroupedShowListItem()
             HorizontalDivider()
         }
@@ -187,9 +190,9 @@ fun LoadedShowsList(
     modifier: Modifier = Modifier,
     onShowClicked: (String) -> Unit = {},
 ) {
-    LazyColumn(modifier = modifier) {
+    Column(modifier = modifier) {
         val shows = uiState.shows
-        items(shows.sortedByDescending { it.date }) { show ->
+        for (show in shows.sortedByDescending { it.date }) {
             GroupedShowListItem(
                 venueName = show.venueName,
                 city = show.city,
@@ -225,8 +228,8 @@ fun TrackList(
 fun LoadingTrackList(
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        items(4) {
+    Column(modifier = modifier) {
+        for (i in 1..4) {
             LoadingTrackListItemCount()
             HorizontalDivider()
         }
@@ -239,8 +242,8 @@ fun LoadedTrackList(
     modifier: Modifier = Modifier
 ) {
     val tracks = uiState.tracks
-    LazyColumn(modifier = modifier) {
-        items(tracks.sortedBy{ it.trackName }.sortedByDescending { it.trackCount }) { track ->
+    Column(modifier = modifier) {
+        for (track in tracks.sortedBy{ it.trackName }.sortedByDescending { it.trackCount }) {
             TrackListItem(
                 trackName = track.trackName,
                 trackCount = track.trackCount,
@@ -263,7 +266,7 @@ fun ArtistScreenPreview() {
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2022-06-10") ?: Date(),
-            artists = arrayOf("Anthrax", "Behemoth", "Slayer", "Testament")
+            artists = listOf("Anthrax", "Behemoth", "Slayer", "Testament")
         ),
         GroupedShow(
             id = "ID2",
@@ -273,7 +276,7 @@ fun ArtistScreenPreview() {
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2022-05-15") ?: Date(),
-            arrayOf("Megadeth", "Trivium")
+            listOf("Megadeth", "Trivium")
         )
     )
     val tracks = listOf(

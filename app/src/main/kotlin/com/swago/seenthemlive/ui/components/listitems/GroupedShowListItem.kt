@@ -35,7 +35,7 @@ fun GroupedShowListItem(
     venueName: String,
     city: String,
     state: String,
-    artistList: Array<String>,
+    artistList: List<String>,
     date: Date,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
@@ -119,7 +119,7 @@ fun GroupedShowListItemPreview() {
             venueName = "PPL Center",
             city = "Allentown",
             state = "PA",
-            artistList = arrayOf("Megadeth", "Trivium"),
+            artistList = listOf("Megadeth", "Trivium"),
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2022-05-15") ?: Date(),
@@ -136,7 +136,7 @@ fun GroupedShowListItemPreview2() {
             venueName = "Jiffy Lube Live",
             city = "Bristow",
             state = "VA",
-            artistList = arrayOf("Anthrax", "Behemoth", "Slayer", "Lamb of God"),
+            artistList = listOf("Anthrax", "Behemoth", "Slayer", "Lamb of God"),
             date = SimpleDateFormat(
                 "yyyy-MM-dd", Locale.US
             ).parse("2022-06-10") ?: Date(),
