@@ -2,6 +2,7 @@ package com.swago.seenthemlive.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.data.repository.SetlistFmRepository
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
@@ -21,12 +22,18 @@ import java.time.Duration
 @HiltViewModel(assistedFactory = SearchResultViewModel.Factory::class)
 class SearchResultViewModel @AssistedInject constructor(
     @Assisted val showId: String,
-    setlistFmRepository: SetlistFmRepository
+    setlistFmRepository: SetlistFmRepository,
+    firebaseRepository: FirebaseRepository,
 ) : ViewModel() {
 
     val showFlow: Flow<Show> = flow {
         delay(Duration.ofMillis(2000))
         emit(setlistFmRepository.getShow(showId = showId))
+    }
+
+    val savedFlow: Flow<Boolean> = flow {
+        delay(Duration.ofMillis(2000))
+        emit(firebaseRepository.showSaved(showId = showId))
     }
 
     val tracksFlow: Flow<List<Track>> = flow {
@@ -41,6 +48,7 @@ class SearchResultViewModel @AssistedInject constructor(
 
     val uiState: StateFlow<SearchResultUiState> = combine(
         showFlow,
+        savedFlow,
         tracksFlow,
         encoreTracksFlow,
         SearchResultUiState::Loaded
@@ -62,6 +70,7 @@ sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState
     data class Loaded(
         val show: Show,
+        val saved: Boolean,
         val tracks: List<Track>,
         val encoreTracks: List<Track>,
     ) : SearchResultUiState

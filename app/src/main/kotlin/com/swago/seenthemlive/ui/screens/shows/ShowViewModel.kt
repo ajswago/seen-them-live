@@ -29,6 +29,11 @@ class ShowViewModel @AssistedInject constructor(
         emit(firebaseRepository.getShow(showId = showId))
     }
 
+    val savedFlow: Flow<Boolean> = flow {
+        delay(Duration.ofMillis(2000))
+        emit(firebaseRepository.showSaved(showId = showId))
+    }
+
     val tracksFlow: Flow<List<Track>> = flow {
         delay(Duration.ofMillis(2000))
         emit(firebaseRepository.getTracksForShow(showId = showId))
@@ -46,6 +51,7 @@ class ShowViewModel @AssistedInject constructor(
 
     val uiState: StateFlow<ShowUiState> = combine(
         showFlow,
+        savedFlow,
         tracksFlow,
         encoreTracksFlow,
         linkedShowsFlow,
@@ -68,6 +74,7 @@ sealed interface ShowUiState {
     data object Loading : ShowUiState
     data class Loaded(
         val show: Show,
+        val saved: Boolean,
         val tracks: List<Track>,
         val encoreTracks: List<Track>,
         val linkedShows: List<Show>

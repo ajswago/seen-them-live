@@ -10,5 +10,4 @@ data class Show(
     val state: String,
     val date: Date,
     val tourName: String? = null,
-    val saved: Boolean = false
 )

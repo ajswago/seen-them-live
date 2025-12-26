@@ -21,6 +21,7 @@ interface FirebaseRepository {
     suspend fun getShowsForArtist(artistId: String): List<GroupedShow>
     suspend fun getTracksForArtist(artistId: String): List<Track>
     suspend fun getShow(showId: String): Show
+    suspend fun showSaved(showId: String): Boolean
     suspend fun getTracksForShow(showId: String): List<Track>
     suspend fun getEncoreTracksForShow(showId: String): List<Track>
     suspend fun getLinkedShows(showId: String): List<Show>
@@ -37,6 +38,7 @@ class NetworkFirebaseRepository @Inject constructor(
     override suspend fun getShowsForArtist(artistId: String): List<GroupedShow> = firebaseApiService.getUser().getShowsForArtist(artistId)
     override suspend fun getTracksForArtist(artistId: String): List<Track> = firebaseApiService.getUser().getTracksForArtist(artistId)
     override suspend fun getShow(showId: String): Show = firebaseApiService.getUser().getShow(showId)
+    override suspend fun showSaved(showId: String): Boolean = firebaseApiService.getUser().showSaved(showId)
     override suspend fun getTracksForShow(showId: String): List<Track> = firebaseApiService.getUser().getTracksForShow(showId)
     override suspend fun getEncoreTracksForShow(showId: String): List<Track> = firebaseApiService.getUser().getEncoreTracksForShow(showId)
     override suspend fun getLinkedShows(showId: String): List<Show> = firebaseApiService.getUser().getLinkedShows(showId)
@@ -111,6 +113,11 @@ fun UserData.getShowsForArtist(artistId: String): List<GroupedShow> {
 fun UserData.getShow(showId: String): Show {
     val setlist = this.setlists?.first { it.id == showId } ?: Setlist()
     return setlist.asShow()
+}
+
+fun UserData.showSaved(showId: String): Boolean {
+    val setlist = this.setlists?.firstOrNull { it.id == showId }
+    return setlist != null
 }
 
 fun UserData.getTracksForArtist(artistId: String): List<Track> {

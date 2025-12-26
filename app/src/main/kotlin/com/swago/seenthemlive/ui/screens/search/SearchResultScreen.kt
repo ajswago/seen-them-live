@@ -224,6 +224,7 @@ fun SearchResultScreenPreview() {
     SearchResultScreen(
         uiState = SearchResultUiState.Loaded(
             show = show,
+            saved = false,
             tracks = tracks,
             encoreTracks = encore
         ),

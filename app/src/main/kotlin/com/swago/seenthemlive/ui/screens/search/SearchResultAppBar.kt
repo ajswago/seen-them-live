@@ -34,7 +34,7 @@ fun SearchResultAppBar(
 ) {
     val enabled = uiState !is SearchResultUiState.Loading
     val show = (uiState as? SearchResultUiState.Loaded).let { it?.show }
-    val showSaved = show?.saved ?: false
+    val showSaved = (uiState as? SearchResultUiState.Loaded).let { it?.saved } ?: false
     TopAppBar(
         title = {
             Text(
@@ -92,7 +92,6 @@ fun UnsavedSearchResultAppBarPreview() {
         ).parse("2024-04-09") ?: Date(),
         tourName = "Warp Speed Warriors",
         artist = "DragonForce",
-        saved = false
     )
     val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
@@ -100,6 +99,7 @@ fun UnsavedSearchResultAppBarPreview() {
     SearchResultAppBar(
         uiState = SearchResultUiState.Loaded(
             show,
+            false,
             tracks,
             listOf()
         ),
@@ -122,7 +122,6 @@ fun SavedSearchResultAppBarPreview() {
         ).parse("2024-04-09") ?: Date(),
         tourName = "Warp Speed Warriors",
         artist = "DragonForce",
-        saved = true
     )
     val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
@@ -130,6 +129,7 @@ fun SavedSearchResultAppBarPreview() {
     SearchResultAppBar(
         uiState = SearchResultUiState.Loaded(
             show,
+            true,
             tracks,
             listOf()
         ),

@@ -331,6 +331,7 @@ fun ShowScreenPreview() {
     ShowScreen(
         uiState = ShowUiState.Loaded(
             show = show,
+            saved = true,
             linkedShows = linkedShows,
             tracks = tracks,
             encoreTracks = encoreTracks,

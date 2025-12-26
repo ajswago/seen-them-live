@@ -37,7 +37,7 @@ fun ShowAppBar(
 ) {
     val enabled = uiState !is ShowUiState.Loading
     val show = (uiState as? ShowUiState.Loaded).let { it?.show }
-    val showSaved = show?.saved ?: false
+    val showSaved = (uiState as? ShowUiState.Loaded).let { it?.saved } ?: false
     TopAppBar(
         title = {
             Text(
@@ -105,7 +105,6 @@ fun UnsavedShowAppBarPreview() {
         ).parse("2024-04-09") ?: Date(),
         tourName = "Warp Speed Warriors",
         artist = "DragonForce",
-        saved = false
     )
     val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
@@ -115,6 +114,7 @@ fun UnsavedShowAppBarPreview() {
     ShowAppBar(
         uiState = ShowUiState.Loaded(
             show,
+            false,
             tracks,
             encore,
             linkedShows
@@ -140,7 +140,6 @@ fun SavedShowAppBarPreview() {
         ).parse("2024-04-09") ?: Date(),
         tourName = "Warp Speed Warriors",
         artist = "DragonForce",
-        saved = true
     )
     val tracks = listOf(
         Track("Fury of the Storm", trackNumber = 1)
@@ -149,6 +148,7 @@ fun SavedShowAppBarPreview() {
     ShowAppBar(
         uiState = ShowUiState.Loaded(
             show,
+            true,
             tracks,
             listOf(),
             linkedShows
