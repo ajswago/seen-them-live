@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.playlist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,13 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -27,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,28 +39,46 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.cards.CreatePlaylistCard
+import com.swago.seenthemlive.ui.components.listitems.LoadingSelectableShowListGroup
 import com.swago.seenthemlive.ui.components.listitems.SelectableShowListGroup
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Composable
+fun CreatePlaylistRoute(
+    onBackClick: () -> Unit,
+    onPlaylistConfirmed: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: CreatePlaylistViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val createPlaylistStep = viewModel.createPlaylistStep
+    CreatePlaylistScreen(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onCreatePlaylist = { name, selections ->  viewModel.createPlaylist(name = name, selections = selections) },
+        onPlaylistConfirmed = onPlaylistConfirmed,
+        createPlaylistStep = createPlaylistStep,
+        modifier = modifier,
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePlaylistScreen(
-    shows: Array<Show>,
-    onCreatePlaylist: (String, Array<String>) -> Unit,
-    onPlaylistConfirmed: () -> Unit,
+    uiState: CreatePlaylistUiState,
     modifier: Modifier = Modifier,
-    createPlaylistStep: CreatePlaylistStep = CreatePlaylistStep.NOT_STARTED,
+    onBackClick: () -> Unit = {},
+    onCreatePlaylist: ((String, List<String>) -> Unit) = { _, _ -> },
+    onPlaylistConfirmed: () -> Unit = {},
+    createPlaylistStep: CreatePlaylistStep = CreatePlaylistStep.NOT_STARTED
 ) {
-    val selections = remember {
-        mutableStateMapOf(*shows.map { it.id to false }.toTypedArray())
-    }
-    val groupedShows = shows.groupBy { it.date }
-    var enteredName: String? = null
     Scaffold(
         topBar = {
             TopAppBar(
@@ -70,7 +90,7 @@ fun CreatePlaylistScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_description)
@@ -90,71 +110,112 @@ fun CreatePlaylistScreen(
                 .padding(innerPadding)
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Column {
-                CreatePlaylistCard(
-                    onCreate = { name ->
-                        enteredName = name
-                        name?.let { name ->
-                            onCreatePlaylist(name, selections.filter { it.value }.keys.toTypedArray())
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.playlist_select_shows_header),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .padding(start = 24.dp)
-                )
-                Text(
-                    text = stringResource(R.string.playlist_select_shows_secondary_label),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .padding(start = 24.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                LazyColumn {
-                    items(groupedShows.keys.toTypedArray()) { date ->
-                        groupedShows[date]?.let { show ->
-                            val artists = show.map{ it.artist }.toTypedArray()
-                            val artistSelections = remember {
-                                mutableStateMapOf(*artists.map { it to false }.toTypedArray())
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
+                when (uiState) {
+                    CreatePlaylistUiState.Loading -> {
+                        CreatePlaylistCard(enabled = false)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.playlist_select_shows_header),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .padding(start = 24.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.playlist_select_shows_secondary_label),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .padding(start = 24.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Column {
+                            for (i in 1..3) {
+                                LoadingSelectableShowListGroup()
+                                HorizontalDivider()
                             }
-                            SelectableShowListGroup(
-                                venueName = show.first().venueName,
-                                city = show.first().city,
-                                state = show.first().state,
-                                date = date,
-                                artistList = artists,
-                                selections = artistSelections,
-                                onArtistSelected = { index, selected ->
-                                    artistSelections[artists[index]] = selected
-                                    selections[show[index].id] = selected
+                        }
+                    }
+                    is CreatePlaylistUiState.Loaded -> {
+                        val selections: MutableMap<String, Boolean> = remember {
+                            mutableStateMapOf(*uiState.shows.map { it.id to false }.toTypedArray())
+                        }
+                        val groupedShows = uiState.shows.groupBy { it.date }
+                        var enteredName: String? = null
+                        CreatePlaylistCard(
+                            onCreate = { name ->
+                                enteredName = name
+                                name?.let { name ->
+                                    onCreatePlaylist(name, selections.filter { it.value }.keys.toList())
                                 }
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = stringResource(R.string.playlist_select_shows_header),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .padding(start = 24.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.playlist_select_shows_secondary_label),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .padding(start = 24.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Column {
+                            for (date in groupedShows.keys.toTypedArray()) {
+                                groupedShows[date]?.let { show ->
+                                    val artists = show.map{ it.artist }.toTypedArray()
+                                    val artistSelections = remember {
+                                        mutableStateMapOf(*artists.map { it to false }.toTypedArray())
+                                    }
+                                    SelectableShowListGroup(
+                                        venueName = show.first().venueName,
+                                        city = show.first().city,
+                                        state = show.first().state,
+                                        date = date,
+                                        artistList = artists,
+                                        selections = artistSelections,
+                                        onArtistSelected = { index, selected ->
+                                            artistSelections[artists[index]] = selected
+                                            selections[show[index].id] = selected
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        if (createPlaylistStep != CreatePlaylistStep.NOT_STARTED) {
+                            CreatePlaylistProgressDialog(
+                                onDismissRequest = { onPlaylistConfirmed() },
+                                onRetry = {
+                                    enteredName?.let { name ->
+                                        onCreatePlaylist(name, selections.filter { it.value }.keys.toList())
+                                    }
+                                },
+                                step = createPlaylistStep
                             )
                         }
                     }
                 }
             }
-        }
-        if (createPlaylistStep != CreatePlaylistStep.NOT_STARTED) {
-            CreatePlaylistProgressDialog(
-                onDismissRequest = { onPlaylistConfirmed() },
-                onRetry = {
-                    enteredName?.let { name ->
-                        onCreatePlaylist(name, selections.filter { it.value }.keys.toTypedArray())
-                    }
-                },
-                step = createPlaylistStep
-            )
         }
     }
 }
@@ -224,19 +285,10 @@ fun CreatePlaylistProgressDialog(
     }
 }
 
-enum class CreatePlaylistStep(var progress: Float, var description: String) {
-    NOT_STARTED(0.0f, ""),
-    CREATE_PLAYLIST(0.25f, "Creating new playlist in your Spotify account."),
-    FIND_SONGS(0.5f, "Looking up selected songs."),
-    ADD_SONGS(0.75f, "Adding matched songs to newly created playlist."),
-    COMPLETE(1.0f, "Playlist created successfully. Enjoy listening on Spotify!"),
-    FAILED(progress = 1.0f, "Failed to create playlist.")
-}
-
 @Preview(showBackground = true)
 @Composable
 fun CreatePlaylistScreenPreview() {
-    val shows = arrayOf(
+    val shows = listOf(
         Show(
             id = "ID1",
             artist = "Rodrigo y Gabriela",
@@ -299,7 +351,7 @@ fun CreatePlaylistScreenPreview() {
         )
     )
     CreatePlaylistScreen(
-        shows = shows,
+        uiState = CreatePlaylistUiState.Loaded(shows),
         onCreatePlaylist = { name, showIds ->
         },
         onPlaylistConfirmed = {},

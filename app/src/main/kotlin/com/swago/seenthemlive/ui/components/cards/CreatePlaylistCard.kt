@@ -31,8 +31,8 @@ import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 
 @Composable
 fun CreatePlaylistCard(
-    onCreate: ((String?) -> Unit),
     modifier: Modifier = Modifier,
+    onCreate: ((String?) -> Unit) = {},
     enabled: Boolean = true
 ) {
     var playlistName by remember { mutableStateOf<String?>(null) }

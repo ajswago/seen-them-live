@@ -10,6 +10,8 @@ import com.swago.seenthemlive.ui.screens.artists.artistListScreen
 import com.swago.seenthemlive.ui.screens.artists.artistScreen
 import com.swago.seenthemlive.ui.screens.artists.navigateToArtist
 import com.swago.seenthemlive.ui.screens.map.mapScreen
+import com.swago.seenthemlive.ui.screens.playlist.createPlaylistScreen
+import com.swago.seenthemlive.ui.screens.playlist.navigateToCreatePlaylist
 import com.swago.seenthemlive.ui.screens.profile.navigateToProfile
 import com.swago.seenthemlive.ui.screens.profile.profileScreen
 import com.swago.seenthemlive.ui.screens.search.navigateToSearch
@@ -55,6 +57,10 @@ fun HomeNavHost(
             onBackClick = navController::popBackStack,
             onArtistClick = { navController.navigateToArtist(it) }
         )
+        createPlaylistScreen(
+            onBackClick = navController::popBackStack,
+            onPlaylistConfirmed = navController::popBackStack
+        )
     }
 }
 
@@ -64,7 +70,7 @@ fun onProfileMenuOption(item: ProfileMenuItem, navController: NavController) {
             navController.navigateToProfile()
         }
         ProfileMenuItem.CREATE_PLAYLIST -> {
-
+            navController.navigateToCreatePlaylist()
         }
         ProfileMenuItem.LOGOUT -> {
 
