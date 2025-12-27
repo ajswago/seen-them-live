@@ -1,4 +1,4 @@
-package com.swago.seenthemlive.ui.screens
+package com.swago.seenthemlive.ui.screens.about
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,14 +30,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.swago.seenthemlive.BuildConfig
 import com.swago.seenthemlive.R
+import java.util.Calendar
+import java.util.Date
+
+@Composable
+fun AboutRoute(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val calendar: Calendar = Calendar.getInstance()
+    calendar.setTime(Date())
+    val year = calendar.get(Calendar.YEAR)
+    AboutScreen(
+        version = BuildConfig.VERSION_NAME,
+        year = year.toString(),
+        onBackClick = onBackClick,
+        modifier = modifier
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     version: String,
     year: String,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -50,7 +70,7 @@ fun AboutScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.back_button_description)

@@ -6,6 +6,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import com.swago.seenthemlive.ui.components.ProfileMenuItem
 import com.swago.seenthemlive.ui.home.HomeState
+import com.swago.seenthemlive.ui.screens.about.aboutScreen
+import com.swago.seenthemlive.ui.screens.about.navigateToAbout
 import com.swago.seenthemlive.ui.screens.artists.artistListScreen
 import com.swago.seenthemlive.ui.screens.artists.artistScreen
 import com.swago.seenthemlive.ui.screens.artists.navigateToArtist
@@ -61,6 +63,9 @@ fun HomeNavHost(
             onBackClick = navController::popBackStack,
             onPlaylistConfirmed = navController::popBackStack
         )
+        aboutScreen(
+            onBackClick = navController::popBackStack,
+        )
     }
 }
 
@@ -76,7 +81,7 @@ fun onProfileMenuOption(item: ProfileMenuItem, navController: NavController) {
 
         }
         ProfileMenuItem.ABOUT -> {
-
+            navController.navigateToAbout()
         }
     }
 }
