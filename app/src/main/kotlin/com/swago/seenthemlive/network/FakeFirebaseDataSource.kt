@@ -1,15 +1,5 @@
 package com.swago.seenthemlive.network
 
-import com.swago.seenthemlive.models.Artist
-import com.swago.seenthemlive.models.GroupedShow
-import com.swago.seenthemlive.models.Profile
-import com.swago.seenthemlive.models.Show
-import com.swago.seenthemlive.models.Track
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import kotlin.io.path.fileVisitor
-
 object FakeFirebaseDataSource {
 
     val metallica = Artist(

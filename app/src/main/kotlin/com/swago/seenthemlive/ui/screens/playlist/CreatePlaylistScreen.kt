@@ -249,7 +249,7 @@ fun CreatePlaylistProgressDialog(
                     textAlign = TextAlign.End
                 )
                 Spacer(modifier = Modifier.height(48.dp))
-                LinearProgressIndicator(progress = step.progress)
+                LinearProgressIndicator(progress = { step.progress })
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = step.description,
