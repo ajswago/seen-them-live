@@ -39,6 +39,7 @@ import java.util.Locale
 fun ShowRoute(
     showId: String,
     onBackClick: () -> Unit,
+    onArtistClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ShowViewModel = hiltViewModel<ShowViewModel, ShowViewModel.Factory>(
         key = showId,
@@ -51,9 +52,9 @@ fun ShowRoute(
         uiState = uiState,
         onEditClicked = {},
         onToggleSaved = {},
-        onArtistClicked = {},
         onFindMoreClicked = {},
         onBackClick = onBackClick,
+        onArtistClick = onArtistClick,
         modifier = modifier,
     )
 }
@@ -68,7 +69,7 @@ fun ShowScreen(
     showEdit: Boolean = false,
     onToggleSaved: (String) -> Unit = {},
     onEditClicked: () -> Unit = {},
-    onArtistClicked: (String) -> Unit = {},
+    onArtistClick: (String) -> Unit = {},
     onFindMoreClicked: () -> Unit = {},
 ) {
     Scaffold(
@@ -99,7 +100,7 @@ fun ShowScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 LinkedShowsList(
                     uiState = uiState,
-                    onArtistClicked = onArtistClicked,
+                    onArtistClick = onArtistClick,
                     onFindMoreClicked = onFindMoreClicked
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -142,7 +143,7 @@ fun ShowCard(
 @Composable
 fun LinkedShowsList(
     uiState: ShowUiState,
-    onArtistClicked: (String) -> Unit,
+    onArtistClick: (String) -> Unit,
     onFindMoreClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -153,7 +154,7 @@ fun LinkedShowsList(
         is ShowUiState.Loaded -> {
             LoadedLinkedShowsList(
                 uiState = uiState,
-                onArtistClicked = onArtistClicked,
+                onArtistClick = onArtistClick,
                 onFindMoreClicked = onFindMoreClicked,
                 modifier = modifier
             )
@@ -184,7 +185,7 @@ fun LoadingLinkedShowsList(
 fun LoadedLinkedShowsList(
     uiState: ShowUiState.Loaded,
     modifier: Modifier = Modifier,
-    onArtistClicked: (String) -> Unit = {},
+    onArtistClick: (String) -> Unit = {},
     onFindMoreClicked: () -> Unit = {},
 ) {
     val linkedShows = uiState.linkedShows
@@ -192,7 +193,7 @@ fun LoadedLinkedShowsList(
         for(show in linkedShows) {
             ArtistListItem(
                 artistName = show.artist,
-                onClick = { onArtistClicked(show.id) },
+                onClick = { onArtistClick(show.id) },
                 modifier = Modifier
                     .height(55.dp)
             )
@@ -336,7 +337,7 @@ fun ShowScreenPreview() {
             tracks = tracks,
             encoreTracks = encoreTracks,
         ),
-        onArtistClicked = {},
+        onArtistClick = {},
         onFindMoreClicked = {},
         onEditClicked = {},
         onToggleSaved = {},
@@ -349,7 +350,7 @@ fun ShowScreenPreview() {
 fun LoadingShowScreenPreview() {
     ShowScreen(
         uiState = ShowUiState.Loading,
-        onArtistClicked = {},
+        onArtistClick = {},
         onFindMoreClicked = {},
         onEditClicked = {},
         onToggleSaved = {},

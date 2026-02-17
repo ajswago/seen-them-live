@@ -53,8 +53,14 @@ fun HomeNavHost(
             onBackClick = navController::popBackStack
         )
         searchResultScreen(onBackClick = navController::popBackStack)
-        showScreen(onBackClick = navController::popBackStack)
-        artistScreen(onBackClick = navController::popBackStack)
+        showScreen(
+            onBackClick = navController::popBackStack,
+            onArtistClick = { navController.navigateToShow(it) }
+        )
+        artistScreen(
+            onBackClick = navController::popBackStack,
+            onShowClick = { navController.navigateToShow(it) }
+        )
         profileScreen(
             onBackClick = navController::popBackStack,
             onArtistClick = { navController.navigateToArtist(it) }

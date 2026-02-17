@@ -48,6 +48,7 @@ import java.util.Locale
 fun ArtistRoute(
     artistId: String,
     onBackClick: () -> Unit,
+    onShowClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ArtistViewModel = hiltViewModel<ArtistViewModel, ArtistViewModel.Factory>(
         key = artistId
@@ -58,8 +59,8 @@ fun ArtistRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ArtistScreen(
         uiState = uiState,
-        onShowClicked = {},
         onBackClick = onBackClick,
+        onShowClick = onShowClick,
         modifier = modifier,
     )
 }
@@ -70,7 +71,7 @@ fun ArtistScreen(
     uiState: ArtistUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onShowClicked: (String) -> Unit = {},
+    onShowClick: (String) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -115,7 +116,7 @@ fun ArtistScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 ShowsList(
                     uiState = uiState,
-                    onShowClicked = onShowClicked
+                    onShowClicked = onShowClick
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 ListHeaderLabel("Songs")
@@ -300,7 +301,7 @@ fun ArtistScreenPreview() {
             shows = shows,
             tracks = tracks
         ),
-        onShowClicked = {}
+        onShowClick = {}
     )
 }
 
@@ -309,6 +310,6 @@ fun ArtistScreenPreview() {
 fun LoadingArtistScreen() {
     ArtistScreen(
         uiState = ArtistUiState.Loading,
-        onShowClicked = {}
+        onShowClick = {}
     )
 }

@@ -13,13 +13,15 @@ fun NavController.navigateToArtist(artistId: String, navOptions: NavOptions? = n
     navigate(route = ArtistRoute(artistId), navOptions)
 
 fun NavGraphBuilder.artistScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onShowClick: (String) -> Unit,
 ) {
     composable<ArtistRoute> { entry ->
         val id = entry.toRoute<ArtistRoute>().id
         ArtistRoute(
             artistId = id,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onShowClick = onShowClick,
         )
     }
 }
