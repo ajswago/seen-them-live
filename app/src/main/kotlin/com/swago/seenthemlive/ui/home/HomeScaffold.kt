@@ -12,10 +12,12 @@ import com.swago.seenthemlive.navigation.HomeNavHost
 
 @Composable
 fun HomeRoute(
+    logout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScaffold(
         homeState = rememberHomeState(),
+        logout = logout,
         modifier = modifier
     )
 }
@@ -23,6 +25,7 @@ fun HomeRoute(
 @Composable
 fun HomeScaffold(
     homeState: HomeState,
+    logout: () -> Unit,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
@@ -50,6 +53,7 @@ fun HomeScaffold(
 
         HomeNavHost(
             homeState = homeState,
+            logout = logout,
             modifier = modifier
         )
     }

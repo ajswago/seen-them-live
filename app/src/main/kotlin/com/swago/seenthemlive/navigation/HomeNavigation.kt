@@ -13,8 +13,10 @@ fun NavController.navigateToHomeNavHost(navOptions: NavOptions? = null) {
     navigate(route = HomeRoute, navOptions)
 }
 
-fun NavGraphBuilder.homeNavHost() {
+fun NavGraphBuilder.homeNavHost(
+    logout: () -> Unit
+) {
     composable<HomeRoute> {
-        HomeRoute()
+        HomeRoute(logout = logout)
     }
 }

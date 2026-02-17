@@ -28,6 +28,7 @@ import com.swago.seenthemlive.ui.screens.shows.showsListScreen
 @Composable
 fun HomeNavHost(
     homeState: HomeState,
+    logout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = homeState.navController
@@ -37,17 +38,32 @@ fun HomeNavHost(
         modifier = modifier
     ) {
         showsListScreen(
-            onProfileMenuOption = { onProfileMenuOption(it, navController = navController) },
+            onProfileMenuOption = {
+                onProfileMenuOption(
+                    it,
+                    navController = navController,
+                    logout = logout
+                ) },
             onAddClick = navController::navigateToSearch,
             onShowClick = { navController.navigateToShow(it) }
         )
         artistListScreen(
-            onProfileMenuOption = { onProfileMenuOption(it, navController = navController) },
+            onProfileMenuOption = {
+                onProfileMenuOption(
+                    it,
+                    navController = navController,
+                    logout = logout
+                ) },
             onArtistClick = { navController.navigateToArtist(it) }
         )
         mapScreen(
-            onProfileMenuOption = { onProfileMenuOption(it, navController = navController) },
-        )
+            onProfileMenuOption = {
+                onProfileMenuOption(
+                    it,
+                    navController = navController,
+                    logout = logout
+                ) },
+            )
         searchScreen(
             onShowClick = { navController.navigateToSearchResult(it) },
             onBackClick = navController::popBackStack
@@ -75,7 +91,11 @@ fun HomeNavHost(
     }
 }
 
-fun onProfileMenuOption(item: ProfileMenuItem, navController: NavController) {
+fun onProfileMenuOption(
+    item: ProfileMenuItem,
+    navController: NavController,
+    logout: () -> Unit
+) {
     when (item) {
         ProfileMenuItem.PROFILE -> {
             navController.navigateToProfile()
@@ -84,7 +104,7 @@ fun onProfileMenuOption(item: ProfileMenuItem, navController: NavController) {
             navController.navigateToCreatePlaylist()
         }
         ProfileMenuItem.LOGOUT -> {
-
+            logout()
         }
         ProfileMenuItem.ABOUT -> {
             navController.navigateToAbout()

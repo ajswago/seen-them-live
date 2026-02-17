@@ -5,8 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.swago.seenthemlive.data.util.NetworkMonitor
-import com.swago.seenthemlive.ui.StlApp
-import com.swago.seenthemlive.ui.screens.login.rememberLoginState
+import com.swago.seenthemlive.navigation.RootNavHost
 import com.swago.seenthemlive.ui.theme.SeenThemLiveComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -21,11 +20,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val loginState = rememberLoginState(
-                networkMonitor = networkMonitor
-            )
             SeenThemLiveComposeTheme {
-                StlApp(loginState = loginState)
+                RootNavHost()
             }
         }
     }
