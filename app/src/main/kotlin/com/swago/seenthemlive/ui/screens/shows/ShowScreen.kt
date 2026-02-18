@@ -1,25 +1,39 @@
 package com.swago.seenthemlive.ui.screens.shows
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
@@ -29,7 +43,9 @@ import com.swago.seenthemlive.ui.components.cards.ShowCard
 import com.swago.seenthemlive.ui.components.listitems.ArtistListItem
 import com.swago.seenthemlive.ui.components.listitems.FindMoreListItem
 import com.swago.seenthemlive.ui.components.listitems.LoadingArtistListItemSimple
+import com.swago.seenthemlive.ui.components.listitems.LoadingShowListItem
 import com.swago.seenthemlive.ui.components.listitems.LoadingTrackListItemNumbered
+import com.swago.seenthemlive.ui.components.listitems.ShowListItem
 import com.swago.seenthemlive.ui.components.listitems.TrackListItem
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,6 +56,7 @@ fun ShowRoute(
     showId: String,
     onBackClick: () -> Unit,
     onArtistClick: (String) -> Unit,
+    onRelatedShowResultClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ShowViewModel = hiltViewModel<ShowViewModel, ShowViewModel.Factory>(
         key = showId,
@@ -47,14 +64,23 @@ fun ShowRoute(
         factory.create(showId)
     }
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState
+    val relatedShowsResultsUiState = viewModel.relatedShowsResultsUiState
     ShowScreen(
         uiState = uiState,
+        relatedShowsResultsUiState = relatedShowsResultsUiState,
+        onDismissResults = { viewModel.dismissBottomSheet() },
         onEditClicked = {},
-        onToggleSaved = {},
-        onFindMoreClicked = {},
+        onToggleSaved = { viewModel.toggleSaved( it ) },
+        onFindMoreClicked = {
+            val state = uiState
+            if (state is ShowUiState.Loaded) {
+                viewModel.performSearch(state.show.date, state.show.venueName)
+            }
+        },
         onBackClick = onBackClick,
         onArtistClick = onArtistClick,
+        onRelatedShowResultClick = onRelatedShowResultClick,
         modifier = modifier,
     )
 }
@@ -63,22 +89,26 @@ fun ShowRoute(
 @Composable
 fun ShowScreen(
     uiState: ShowUiState,
+    relatedShowsResultsUiState: RelatedShowsResultsUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
+    onDismissResults: () -> Unit = {},
     showToggleSaved: Boolean = true,
     showEdit: Boolean = false,
     onToggleSaved: (String) -> Unit = {},
     onEditClicked: () -> Unit = {},
     onArtistClick: (String) -> Unit = {},
+    onRelatedShowResultClick: (String) -> Unit = {},
     onFindMoreClicked: () -> Unit = {},
 ) {
+    var showConfirmationDialog by mutableStateOf(false)
     Scaffold(
         topBar = { ShowAppBar(
             uiState = uiState,
             onBackClick = onBackClick,
             showToggleSaved = showToggleSaved,
             showEdit = showEdit,
-            onToggleSaved = onToggleSaved,
+            onToggleSaved = { showConfirmationDialog = true },
             onEditClicked = onEditClicked
         ) },
         modifier = modifier.fillMaxSize()
@@ -109,6 +139,20 @@ fun ShowScreen(
                 TrackList(uiState = uiState)
                 Spacer(modifier = Modifier.height(16.dp))
                 EncoreTrackList(uiState = uiState)
+                RelatedShowsResults(
+                    relatedShowsResultsUiState,
+                    onShowClick = onRelatedShowResultClick,
+                    onDismissResults = onDismissResults)
+                if (showConfirmationDialog && uiState is ShowUiState.Loaded) {
+                    ConfirmAddRemoveDialog(
+                        onDismissRequest = { showConfirmationDialog = false },
+                        onConfirm = {
+                            showConfirmationDialog = false
+                            onToggleSaved(uiState.show.id)
+                        },
+                        saved = uiState.saved
+                    )
+                }
             }
         }
     }
@@ -286,6 +330,134 @@ fun EncoreTrackList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RelatedShowsResults(
+    relatedShowsResultsUiState: RelatedShowsResultsUiState,
+    onShowClick: (String) -> Unit = {},
+    onDismissResults: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState()
+    if (relatedShowsResultsUiState != RelatedShowsResultsUiState.Hidden) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                onDismissResults()
+            },
+            sheetState = sheetState
+        ) {
+            when (relatedShowsResultsUiState) {
+                RelatedShowsResultsUiState.Hidden -> {}
+                RelatedShowsResultsUiState.Loading -> {
+                    LoadingRelatedShowResults()
+                }
+                is RelatedShowsResultsUiState.Results -> {
+                    LoadedRelatedShowResults(
+                        relatedShowsResultsUiState,
+                        onShowClick = onShowClick
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable fun LoadingRelatedShowResults(
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        for (i in 1..2) {
+            LoadingShowListItem()
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable fun LoadedRelatedShowResults(
+    relatedShowsResultsUiState: RelatedShowsResultsUiState.Results,
+    modifier: Modifier = Modifier,
+    onShowClick: (String) -> Unit = {},
+) {
+    Column(modifier = modifier) {
+        for (show in relatedShowsResultsUiState.shows.sortedBy { it.artist }) {
+            ShowListItem(
+                artistName = show.artist,
+                venueName = show.venueName,
+                city = show.city,
+                state = show.state,
+                date = show.date,
+                onClick = { onShowClick(show.id) }
+            )
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable
+fun ConfirmAddRemoveDialog(
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+    saved: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Dialog(
+        onDismissRequest = { onDismissRequest() }
+    ) {
+        Card(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(216.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start,
+            ) {
+                Text(
+                    "Confirm",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(top = 8.dp, start = 24.dp),
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    if (saved)
+                        "This show will be removed from your user profile. Do you wish to continue?"
+                    else
+                        "This show will be added to your user profile. Do you wish to continue?",
+                    minLines = 2,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    TextButton(
+                        onClick = { onDismissRequest() },
+                    ) {
+                        Text(stringResource(R.string.cancel_button_label))
+                    }
+                    Button(
+                        onClick = { onConfirm() },
+                    ) {
+                        Text(
+                            if (saved)
+                                "Remove"
+                            else
+                                "Add"
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ShowScreenPreview() {
@@ -337,6 +509,7 @@ fun ShowScreenPreview() {
             tracks = tracks,
             encoreTracks = encoreTracks,
         ),
+        relatedShowsResultsUiState = RelatedShowsResultsUiState.Hidden,
         onArtistClick = {},
         onFindMoreClicked = {},
         onEditClicked = {},
@@ -350,9 +523,30 @@ fun ShowScreenPreview() {
 fun LoadingShowScreenPreview() {
     ShowScreen(
         uiState = ShowUiState.Loading,
+        relatedShowsResultsUiState = RelatedShowsResultsUiState.Hidden,
         onArtistClick = {},
         onFindMoreClicked = {},
         onEditClicked = {},
         onToggleSaved = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ConfirmAddDialogPreview() {
+    ConfirmAddRemoveDialog(
+        onDismissRequest = {},
+        onConfirm = {},
+        saved = false
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ConfirmRemoveDialogPreview() {
+    ConfirmAddRemoveDialog(
+        onDismissRequest = {},
+        onConfirm = {},
+        saved = true
     )
 }

@@ -15,13 +15,15 @@ fun NavController.navigateToShow(showId: String, navOptions: NavOptions? = null)
 fun NavGraphBuilder.showScreen(
     onBackClick: () -> Unit,
     onArtistClick: (String) -> Unit,
+    onRelatedShowResultClick: (String) -> Unit,
 ) {
     composable<ShowRoute> { entry ->
         val id = entry.toRoute<ShowRoute>().id
         ShowRoute(
             showId = id,
             onBackClick = onBackClick,
-            onArtistClick = onArtistClick
+            onArtistClick = onArtistClick,
+            onRelatedShowResultClick = onRelatedShowResultClick
         )
     }
 }

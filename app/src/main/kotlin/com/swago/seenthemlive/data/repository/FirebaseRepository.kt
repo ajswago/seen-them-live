@@ -27,6 +27,7 @@ interface FirebaseRepository {
     suspend fun getLinkedShows(showId: String): List<Show>
     suspend fun getProfile(): Profile
     suspend fun getTopArtistsForProfile(): List<Artist>
+    suspend fun toggleSaved(showId: String): Boolean
 }
 
 class NetworkFirebaseRepository @Inject constructor(
@@ -44,6 +45,7 @@ class NetworkFirebaseRepository @Inject constructor(
     override suspend fun getLinkedShows(showId: String): List<Show> = firebaseApiService.getUser().getLinkedShows(showId)
     override suspend fun getProfile(): Profile = firebaseApiService.getUser().getProfile()
     override suspend fun getTopArtistsForProfile(): List<Artist> = firebaseApiService.getUser().getTopArtistsForProfile()
+    override suspend fun toggleSaved(showId: String): Boolean = firebaseApiService.toggleSaved(showId).showSaved(showId)
 }
 
 fun UserData.getShows(): List<Show> {

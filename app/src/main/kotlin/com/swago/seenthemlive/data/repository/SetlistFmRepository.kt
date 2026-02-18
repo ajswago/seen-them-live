@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 interface SetlistFmRepository {
     suspend fun getSearchResults(searchTerms: SearchTerms): List<Show>
+    suspend fun getSearchResults(date: Date, venue: String): List<Show>
     suspend fun getShow(showId: String): Show
     suspend fun getTracksForShow(showId: String): List<Track>
     suspend fun getEncoreTracksForShow(showId: String): List<Track>
@@ -23,6 +24,9 @@ class NetworkSetlistFmRepository @Inject constructor(
 ) : SetlistFmRepository {
     override suspend fun getSearchResults(searchTerms: SearchTerms): List<Show> =
         setlistFmApiService.getSearchResults(searchTerms = searchTerms).asShowsList()
+
+    override suspend fun getSearchResults(date: Date, venue: String): List<Show> =
+        setlistFmApiService.getSearchResults(date = date, venue = venue).asShowsList()
 
     override suspend fun getShow(showId: String): Show =
         setlistFmApiService.getSetlist(id = showId).asShow()

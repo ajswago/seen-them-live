@@ -107,4 +107,51 @@ object FakeSetlistFmDataSource {
             )
         )
     )
+
+    val relatedShowsResponse = SetlistResponse(
+        listOf(
+            Setlist(
+                artist = Artist(
+                    mbid = "201",
+                    name = "Pantera",
+                ),
+                venue = Venue(
+                    city = City(
+                        name = "East Rutherford",
+                        state = "New Jersey"
+                    ),
+                    name = "Metlife Stadium"
+                ),
+                tour = Tour(name = "M72 World Tour"),
+                id = "201",
+                eventDate = "2023-08-06",
+                sets = Sets(set = listOf(
+                    Set(
+                        song = listOf()
+                    ),
+                ))
+            ),
+            Setlist(
+                artist = Artist(
+                    mbid = "202",
+                    name = "Suicidal Tendencies",
+                ),
+                venue = Venue(
+                    city = City(
+                        name = "East Rutherford",
+                        state = "New Jersey"
+                    ),
+                    name = "Metlife Stadium"
+                ),
+                tour = Tour(name = "M72 World Tour"),
+                id = "112",
+                eventDate = "2023-08-04",
+                sets = Sets(set = listOf(
+                    Set(
+                        song = listOf()
+                    ),
+                ))
+            ),
+        )
+    )
 }

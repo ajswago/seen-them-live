@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -233,7 +234,7 @@ fun CreatePlaylistProgressDialog(
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .height(290.dp)
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
@@ -241,43 +242,57 @@ fun CreatePlaylistProgressDialog(
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Start,
             ) {
                 Text(
                     stringResource(R.string.create_playlist_progress_title),
                     style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.End
+                    modifier = Modifier.padding(top = 8.dp, start = 24.dp),
                 )
                 Spacer(modifier = Modifier.height(48.dp))
-                LinearProgressIndicator(progress = { step.progress })
-                Spacer(modifier = Modifier.height(16.dp))
+                LinearProgressIndicator(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    progress = { step.progress }
+                )
+                Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = step.description,
                     minLines = 2,
                     maxLines = 2,
-                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 24.dp),
                 )
+                Spacer(modifier = Modifier.height(16.dp))
                 if (step == CreatePlaylistStep.FAILED) {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
                         TextButton(
                             onClick = { onDismissRequest() },
-                            modifier = Modifier.padding(8.dp),
                         ) {
                             Text(stringResource(R.string.cancel_button_label))
                         }
-                        TextButton(
+                        Button(
                             onClick = { onRetry() },
-                            modifier = Modifier.padding(8.dp),
                         ) {
                             Text(stringResource(R.string.retry_button_label))
                         }
                     }
                 } else if (step == CreatePlaylistStep.COMPLETE) {
-                    TextButton(
-                        onClick = { onDismissRequest() },
-                        modifier = Modifier.padding(8.dp),
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                     ) {
-                        Text(stringResource(R.string.dismiss_button_label))
+                        TextButton(
+                            onClick = { onDismissRequest() },
+                        ) {
+                            Text(stringResource(R.string.dismiss_button_label))
+                        }
                     }
                 }
             }

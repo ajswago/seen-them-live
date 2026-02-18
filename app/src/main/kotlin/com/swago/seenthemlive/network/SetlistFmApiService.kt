@@ -2,15 +2,21 @@ package com.swago.seenthemlive.network
 
 import com.swago.seenthemlive.ui.components.cards.SearchTerms
 import java.io.Serializable
+import java.util.Date
 import javax.inject.Inject
 
 interface SetlistFmApiService {
     suspend fun getSearchResults(searchTerms: SearchTerms): SetlistResponse
+    suspend fun getSearchResults(date: Date, venue: String): SetlistResponse
     suspend fun getSetlist(id: String): Setlist
 }
 
 class NetworkSetlistFmApiService : SetlistFmApiService {
     override suspend fun getSearchResults(searchTerms: SearchTerms): SetlistResponse {
+        return SetlistResponse(listOf())
+    }
+
+    override suspend fun getSearchResults(date: Date, venue: String): SetlistResponse {
         return SetlistResponse(listOf())
     }
 
@@ -22,6 +28,10 @@ class NetworkSetlistFmApiService : SetlistFmApiService {
 class FakeSetlistFmApiService @Inject constructor() : SetlistFmApiService {
     override suspend fun getSearchResults(searchTerms: SearchTerms): SetlistResponse {
         return FakeSetlistFmDataSource.setlistResponse
+    }
+
+    override suspend fun getSearchResults(date: Date, venue: String): SetlistResponse {
+        return FakeSetlistFmDataSource.relatedShowsResponse
     }
 
     override suspend fun getSetlist(id: String): Setlist {

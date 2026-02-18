@@ -71,7 +71,8 @@ fun HomeNavHost(
         searchResultScreen(onBackClick = navController::popBackStack)
         showScreen(
             onBackClick = navController::popBackStack,
-            onArtistClick = { navController.navigateToShow(it) }
+            onArtistClick = { navController.navigateToShow(it) },
+            onRelatedShowResultClick = { navController.navigateToSearchResult(it) },
         )
         artistScreen(
             onBackClick = navController::popBackStack,
