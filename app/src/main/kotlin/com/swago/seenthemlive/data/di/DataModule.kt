@@ -3,13 +3,17 @@ package com.swago.seenthemlive.data.di
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.data.repository.NetworkFirebaseRepository
 import com.swago.seenthemlive.data.repository.NetworkSetlistFmRepository
+import com.swago.seenthemlive.data.repository.NetworkSpotifyRepository
 import com.swago.seenthemlive.data.repository.SetlistFmRepository
+import com.swago.seenthemlive.data.repository.SpotifyRepository
 import com.swago.seenthemlive.data.util.ConnectivityManagerNetworkMonitor
 import com.swago.seenthemlive.data.util.NetworkMonitor
 import com.swago.seenthemlive.network.FakeFirebaseApiService
 import com.swago.seenthemlive.network.FakeSetlistFmApiService
+import com.swago.seenthemlive.network.FakeSpotifyApiService
 import com.swago.seenthemlive.network.FirebaseApiService
 import com.swago.seenthemlive.network.SetlistFmApiService
+import com.swago.seenthemlive.network.SpotifyApiService
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -42,4 +46,14 @@ abstract class DataModule {
     internal abstract fun bindsSetlistFmApiService(
         setlistFmApiService: FakeSetlistFmApiService
     ): SetlistFmApiService
+
+    @Binds
+    internal abstract fun bindsSpotifyRepository(
+        spotifyRepository: NetworkSpotifyRepository
+    ): SpotifyRepository
+
+    @Binds
+    internal abstract fun bindsSpotifyApiService(
+        spotifyApiService: FakeSpotifyApiService
+    ): SpotifyApiService
 }

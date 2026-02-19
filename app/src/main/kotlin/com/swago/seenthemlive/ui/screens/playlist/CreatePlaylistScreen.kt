@@ -76,7 +76,7 @@ fun CreatePlaylistScreen(
     uiState: CreatePlaylistUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onCreatePlaylist: ((String, List<String>) -> Unit) = { _, _ -> },
+    onCreatePlaylist: ((String, List<Show>) -> Unit) = { _, _ -> },
     onPlaylistConfirmed: () -> Unit = {},
     createPlaylistStep: CreatePlaylistStep = CreatePlaylistStep.NOT_STARTED
 ) {
@@ -146,8 +146,8 @@ fun CreatePlaylistScreen(
                         }
                     }
                     is CreatePlaylistUiState.Loaded -> {
-                        val selections: MutableMap<String, Boolean> = remember {
-                            mutableStateMapOf(*uiState.shows.map { it.id to false }.toTypedArray())
+                        val selections: MutableMap<Show, Boolean> = remember {
+                            mutableStateMapOf(*uiState.shows.map { it to false }.toTypedArray())
                         }
                         val groupedShows = uiState.shows.groupBy { it.date }
                         var enteredName: String? = null
@@ -197,7 +197,7 @@ fun CreatePlaylistScreen(
                                         selections = artistSelections,
                                         onArtistSelected = { index, selected ->
                                             artistSelections[artists[index]] = selected
-                                            selections[show[index].id] = selected
+                                            selections[show[index]] = selected
                                         }
                                     )
                                 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.swago.seenthemlive.data.repository.FirebaseRepository
+import com.swago.seenthemlive.data.repository.NetworkSpotifyRepository
 import com.swago.seenthemlive.models.Show
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePlaylistViewModel @Inject constructor(
-    firebaseRepository: FirebaseRepository
+    val firebaseRepository: FirebaseRepository,
+    val spotifyRepository: NetworkSpotifyRepository
 ) : ViewModel() {
 
     var createPlaylistStep: CreatePlaylistStep by mutableStateOf(CreatePlaylistStep.NOT_STARTED)
@@ -40,14 +42,25 @@ class CreatePlaylistViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
         )
 
-    fun createPlaylist(name: String, selections: List<String>) {
+    fun createPlaylist(name: String, selections: List<Show>) {
         createPlaylistStep = CreatePlaylistStep.CREATE_PLAYLIST
         viewModelScope.launch {
             delay(Duration.ofMillis(2000))
+            val playlistId = spotifyRepository.createPlaylist(name)
+            if (playlistId == null) {
+                createPlaylistStep = CreatePlaylistStep.FAILED
+                return@launch
+            }
             createPlaylistStep = CreatePlaylistStep.FIND_SONGS
             delay(Duration.ofMillis(2000))
+            val songIds = selections.flatMap { show ->
+                firebaseRepository.getTracksForShow(show.id).plus(
+                    firebaseRepository.getEncoreTracksForShow(show.id)
+                ).mapNotNull { track -> spotifyRepository.searchSong(show.artist, track.trackName) }
+            }
             createPlaylistStep = CreatePlaylistStep.ADD_SONGS
             delay(Duration.ofMillis(2000))
+            val result = spotifyRepository.addSongsToPlaylist(playlistId, songIds)
             createPlaylistStep = CreatePlaylistStep.COMPLETE
         }
     }
