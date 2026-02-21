@@ -8,18 +8,21 @@ import com.swago.seenthemlive.ui.screens.login.LoginRoute
 
 @Composable
 fun RootNavHost(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    startDestination: Any = LoginRoute,
+    googleSignOut: () -> Unit
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = LoginRoute,
+        startDestination = startDestination,
         modifier = modifier
     ) {
         loginNav(navController = navController)
 
         homeNavHost(
             logout = {
+                googleSignOut()
                 navController.navigate(LoginRoute) {
                     popUpTo(0){}
                 }

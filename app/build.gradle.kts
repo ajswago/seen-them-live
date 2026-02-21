@@ -1,14 +1,28 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose)
+    alias(libs.plugins.gms)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.canRead()) {
+    localPropertiesFile.inputStream().use { inputStream ->
+        localProperties.load(inputStream)
+    }
+}
+
+val googleWebApiKey: String = localProperties.getProperty("google_web_api_key", "")
+val setlistfmApiKey: String = localProperties.getProperty("setlistfm_api_key", "")
+val spotifyClientId: String = localProperties.getProperty("spotify_client_id", "")
 
 android {
     namespace = "com.swago.seenthemlive"
@@ -25,6 +39,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "GOOGLE_WEB_API_KEY", "\"$googleWebApiKey\"")
+        buildConfigField("String", "SETLISTFM_API_KEY", "\"$setlistfmApiKey\"")
+        buildConfigField("String", "SPOTIFY_CLIENT_ID", "\"$spotifyClientId\"")
     }
 
     buildTypes {
@@ -58,6 +76,7 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.firebase.bom))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material.icons.extended)
@@ -68,10 +87,14 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.auth)
     implementation(libs.google.auth)
+    implementation(libs.google.id)
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.serialization.json)
 

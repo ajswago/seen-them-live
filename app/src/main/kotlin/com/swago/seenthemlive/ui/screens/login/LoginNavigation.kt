@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.serialization.Serializable
 
 @Serializable object LoginRoute
@@ -12,7 +13,7 @@ fun NavController.navigateToLogin(navOptions: NavOptions) =
     navigate(route = LoginRoute, navOptions)
 
 fun NavGraphBuilder.loginScreen(
-    onLogin: () -> Unit
+    onLogin: (FirebaseUser?) -> Unit
 ) {
     composable<LoginRoute> {
         LoginRoute(onLogin = onLogin)

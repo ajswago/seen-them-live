@@ -10,10 +10,14 @@ fun NavGraphBuilder.loginNav(
     navController: NavHostController
 ) {
     loginScreen(
-        onLogin = { navController.navigateToHomeNavHost(navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-                inclusive = true
+        onLogin = { user ->
+            if (user != null) {
+                navController.navigateToHomeNavHost(navOptions {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        inclusive = true
+                    }
+                })
             }
-        }) }
+        }
     )
 }

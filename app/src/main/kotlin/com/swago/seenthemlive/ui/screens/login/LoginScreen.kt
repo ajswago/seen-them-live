@@ -27,25 +27,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.credentials.CredentialManager
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.firebase.auth.FirebaseUser
 import com.swago.seenthemlive.R
 
 @Composable
 fun LoginRoute(
-    onLogin: () -> Unit,
+    onLogin: (FirebaseUser?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val isOffline by viewModel.isOffline.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LoginScreen(
         modifier = modifier,
         uiState = viewModel.uiState,
         isOffline = isOffline,
-        onLoginClick = { viewModel.performLogin { onLogin() } },
+        onLoginClick = { viewModel.performLogin(
+            getCredential = {
+                val credentialManager = CredentialManager.create(context)
+                return@performLogin credentialManager.getCredential(context, it)
+            },
+            { user -> onLogin(user) } ) },
     )
 }
 
@@ -114,6 +123,16 @@ fun LoginScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Not connected")
+                        }
+                    } else if (uiState is LoginUiState.Failed) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Filled.Error,
+                                tint = MaterialTheme.colorScheme.error,
+                                contentDescription = "Error"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Login Failed")
                         }
                     } else if (uiState is LoginUiState.Loading) {
                         CircularProgressIndicator()
