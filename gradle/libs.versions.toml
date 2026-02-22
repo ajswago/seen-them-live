@@ -11,6 +11,7 @@ androidxLifecycle = "2.10.0"
 androidxNavigation="2.9.6"
 androidxTestExt = "1.3.0"
 firebaseBom = "34.9.0"
+firebaseFirestoreKtx = "24.4.1"
 gmsPlugin = "4.4.4"
 googleAuth = "21.4.0"
 googleId = "1.1.1"
@@ -43,6 +44,7 @@ androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espres
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "googleAuth"}
 google-id = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleId" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

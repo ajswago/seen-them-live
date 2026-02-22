@@ -2,6 +2,8 @@ package com.swago.seenthemlive.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.models.Artist
 import com.swago.seenthemlive.models.Profile
@@ -12,8 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.time.delay
-import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,13 +22,13 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     val profileFlow: Flow<Profile> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getProfile())
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getProfile(user?.uid ?: ""))
     }
 
     val artistsFlow: Flow<List<Artist>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getTopArtistsForProfile())
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getTopArtistsForProfile(user?.uid ?: ""))
     }
 
     val uiState: StateFlow<ProfileUiState> = combine(

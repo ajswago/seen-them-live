@@ -2,6 +2,8 @@ package com.swago.seenthemlive.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.data.repository.SetlistFmRepository
 import com.swago.seenthemlive.models.Show
@@ -32,8 +34,8 @@ class SearchResultViewModel @AssistedInject constructor(
     }
 
     val savedFlow: Flow<Boolean> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.showSaved(showId = showId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.showSaved(user?.uid ?: "", showId = showId))
     }
 
     val tracksFlow: Flow<List<Track>> = flow {

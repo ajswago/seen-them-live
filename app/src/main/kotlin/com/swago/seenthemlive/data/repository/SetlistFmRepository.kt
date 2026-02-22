@@ -6,6 +6,7 @@ import com.swago.seenthemlive.network.Setlist
 import com.swago.seenthemlive.network.SetlistFmApiService
 import com.swago.seenthemlive.network.SetlistResponse
 import com.swago.seenthemlive.ui.components.cards.SearchTerms
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -48,14 +49,19 @@ fun SetlistResponse.asShowsList(): List<Show> {
 }
 
 fun Setlist.asShow(): Show {
+    val date = try {
+        SimpleDateFormat(
+            "dd-MM-yyyy", Locale.US
+        ).parse(this.eventDate ?: "")
+    } catch (e: ParseException) {
+        Date()
+    }
     return Show(
         id = this.id ?: "",
         venueName = this.venue?.name ?: "",
         city = this.venue?.city?.name ?: "",
         state = this.venue?.city?.state ?: "",
-        date = SimpleDateFormat(
-            "yyyy-MM-dd", Locale.US
-        ).parse(this.eventDate ?: "") ?: Date(),
+        date = date,
         tourName = this.tour?.name,
         artist = this.artist?.name ?: ""
     )

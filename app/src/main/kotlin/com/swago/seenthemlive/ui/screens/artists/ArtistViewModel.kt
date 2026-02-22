@@ -2,6 +2,8 @@ package com.swago.seenthemlive.ui.screens.artists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.models.Artist
 import com.swago.seenthemlive.models.GroupedShow
@@ -16,8 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.time.delay
-import java.time.Duration
 
 @HiltViewModel(assistedFactory = ArtistViewModel.Factory::class)
 class ArtistViewModel @AssistedInject constructor(
@@ -26,18 +26,18 @@ class ArtistViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val artistFlow: Flow<Artist> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getArtist(artistId = artistId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getArtist(user?.uid ?: "", artistId = artistId))
     }
 
     val showsFlow: Flow<List<GroupedShow>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getShowsForArtist(artistId = artistId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getShowsForArtist(user?.uid ?: "", artistId = artistId))
     }
 
     val tracksFlow: Flow<List<Track>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getTracksForArtist(artistId = artistId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getTracksForArtist(user?.uid ?: "", artistId = artistId))
     }
 
     val uiState: StateFlow<ArtistUiState> = combine(

@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.data.repository.SetlistFmRepository
 import com.swago.seenthemlive.models.Show
@@ -32,32 +34,32 @@ class ShowViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val showFlow: Flow<Show> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getShow(showId = showId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getShow(user?.uid ?: "", showId = showId))
     }
 
     val savedFlow: Flow<Boolean> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.showSaved(showId = showId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.showSaved(user?.uid ?: "", showId = showId))
     }
 
     val tracksFlow: Flow<List<Track>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getTracksForShow(showId = showId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getTracksForShow(user?.uid ?: "", showId = showId))
     }
 
     val encoreTracksFlow: Flow<List<Track>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getEncoreTracksForShow(showId = showId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getEncoreTracksForShow(user?.uid ?: "", showId = showId))
     }
 
     val linkedShowsFlow: Flow<List<Show>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getLinkedShows(showId = showId))
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getLinkedShows(user?.uid ?: "", showId = showId))
     }
 
     fun toggleSavedFlow(id: String): Flow<Boolean> = flow {
-        delay(Duration.ofMillis(2000))
+        val user = Firebase.auth.currentUser
         emit(firebaseRepository.toggleSaved(showId = showId))
     }
 

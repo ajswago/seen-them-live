@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.data.repository.NetworkSpotifyRepository
 import com.swago.seenthemlive.models.Show
@@ -29,8 +31,8 @@ class CreatePlaylistViewModel @Inject constructor(
     var createPlaylistStep: CreatePlaylistStep by mutableStateOf(CreatePlaylistStep.NOT_STARTED)
 
     val showsFlow: Flow<List<Show>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(firebaseRepository.getShows())
+        val user = Firebase.auth.currentUser
+        emit(firebaseRepository.getShows(user?.uid ?: ""))
     }
 
     var uiState: StateFlow<CreatePlaylistUiState> =
@@ -54,8 +56,9 @@ class CreatePlaylistViewModel @Inject constructor(
             createPlaylistStep = CreatePlaylistStep.FIND_SONGS
             delay(Duration.ofMillis(2000))
             val songIds = selections.flatMap { show ->
-                firebaseRepository.getTracksForShow(show.id).plus(
-                    firebaseRepository.getEncoreTracksForShow(show.id)
+                val user = Firebase.auth.currentUser
+                firebaseRepository.getTracksForShow(user?.uid ?: "", show.id).plus(
+                    firebaseRepository.getEncoreTracksForShow(user?.uid ?: "", show.id)
                 ).mapNotNull { track -> spotifyRepository.searchSong(show.artist, track.trackName) }
             }
             createPlaylistStep = CreatePlaylistStep.ADD_SONGS

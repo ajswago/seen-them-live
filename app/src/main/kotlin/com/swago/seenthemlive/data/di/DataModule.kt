@@ -8,10 +8,10 @@ import com.swago.seenthemlive.data.repository.SetlistFmRepository
 import com.swago.seenthemlive.data.repository.SpotifyRepository
 import com.swago.seenthemlive.data.util.ConnectivityManagerNetworkMonitor
 import com.swago.seenthemlive.data.util.NetworkMonitor
-import com.swago.seenthemlive.network.FakeFirebaseApiService
 import com.swago.seenthemlive.network.FakeSetlistFmApiService
 import com.swago.seenthemlive.network.FakeSpotifyApiService
 import com.swago.seenthemlive.network.FirebaseApiService
+import com.swago.seenthemlive.network.NetworkFirebaseApiService
 import com.swago.seenthemlive.network.SetlistFmApiService
 import com.swago.seenthemlive.network.SpotifyApiService
 import dagger.Binds
@@ -34,7 +34,7 @@ abstract class DataModule {
 
     @Binds
     internal abstract fun bindsFirebaseApiService(
-        firebaseApiService: FakeFirebaseApiService
+        firebaseApiService: NetworkFirebaseApiService
     ): FirebaseApiService
 
     @Binds
