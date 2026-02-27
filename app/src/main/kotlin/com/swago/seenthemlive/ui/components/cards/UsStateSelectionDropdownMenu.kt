@@ -26,7 +26,7 @@ import com.swago.seenthemlive.R
 @Composable
 fun UsStateSelectionDropdownMenu(
     selectedText: String?,
-    onSelectionChange: ((String?) -> Unit),
+    onSelectionChange: ((UsState) -> Unit),
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
@@ -67,9 +67,9 @@ fun UsStateSelectionDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                usStates.forEach { item ->
+                UsState.entries.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(text = item ?: stringResource(R.string.state_no_selection_label)) },
+                        text = { Text(text = item.stateName ?: stringResource(R.string.state_no_selection_label)) },
                         onClick = {
                             onSelectionChange(item)
                             expanded = false
@@ -81,67 +81,67 @@ fun UsStateSelectionDropdownMenu(
     }
 }
 
-val usStates = arrayOf(
-    null,
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "District of Columbia",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming"
-)
+enum class UsState(val stateName: String?, val code: String?) {
+    NONE(null, null),
+    ALABAMA("Alabama","AL"),
+    ALASKA("Alaska","AK"),
+    ARIZONA("Arizona","AZ"),
+    ARKANSAS("Arkansas","AR"),
+    CALIFORNIA("California","CA"),
+    COLORADO("Colorado","CO"),
+    CONNECTICUT("Connecticut","CT"),
+    DELAWARE("Delaware","DE"),
+    DC("District of Columbia","DC"),
+    FLORIDA("Florida","FL"),
+    GEORGIA("Georgia","GA"),
+    HAWAII("Hawaii","HI"),
+    IDAHO("Idaho","ID"),
+    ILLINOIS("Illinois","IL"),
+    INDIANA("Indiana","IN"),
+    IOWA("Iowa","IA"),
+    KANSAS("Kansas","KS"),
+    KENTUCKY("Kentucky","KY"),
+    LOUISIANA("Louisiana","LA"),
+    MAINE("Maine","ME"),
+    MARYLAND("Maryland","MD"),
+    MASSACHUSETTS("Massachusetts","MA"),
+    MICHIGAN("Michigan","MI"),
+    MINNESOTA("Minnesota","MN"),
+    MISSISSIPPI("Mississippi","MS"),
+    MISSOURI("Missouri","MO"),
+    MONTANA("Montana","MT"),
+    NEBRASKA("Nebraska","NE"),
+    NEVADA("Nevada","NV"),
+    NEW_HAMPSHIRE("New Hampshire","NH"),
+    NEW_JERSEY("New Jersey","NJ"),
+    NEW_MEXICO("New Mexico","NM"),
+    NEW_YORK("New York","NY"),
+    NORTH_CAROLINA("North Carolina","NC"),
+    NORTH_DAKOTA("North Dakota","ND"),
+    OHIO("Ohio","OH"),
+    OKLAHOMA("Oklahoma","OK"),
+    OREGON("Oregon","OR"),
+    PENNSYLVANIA("Pennsylvania","PA"),
+    RHODE_ISLAND("Rhode Island","RI"),
+    SOUTH_CAROLINA("South Carolina","SC"),
+    SOUTH_DAKOTA("South Dakota","SD"),
+    TENNESSEE("Tennessee","TN"),
+    TEXAS("Texas","TX"),
+    UTAH("Utah","UT"),
+    VERMONT("Vermont","VT"),
+    VIRGINIA("Virginia","VA"),
+    WASHINGTON("Washington","WA"),
+    WEST_VIRGINIA("West Virginia","WV"),
+    WISCONSIN("Wisconsin","WI"),
+    WYOMING("Wyoming","WY"),
+}
 
 @Preview(showBackground = true)
 @Composable
 fun UsStateSelectionDropdownMenuPreview() {
-    var usState by remember { mutableStateOf(usStates[0]) }
+    var usState by remember { mutableStateOf(UsState.NONE) }
     UsStateSelectionDropdownMenu(
-        selectedText = usState,
+        selectedText = usState.stateName,
         onSelectionChange = { usState = it }
     )
 }

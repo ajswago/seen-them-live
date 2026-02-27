@@ -7,6 +7,7 @@ import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
 import com.swago.seenthemlive.network.FirebaseApiService
 import com.swago.seenthemlive.network.Setlist
+import com.swago.seenthemlive.network.SetlistFmApiService
 import com.swago.seenthemlive.network.UserData
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -16,37 +17,57 @@ import javax.inject.Inject
 import kotlin.collections.filter
 
 interface FirebaseRepository {
-    suspend fun getShows(uid: String): List<Show>
-    suspend fun getArtists(uid: String): List<Artist>
-    suspend fun getArtist(uid: String, artistId: String): Artist
-    suspend fun getShowsForArtist(uid: String, artistId: String): List<GroupedShow>
-    suspend fun getTracksForArtist(uid: String, artistId: String): List<Track>
-    suspend fun getShow(uid: String, showId: String): Show
-    suspend fun showSaved(uid: String, showId: String): Boolean
-    suspend fun getTracksForShow(uid: String, showId: String): List<Track>
-    suspend fun getEncoreTracksForShow(uid: String, showId: String): List<Track>
-    suspend fun getLinkedShows(uid: String, showId: String): List<Show>
-    suspend fun getProfile(uid: String): Profile
-    suspend fun getTopArtistsForProfile(uid: String): List<Artist>
-    suspend fun toggleSaved(showId: String): Boolean
+    suspend fun getShows(): List<Show>
+    suspend fun getArtists(): List<Artist>
+    suspend fun getArtist(artistId: String): Artist
+    suspend fun getShowsForArtist(artistId: String): List<GroupedShow>
+    suspend fun getTracksForArtist(artistId: String): List<Track>
+    suspend fun getShow(showId: String): ShowData
+    suspend fun showSaved(showId: String): Boolean
+    suspend fun getLinkedShows(showId: String): List<Show>
+    suspend fun getProfile(): Profile
+    suspend fun getTopArtistsForProfile(): List<Artist>
+    suspend fun saveShow(showId: String)
+    suspend fun removeShow(showId: String)
 }
 
 class NetworkFirebaseRepository @Inject constructor(
-    private val firebaseApiService: FirebaseApiService
+    private val firebaseApiService: FirebaseApiService,
+    private val setlistFmApiService: SetlistFmApiService
 ) : FirebaseRepository {
-    override suspend fun getShows(uid: String): List<Show> = firebaseApiService.getUser(uid).getShows()
-    override suspend fun getArtists(uid: String): List<Artist> = firebaseApiService.getUser(uid).getArtists()
-    override suspend fun getArtist(uid: String, artistId: String): Artist = firebaseApiService.getUser(uid).getArtist(artistId)
-    override suspend fun getShowsForArtist(uid: String, artistId: String): List<GroupedShow> = firebaseApiService.getUser(uid).getShowsForArtist(artistId)
-    override suspend fun getTracksForArtist(uid: String, artistId: String): List<Track> = firebaseApiService.getUser(uid).getTracksForArtist(artistId)
-    override suspend fun getShow(uid: String, showId: String): Show = firebaseApiService.getUser(uid).getShow(showId)
-    override suspend fun showSaved(uid: String, showId: String): Boolean = firebaseApiService.getUser(uid).showSaved(showId)
-    override suspend fun getTracksForShow(uid: String, showId: String): List<Track> = firebaseApiService.getUser(uid).getTracksForShow(showId)
-    override suspend fun getEncoreTracksForShow(uid: String, showId: String): List<Track> = firebaseApiService.getUser(uid).getEncoreTracksForShow(showId)
-    override suspend fun getLinkedShows(uid: String, showId: String): List<Show> = firebaseApiService.getUser(uid).getLinkedShows(showId)
-    override suspend fun getProfile(uid: String): Profile = firebaseApiService.getUser(uid).getProfile()
-    override suspend fun getTopArtistsForProfile(uid: String): List<Artist> = firebaseApiService.getUser(uid).getTopArtistsForProfile()
-    override suspend fun toggleSaved(showId: String): Boolean = firebaseApiService.toggleSaved(showId).showSaved(showId)
+    override suspend fun getShows(): List<Show> = firebaseApiService.getUser().getShows()
+    override suspend fun getArtists(): List<Artist> = firebaseApiService.getUser().getArtists()
+    override suspend fun getArtist(artistId: String): Artist = firebaseApiService.getUser().getArtist(artistId)
+    override suspend fun getShowsForArtist(artistId: String): List<GroupedShow> = firebaseApiService.getUser().getShowsForArtist(artistId)
+    override suspend fun getTracksForArtist(artistId: String): List<Track> = firebaseApiService.getUser().getTracksForArtist(artistId)
+    override suspend fun getShow(showId: String): ShowData {
+        val userData = firebaseApiService.getUser()
+        val setlist = userData.getSetlist(showId) ?: setlistFmApiService.getSetlist(id = showId)
+        return ShowData(
+            setlist.asShow(),
+            setlist.asTracksList(),
+            setlist.asEncoreTracksList()
+        )
+    }
+    override suspend fun showSaved(showId: String): Boolean = firebaseApiService.getUser().showSaved(showId)
+    override suspend fun getLinkedShows(showId: String): List<Show> {
+        val userData = firebaseApiService.getUser()
+        val setlist = userData.getSetlist(showId) ?: setlistFmApiService.getSetlist(id = showId)
+        return userData.getLinkedShows(setlist)
+    }
+    override suspend fun getProfile(): Profile = firebaseApiService.getUser().getProfile()
+    override suspend fun getTopArtistsForProfile(): List<Artist> = firebaseApiService.getUser().getTopArtistsForProfile()
+    override suspend fun saveShow(showId: String) {
+        val setlist = setlistFmApiService.getSetlist(showId)
+        firebaseApiService.saveShow(setlist)
+    }
+    override suspend fun removeShow(showId: String) {
+        firebaseApiService.removeShow(showId)
+    }
+}
+
+fun UserData.getSetlist(showId: String): Setlist? {
+    return this.setlists?.firstOrNull { it.id == showId }
 }
 
 fun UserData.getShows(): List<Show> {
@@ -71,7 +92,7 @@ fun UserData.getArtists(): List<Artist> {
                 SimpleDateFormat(
                     "dd-MM-yyyy", Locale.US
                 ).parse(lastSetlistDate ?: "")
-            } catch (e: ParseException) {
+            } catch (_: ParseException) {
                 Date()
             }
             Artist(
@@ -92,7 +113,7 @@ fun UserData.getArtist(artistId: String): Artist {
         SimpleDateFormat(
             "dd-MM-yyyy", Locale.US
         ).parse(lastSetlistDate ?: "")
-    } catch (e: ParseException) {
+    } catch (_: ParseException) {
         Date()
     }
     return Artist(
@@ -113,7 +134,7 @@ fun UserData.getShowsForArtist(artistId: String): List<GroupedShow> {
             SimpleDateFormat(
                 "dd-MM-yyyy", Locale.US
             ).parse(setlist.eventDate ?: "")
-        } catch (e: ParseException) {
+        } catch (_: ParseException) {
             Date()
         }
         GroupedShow(
@@ -128,13 +149,13 @@ fun UserData.getShowsForArtist(artistId: String): List<GroupedShow> {
     } ?: listOf()
 }
 
-fun UserData.getShow(showId: String): Show {
-    val setlist = this.setlists?.first { it.id == showId } ?: Setlist()
-    return setlist.asShow()
+fun UserData.getShow(showId: String): Show? {
+    val setlist = this.getSetlist(showId)
+    return setlist?.asShow()
 }
 
 fun UserData.showSaved(showId: String): Boolean {
-    val setlist = this.setlists?.firstOrNull { it.id == showId }
+    val setlist = this.getSetlist(showId)
     return setlist != null
 }
 
@@ -152,21 +173,19 @@ fun UserData.getTracksForArtist(artistId: String): List<Track> {
     } ?: listOf()
 }
 
-fun UserData.getTracksForShow(showId: String): List<Track> {
-    val setlist = this.setlists?.first { it.id == showId } ?: Setlist()
-    return setlist.asTracksList()
+fun UserData.getTracksForShow(showId: String): List<Track>? {
+    return this.getSetlist(showId)?.asTracksList()
 }
 
-fun UserData.getEncoreTracksForShow(showId: String): List<Track> {
-    val setlist = this.setlists?.first { it.id == showId } ?: Setlist()
-    return setlist.asEncoreTracksList()
+fun UserData.getEncoreTracksForShow(showId: String): List<Track>? {
+    return this.getSetlist(showId)?.asEncoreTracksList()
 }
 
-fun UserData.getLinkedShows(showId: String): List<Show> {
+fun UserData.getLinkedShows(setlist: Setlist): List<Show> {
     val setlistsByDate = this.setlists?.groupBy { Pair(it.eventDate, it.venue?.id) }
-    val setlist = this.setlists?.first { it.id == showId } ?: Setlist()
+//    val setlist = this.setlists?.firstOrNull { it.id == showId }
     return setlistsByDate?.get(Pair(setlist.eventDate, setlist.venue?.id))
-        ?.filterNot { it.artist?.mbid == setlist.artist?.mbid }?.map{ it.asShow() } ?: listOf()
+        ?.filterNot { it.artist?.mbid == setlist.artist?.mbid }?.map { it.asShow() } ?: listOf()
 }
 
 fun UserData.getProfile(): Profile {

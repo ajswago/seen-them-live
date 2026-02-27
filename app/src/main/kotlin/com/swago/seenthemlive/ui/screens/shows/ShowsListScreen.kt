@@ -14,14 +14,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
@@ -40,12 +39,13 @@ fun ShowsListRoute(
     modifier: Modifier = Modifier,
     viewModel: ShowsListViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState
     ShowsListScreen(
         uiState = uiState,
         onProfileMenuOption = onProfileMenuOption,
         onAddClick = onAddClick,
         onShowClick = onShowClick,
+        refresh = { viewModel.load() },
         modifier = modifier,
     )
 }
@@ -58,7 +58,12 @@ fun ShowsListScreen(
     onProfileMenuOption: (ProfileMenuItem) -> Unit = {},
     onAddClick: () -> Unit = {},
     onShowClick: (String) -> Unit = {},
+    refresh: () -> Unit = {}
 ) {
+    LifecycleStartEffect(Unit) {
+        refresh()
+        onStopOrDispose { }
+    }
     Scaffold(
         topBar = {
             AppBarWithProfile(

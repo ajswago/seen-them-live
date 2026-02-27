@@ -2,8 +2,6 @@ package com.swago.seenthemlive.ui.screens.artists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.models.Artist
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,13 +19,13 @@ class ArtistListViewModel @Inject constructor(
 ) : ViewModel() {
 
     val artistsFlow: Flow<List<Artist>> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getArtists(user?.uid ?: ""))
+        val artists = firebaseRepository.getArtists()
+        emit(artists)
     }
 
     val uiState: StateFlow<ArtistListUiState> =
-        artistsFlow.map {
-            ArtistListUiState.Loaded(it)
+        artistsFlow.map { artists ->
+            ArtistListUiState.Loaded(artists)
         }.stateIn(
             scope = viewModelScope,
             initialValue = ArtistListUiState.Loading,

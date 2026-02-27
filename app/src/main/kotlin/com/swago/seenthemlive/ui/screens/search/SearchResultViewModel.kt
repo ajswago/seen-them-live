@@ -1,64 +1,87 @@
 package com.swago.seenthemlive.ui.screens.search
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.data.repository.SetlistFmRepository
+import com.swago.seenthemlive.data.repository.ShowData
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
+import com.swago.seenthemlive.ui.screens.shows.ConfirmationUiState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.time.delay
-import java.time.Duration
+import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = SearchResultViewModel.Factory::class)
 class SearchResultViewModel @AssistedInject constructor(
     @Assisted val showId: String,
     setlistFmRepository: SetlistFmRepository,
-    firebaseRepository: FirebaseRepository,
+    val firebaseRepository: FirebaseRepository,
 ) : ViewModel() {
 
-    val showFlow: Flow<Show> = flow {
-        delay(Duration.ofMillis(2000))
+    val showFlow: Flow<ShowData> = flow {
         emit(setlistFmRepository.getShow(showId = showId))
     }
 
     val savedFlow: Flow<Boolean> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.showSaved(user?.uid ?: "", showId = showId))
+        emit(firebaseRepository.showSaved(showId = showId))
     }
 
-    val tracksFlow: Flow<List<Track>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(setlistFmRepository.getTracksForShow(showId = showId))
+    var uiState: SearchResultUiState by mutableStateOf(SearchResultUiState.Loading)
+    init {
+        load()
     }
 
-    val encoreTracksFlow: Flow<List<Track>> = flow {
-        delay(Duration.ofMillis(2000))
-        emit(setlistFmRepository.getEncoreTracksForShow(showId = showId))
+    fun load() {
+        viewModelScope.launch {
+            combine(
+                showFlow,
+                savedFlow
+            ) { showData, saved ->
+                SearchResultUiState.Loaded(
+                    showData.show,
+                    saved,
+                    showData.tracks,
+                    showData.encore
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = SearchResultUiState.Loading
+            ).collect { uiState = it }
+        }
     }
 
-    val uiState: StateFlow<SearchResultUiState> = combine(
-        showFlow,
-        savedFlow,
-        tracksFlow,
-        encoreTracksFlow,
-        SearchResultUiState::Loaded
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SearchResultUiState.Loading
-    )
+    var confirmationUiState: ConfirmationUiState by mutableStateOf(ConfirmationUiState.NotLoading)
+
+    fun toggleSaved(completion: () -> Unit) {
+        confirmationUiState = ConfirmationUiState.Loading
+        viewModelScope.launch {
+            val saved = firebaseRepository.showSaved(showId = showId)
+            if (saved) {
+                firebaseRepository.removeShow(showId = showId)
+            } else {
+                firebaseRepository.saveShow(showId = showId)
+            }
+        }.invokeOnCompletion {
+            viewModelScope.launch(Dispatchers.Main) {
+                load()
+                confirmationUiState = ConfirmationUiState.NotLoading
+                completion()
+            }
+        }
+    }
 
     @AssistedFactory
     interface Factory {

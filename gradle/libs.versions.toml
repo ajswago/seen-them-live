@@ -10,6 +10,7 @@ androidxHiltNavigationCompose = "1.3.0"
 androidxLifecycle = "2.10.0"
 androidxNavigation="2.9.6"
 androidxTestExt = "1.3.0"
+coil = "2.7.0"
 firebaseBom = "34.9.0"
 firebaseFirestoreKtx = "24.4.1"
 gmsPlugin = "4.4.4"
@@ -20,6 +21,9 @@ kotlin = "2.2.21"
 kotlinxSerializationJson = "1.9.0"
 ksp = "2.3.1"
 material3AdaptiveNavigationSuite = "1.4.0"
+okhttpLoggingInterceptor = "4.7.2"
+retrofit = "2.11.0"
+retrofitKtxSerializationConverter = "1.0.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
@@ -42,6 +46,7 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
@@ -50,6 +55,9 @@ google-id = { group = "com.google.android.libraries.identity.googleid", name = "
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-ktx-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKtxSerializationConverter" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

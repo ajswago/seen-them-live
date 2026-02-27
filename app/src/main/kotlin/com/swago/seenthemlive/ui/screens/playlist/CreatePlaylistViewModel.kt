@@ -31,8 +31,7 @@ class CreatePlaylistViewModel @Inject constructor(
     var createPlaylistStep: CreatePlaylistStep by mutableStateOf(CreatePlaylistStep.NOT_STARTED)
 
     val showsFlow: Flow<List<Show>> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getShows(user?.uid ?: ""))
+        emit(firebaseRepository.getShows())
     }
 
     var uiState: StateFlow<CreatePlaylistUiState> =
@@ -56,10 +55,9 @@ class CreatePlaylistViewModel @Inject constructor(
             createPlaylistStep = CreatePlaylistStep.FIND_SONGS
             delay(Duration.ofMillis(2000))
             val songIds = selections.flatMap { show ->
-                val user = Firebase.auth.currentUser
-                firebaseRepository.getTracksForShow(user?.uid ?: "", show.id).plus(
-                    firebaseRepository.getEncoreTracksForShow(user?.uid ?: "", show.id)
-                ).mapNotNull { track -> spotifyRepository.searchSong(show.artist, track.trackName) }
+                val showData = firebaseRepository.getShow(show.id)
+                showData.tracks.plus(showData.encore)
+                    .mapNotNull { track -> spotifyRepository.searchSong(show.artist, track.trackName) }
             }
             createPlaylistStep = CreatePlaylistStep.ADD_SONGS
             delay(Duration.ofMillis(2000))

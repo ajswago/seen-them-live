@@ -37,7 +37,7 @@ fun SearchCard(
 ) {
     var artist by remember { mutableStateOf<String?>(null) }
     var venue by remember { mutableStateOf<String?>(null) }
-    var usState by remember { mutableStateOf(usStates[0]) }
+    var usState by remember { mutableStateOf(UsState.NONE) }
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -95,7 +95,7 @@ fun SearchCard(
             )
             UsStateSelectionDropdownMenu(
                 enabled = enabled,
-                selectedText = usState,
+                selectedText = usState.stateName,
                 onSelectionChange = { usState = it }
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -105,7 +105,7 @@ fun SearchCard(
                     SearchTerms(
                         artist = artist,
                         venue = venue,
-                        usState = usState
+                        usState = usState.code
                     )
                 ) },
                 modifier = Modifier

@@ -26,18 +26,15 @@ class ArtistViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val artistFlow: Flow<Artist> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getArtist(user?.uid ?: "", artistId = artistId))
+        emit(firebaseRepository.getArtist(artistId = artistId))
     }
 
     val showsFlow: Flow<List<GroupedShow>> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getShowsForArtist(user?.uid ?: "", artistId = artistId))
+        emit(firebaseRepository.getShowsForArtist(artistId = artistId))
     }
 
     val tracksFlow: Flow<List<Track>> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getTracksForArtist(user?.uid ?: "", artistId = artistId))
+        emit(firebaseRepository.getTracksForArtist(artistId = artistId))
     }
 
     val uiState: StateFlow<ArtistUiState> = combine(

@@ -10,8 +10,6 @@ import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.cards.SearchTerms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.delay
-import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +22,6 @@ class SearchViewModel @Inject constructor(
     fun performSearch(terms: SearchTerms) {
         uiState = SearchUiState.Loading
         viewModelScope.launch {
-            delay(Duration.ofMillis(2000))
             uiState = SearchUiState.Results(shows = setlistFmRepository.getSearchResults(terms))
         }
     }

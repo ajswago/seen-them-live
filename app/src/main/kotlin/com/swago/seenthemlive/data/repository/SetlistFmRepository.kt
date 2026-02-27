@@ -15,9 +15,7 @@ import javax.inject.Inject
 interface SetlistFmRepository {
     suspend fun getSearchResults(searchTerms: SearchTerms): List<Show>
     suspend fun getSearchResults(date: Date, venue: String): List<Show>
-    suspend fun getShow(showId: String): Show
-    suspend fun getTracksForShow(showId: String): List<Track>
-    suspend fun getEncoreTracksForShow(showId: String): List<Track>
+    suspend fun getShow(showId: String): ShowData
 }
 
 class NetworkSetlistFmRepository @Inject constructor(
@@ -29,14 +27,14 @@ class NetworkSetlistFmRepository @Inject constructor(
     override suspend fun getSearchResults(date: Date, venue: String): List<Show> =
         setlistFmApiService.getSearchResults(date = date, venue = venue).asShowsList()
 
-    override suspend fun getShow(showId: String): Show =
-        setlistFmApiService.getSetlist(id = showId).asShow()
-
-    override suspend fun getTracksForShow(showId: String): List<Track> =
-        setlistFmApiService.getSetlist(id = showId).asTracksList()
-
-    override suspend fun getEncoreTracksForShow(showId: String): List<Track> =
-        setlistFmApiService.getSetlist(id = showId).asEncoreTracksList()
+    override suspend fun getShow(showId: String): ShowData {
+        val setlist = setlistFmApiService.getSetlist(id = showId)
+        return ShowData(
+            setlist.asShow(),
+            setlist.asTracksList(),
+            setlist.asEncoreTracksList()
+        )
+    }
 }
 
 fun SetlistResponse.asShowsList(): List<Show> {
@@ -53,7 +51,7 @@ fun Setlist.asShow(): Show {
         SimpleDateFormat(
             "dd-MM-yyyy", Locale.US
         ).parse(this.eventDate ?: "")
-    } catch (e: ParseException) {
+    } catch (_: ParseException) {
         Date()
     }
     return Show(
@@ -95,3 +93,9 @@ fun Setlist.asEncoreTracksList(): List<Track> {
         )
     } ?: listOf() } ?: listOf()
 }
+
+data class ShowData(
+    val show: Show,
+    val tracks: List<Track>,
+    val encore: List<Track>,
+)

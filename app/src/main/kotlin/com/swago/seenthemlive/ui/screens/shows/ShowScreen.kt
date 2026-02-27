@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -26,9 +29,12 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,12 +72,16 @@ fun ShowRoute(
 ) {
     val uiState = viewModel.uiState
     val relatedShowsResultsUiState = viewModel.relatedShowsResultsUiState
+    val confirmationUiState = viewModel.confirmationUiState
     ShowScreen(
         uiState = uiState,
         relatedShowsResultsUiState = relatedShowsResultsUiState,
+        confirmationUiState = confirmationUiState,
         onDismissResults = { viewModel.dismissBottomSheet() },
         onEditClicked = {},
-        onToggleSaved = { viewModel.toggleSaved( it ) },
+        onToggleSaved = { completion ->
+            viewModel.toggleSaved(completion)
+        },
         onFindMoreClicked = {
             val state = uiState
             if (state is ShowUiState.Loaded) {
@@ -81,6 +91,7 @@ fun ShowRoute(
         onBackClick = onBackClick,
         onArtistClick = onArtistClick,
         onRelatedShowResultClick = onRelatedShowResultClick,
+        refresh = { viewModel.load() },
         modifier = modifier,
     )
 }
@@ -90,18 +101,20 @@ fun ShowRoute(
 fun ShowScreen(
     uiState: ShowUiState,
     relatedShowsResultsUiState: RelatedShowsResultsUiState,
+    confirmationUiState: ConfirmationUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onDismissResults: () -> Unit = {},
     showToggleSaved: Boolean = true,
     showEdit: Boolean = false,
-    onToggleSaved: (String) -> Unit = {},
+    onToggleSaved: (completion: () -> Unit) -> Unit = {},
     onEditClicked: () -> Unit = {},
     onArtistClick: (String) -> Unit = {},
     onRelatedShowResultClick: (String) -> Unit = {},
     onFindMoreClicked: () -> Unit = {},
+    refresh: () -> Unit = {}
 ) {
-    var showConfirmationDialog by mutableStateOf(false)
+    var showConfirmationDialog by remember {mutableStateOf(false) }
     Scaffold(
         topBar = { ShowAppBar(
             uiState = uiState,
@@ -145,10 +158,12 @@ fun ShowScreen(
                     onDismissResults = onDismissResults)
                 if (showConfirmationDialog && uiState is ShowUiState.Loaded) {
                     ConfirmAddRemoveDialog(
+                        uiState = confirmationUiState,
                         onDismissRequest = { showConfirmationDialog = false },
                         onConfirm = {
-                            showConfirmationDialog = false
-                            onToggleSaved(uiState.show.id)
+                            onToggleSaved {
+                                showConfirmationDialog = false
+                            }
                         },
                         saved = uiState.saved
                     )
@@ -394,6 +409,7 @@ fun RelatedShowsResults(
 
 @Composable
 fun ConfirmAddRemoveDialog(
+    uiState: ConfirmationUiState,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
     saved: Boolean,
@@ -445,12 +461,25 @@ fun ConfirmAddRemoveDialog(
                     Button(
                         onClick = { onConfirm() },
                     ) {
-                        Text(
-                            if (saved)
-                                "Remove"
-                            else
-                                "Add"
-                        )
+                        Box(contentAlignment = Alignment.Center) {
+                            if (uiState is ConfirmationUiState.Loading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    color = LocalContentColor.current,
+                                    strokeWidth = 1.5f.dp,
+                                    strokeCap = StrokeCap.Round)
+                            }
+                            Text(
+                                if (saved)
+                                    "Remove"
+                                else
+                                    "Add",
+                                modifier = Modifier.alpha(
+                                    if (uiState is ConfirmationUiState.Loading) 0.0f
+                                    else 1.0f
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -510,6 +539,7 @@ fun ShowScreenPreview() {
             encoreTracks = encoreTracks,
         ),
         relatedShowsResultsUiState = RelatedShowsResultsUiState.Hidden,
+        confirmationUiState = ConfirmationUiState.NotLoading,
         onArtistClick = {},
         onFindMoreClicked = {},
         onEditClicked = {},
@@ -524,6 +554,7 @@ fun LoadingShowScreenPreview() {
     ShowScreen(
         uiState = ShowUiState.Loading,
         relatedShowsResultsUiState = RelatedShowsResultsUiState.Hidden,
+        confirmationUiState = ConfirmationUiState.NotLoading,
         onArtistClick = {},
         onFindMoreClicked = {},
         onEditClicked = {},
@@ -535,6 +566,7 @@ fun LoadingShowScreenPreview() {
 @Composable
 fun ConfirmAddDialogPreview() {
     ConfirmAddRemoveDialog(
+        uiState = ConfirmationUiState.NotLoading,
         onDismissRequest = {},
         onConfirm = {},
         saved = false
@@ -545,8 +577,20 @@ fun ConfirmAddDialogPreview() {
 @Composable
 fun ConfirmRemoveDialogPreview() {
     ConfirmAddRemoveDialog(
+        uiState = ConfirmationUiState.NotLoading,
         onDismissRequest = {},
         onConfirm = {},
         saved = true
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingConfirmDialogPreview() {
+    ConfirmAddRemoveDialog(
+        uiState = ConfirmationUiState.Loading,
+        onDismissRequest = {},
+        onConfirm = {},
+        saved = false
     )
 }

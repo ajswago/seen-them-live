@@ -15,11 +15,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.models.Track
@@ -28,6 +30,8 @@ import com.swago.seenthemlive.ui.components.cards.LoadingShowCard
 import com.swago.seenthemlive.ui.components.cards.ShowCard
 import com.swago.seenthemlive.ui.components.listitems.LoadingTrackListItemNumbered
 import com.swago.seenthemlive.ui.components.listitems.TrackListItem
+import com.swago.seenthemlive.ui.screens.shows.ConfirmAddRemoveDialog
+import com.swago.seenthemlive.ui.screens.shows.ConfirmationUiState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,10 +47,14 @@ fun SearchResultRoute(
         factory.create(showId)
     }
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState
+    val confirmationUiState = viewModel.confirmationUiState
     SearchResultScreen(
         uiState = uiState,
-        onToggleSaved = {},
+        confirmationUiState = confirmationUiState,
+        onToggleSaved = { completion ->
+            viewModel.toggleSaved(completion)
+        },
         onBackClick = onBackClick,
         modifier = modifier,
     )
@@ -56,17 +64,19 @@ fun SearchResultRoute(
 @Composable
 fun SearchResultScreen(
     uiState: SearchResultUiState,
+    confirmationUiState: ConfirmationUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     showToggleSaved: Boolean = true,
-    onToggleSaved: (String) -> Unit = {},
+    onToggleSaved: (completion: () -> Unit) -> Unit = {},
 ) {
+    var showConfirmationDialog by remember { mutableStateOf(false) }
     Scaffold(
         topBar = { SearchResultAppBar(
             uiState = uiState,
             onBackClick = onBackClick,
             showToggleSaved = showToggleSaved,
-            onToggleSaved = onToggleSaved,
+            onToggleSaved = { showConfirmationDialog = true },
         ) },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
@@ -87,6 +97,18 @@ fun SearchResultScreen(
                 TrackList(uiState = uiState)
                 Spacer(modifier = Modifier.height(16.dp))
                 EncoreTrackList(uiState = uiState)
+                if (showConfirmationDialog && uiState is SearchResultUiState.Loaded) {
+                    ConfirmAddRemoveDialog(
+                        uiState = confirmationUiState,
+                        onDismissRequest = { showConfirmationDialog = false },
+                        onConfirm = {
+                            onToggleSaved {
+                                showConfirmationDialog = false
+                            }
+                        },
+                        saved = uiState.saved
+                    )
+                }
             }
         }
     }
@@ -228,6 +250,7 @@ fun SearchResultScreenPreview() {
             tracks = tracks,
             encoreTracks = encore
         ),
+        confirmationUiState = ConfirmationUiState.NotLoading,
         onToggleSaved = {},
         modifier = Modifier
     )
@@ -238,6 +261,7 @@ fun SearchResultScreenPreview() {
 fun LoadingSearchResultScreenPreview() {
     SearchResultScreen(
         uiState = SearchResultUiState.Loading,
+        confirmationUiState = ConfirmationUiState.NotLoading,
         onToggleSaved = {},
     )
 }

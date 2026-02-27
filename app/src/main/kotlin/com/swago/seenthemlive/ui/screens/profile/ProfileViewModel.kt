@@ -22,13 +22,11 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     val profileFlow: Flow<Profile> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getProfile(user?.uid ?: ""))
+        emit(firebaseRepository.getProfile())
     }
 
     val artistsFlow: Flow<List<Artist>> = flow {
-        val user = Firebase.auth.currentUser
-        emit(firebaseRepository.getTopArtistsForProfile(user?.uid ?: ""))
+        emit(firebaseRepository.getTopArtistsForProfile())
     }
 
     val uiState: StateFlow<ProfileUiState> = combine(

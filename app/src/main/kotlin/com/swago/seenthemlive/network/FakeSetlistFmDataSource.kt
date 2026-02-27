@@ -2,6 +2,8 @@ package com.swago.seenthemlive.network
 
 object FakeSetlistFmDataSource {
     val setlistResponse = SetlistResponse(
+        "",
+        0,0,0,
         listOf(
             Setlist(
                 artist = Artist(
@@ -109,6 +111,8 @@ object FakeSetlistFmDataSource {
     )
 
     val relatedShowsResponse = SetlistResponse(
+        "",
+        0,0,0,
         listOf(
             Setlist(
                 artist = Artist(

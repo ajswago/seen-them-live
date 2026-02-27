@@ -182,7 +182,7 @@ fun CreatePlaylistScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Column {
-                            for (date in groupedShows.keys.toTypedArray()) {
+                            for (date in groupedShows.keys.toTypedArray().sortedDescending()) {
                                 groupedShows[date]?.let { show ->
                                     val artists = show.map{ it.artist }.toTypedArray()
                                     val artistSelections = remember {
