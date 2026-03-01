@@ -9,6 +9,7 @@ import com.swago.seenthemlive.network.FirebaseApiService
 import com.swago.seenthemlive.network.Setlist
 import com.swago.seenthemlive.network.SetlistFmApiService
 import com.swago.seenthemlive.network.UserData
+import com.swago.seenthemlive.ui.screens.map.MapItem
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -29,6 +30,7 @@ interface FirebaseRepository {
     suspend fun getTopArtistsForProfile(): List<Artist>
     suspend fun saveShow(showId: String)
     suspend fun removeShow(showId: String)
+    suspend fun getMapItems(): List<MapItem>
 }
 
 class NetworkFirebaseRepository @Inject constructor(
@@ -64,6 +66,7 @@ class NetworkFirebaseRepository @Inject constructor(
     override suspend fun removeShow(showId: String) {
         firebaseApiService.removeShow(showId)
     }
+    override suspend fun getMapItems(): List<MapItem> = firebaseApiService.getUser().asMapItems()
 }
 
 fun UserData.getSetlist(showId: String): Setlist? {
@@ -183,7 +186,6 @@ fun UserData.getEncoreTracksForShow(showId: String): List<Track>? {
 
 fun UserData.getLinkedShows(setlist: Setlist): List<Show> {
     val setlistsByDate = this.setlists?.groupBy { Pair(it.eventDate, it.venue?.id) }
-//    val setlist = this.setlists?.firstOrNull { it.id == showId }
     return setlistsByDate?.get(Pair(setlist.eventDate, setlist.venue?.id))
         ?.filterNot { it.artist?.mbid == setlist.artist?.mbid }?.map { it.asShow() } ?: listOf()
 }
@@ -215,4 +217,12 @@ fun UserData.getTopArtistsForProfile(): List<Artist> {
                 lastShow = Date()
             )
         } ?: listOf()
+}
+
+fun UserData.asMapItems(): List<MapItem> {
+    return this.setlists?.groupBy {
+        it.venue
+    }?.map { venueGroup ->
+        MapItem(venueGroup.key?.name, venueGroup.value.groupBy { it.eventDate }.values.count(),
+            venueGroup.key?.city?.coords?.lat, venueGroup.key?.city?.coords?.long) } ?: listOf()
 }

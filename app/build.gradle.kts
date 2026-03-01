@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.secrets.gradle.plugin)
 }
 
 val localProperties = Properties()
@@ -99,6 +100,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.google.auth)
     implementation(libs.google.id)
+    implementation(libs.google.maps.compose)
     implementation(libs.hilt.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp.logging.interceptor)
