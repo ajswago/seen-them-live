@@ -25,7 +25,7 @@ interface SetlistFmApiService {
     suspend fun getSetlist(id: String): Setlist
 }
 
-class AuthInterceptor() : Interceptor {
+class SetlistFmAuthInterceptor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val newRequest = originalRequest.newBuilder()
@@ -41,7 +41,7 @@ class NetworkSetlistFmApiService @Inject constructor() : SetlistFmApiService {
     private val baseUrl = "https://api.setlist.fm/rest/1.0/"
 
     private val setlistfmClient = OkHttpClient().newBuilder()
-        .addInterceptor(AuthInterceptor())
+        .addInterceptor(SetlistFmAuthInterceptor())
         .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         .build()
 

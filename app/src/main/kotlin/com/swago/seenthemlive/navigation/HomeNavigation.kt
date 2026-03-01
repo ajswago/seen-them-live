@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.swago.seenthemlive.ui.home.HomeRoute
 import kotlinx.serialization.Serializable
 
@@ -14,9 +15,10 @@ fun NavController.navigateToHomeNavHost(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.homeNavHost(
-    logout: () -> Unit
+    logout: () -> Unit,
+    onSpotifyAuth: (AuthorizationRequest, (String) -> Unit) -> Unit,
 ) {
     composable<HomeRoute> {
-        HomeRoute(logout = logout)
+        HomeRoute(logout = logout, onSpotifyAuth = onSpotifyAuth)
     }
 }

@@ -34,6 +34,8 @@ android {
         targetSdk = 34
         versionCode = 2
         versionName = "2.0"
+        manifestPlaceholders["redirectSchemeName"] = "com.swago.seenthemlive"
+        manifestPlaceholders["redirectHostName"] = "callback"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -102,6 +104,7 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit)
     implementation(libs.retrofit.ktx.serialization.converter)
+    implementation(libs.spotify.auth)
 
     ksp(libs.hilt.compiler)
 

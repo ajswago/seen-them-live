@@ -1,5 +1,6 @@
 package com.swago.seenthemlive.ui.screens.playlist
 
+import android.content.Context.MODE_PRIVATE
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,11 +30,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,7 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
+import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.swago.seenthemlive.R
 import com.swago.seenthemlive.models.Show
 import com.swago.seenthemlive.ui.components.cards.CreatePlaylistCard
@@ -54,12 +56,14 @@ import java.util.Locale
 @Composable
 fun CreatePlaylistRoute(
     onBackClick: () -> Unit,
+    onSpotifyAuth: (AuthorizationRequest, (String) -> Unit) -> Unit,
     onPlaylistConfirmed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreatePlaylistViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState
     val createPlaylistStep = viewModel.createPlaylistStep
+    val context = LocalContext.current
     CreatePlaylistScreen(
         uiState = uiState,
         onBackClick = onBackClick,
@@ -67,6 +71,17 @@ fun CreatePlaylistRoute(
         onPlaylistConfirmed = onPlaylistConfirmed,
         createPlaylistStep = createPlaylistStep,
         modifier = modifier,
+        checkSpotifyAuth = { viewModel.checkSpotifyAuth(
+            getSavedCode = {
+                val editor = context.getSharedPreferences(
+                    "spotifycode",
+                    MODE_PRIVATE)
+                editor.getString("code", "")
+            },
+            authenticateWithSpotify = { request, completion ->
+                onSpotifyAuth(request, completion)
+            }
+        ) }
     )
 }
 
@@ -78,8 +93,13 @@ fun CreatePlaylistScreen(
     onBackClick: () -> Unit = {},
     onCreatePlaylist: ((String, List<Show>) -> Unit) = { _, _ -> },
     onPlaylistConfirmed: () -> Unit = {},
-    createPlaylistStep: CreatePlaylistStep = CreatePlaylistStep.NOT_STARTED
+    createPlaylistStep: CreatePlaylistStep = CreatePlaylistStep.NOT_STARTED,
+    checkSpotifyAuth: () -> Unit = {}
 ) {
+    LifecycleStartEffect(Unit) {
+        checkSpotifyAuth()
+        onStopOrDispose { }
+    }
     Scaffold(
         topBar = {
             TopAppBar(

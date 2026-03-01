@@ -8,16 +8,19 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.swago.seenthemlive.navigation.HomeNavHost
 
 @Composable
 fun HomeRoute(
     logout: () -> Unit,
+    onSpotifyAuth: (AuthorizationRequest, (String) -> Unit) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScaffold(
         homeState = rememberHomeState(),
         logout = logout,
+        onSpotifyAuth = onSpotifyAuth,
         modifier = modifier
     )
 }
@@ -26,6 +29,7 @@ fun HomeRoute(
 fun HomeScaffold(
     homeState: HomeState,
     logout: () -> Unit,
+    onSpotifyAuth: (AuthorizationRequest, (String) -> Unit) -> Unit,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
@@ -54,6 +58,7 @@ fun HomeScaffold(
         HomeNavHost(
             homeState = homeState,
             logout = logout,
+            onSpotifyAuth = onSpotifyAuth,
             modifier = modifier
         )
     }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
+import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.swago.seenthemlive.ui.components.ProfileMenuItem
 import com.swago.seenthemlive.ui.home.HomeState
 import com.swago.seenthemlive.ui.screens.about.aboutScreen
@@ -29,6 +30,7 @@ import com.swago.seenthemlive.ui.screens.shows.showsListScreen
 fun HomeNavHost(
     homeState: HomeState,
     logout: () -> Unit,
+    onSpotifyAuth: (AuthorizationRequest, (String) -> Unit) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController = homeState.navController
@@ -84,6 +86,7 @@ fun HomeNavHost(
         )
         createPlaylistScreen(
             onBackClick = navController::popBackStack,
+            onSpotifyAuth = onSpotifyAuth,
             onPlaylistConfirmed = navController::popBackStack
         )
         aboutScreen(
