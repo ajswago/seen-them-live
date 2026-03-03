@@ -18,6 +18,8 @@ import java.util.Locale
 import javax.inject.Inject
 import kotlinx.serialization.Serializable
 import okhttp3.Response
+import retrofit2.HttpException
+import kotlin.collections.listOf
 
 interface SetlistFmApiService {
     suspend fun getSearchResults(searchTerms: SearchTerms): SetlistResponse
@@ -56,21 +58,29 @@ class NetworkSetlistFmApiService @Inject constructor() : SetlistFmApiService {
     val getSetlist : GetSetlist = retrofit().create(GetSetlist::class.java)
 
     override suspend fun getSearchResults(searchTerms: SearchTerms): SetlistResponse {
-        return search.getSetlists(
-            artistName = searchTerms.artist,
-            venueName = searchTerms.venue,
-            stateCode = searchTerms.usState
-        )
+        try {
+            return search.getSetlists(
+                artistName = searchTerms.artist,
+                venueName = searchTerms.venue,
+                stateCode = searchTerms.usState
+            )
+        } catch (_ : HttpException) {
+            return SetlistResponse(setlist = listOf())
+        }
     }
 
     override suspend fun getSearchResults(date: Date, venue: String): SetlistResponse {
-        val dateString = SimpleDateFormat(
-            "dd-MM-yyyy", Locale.US
-        ).format(date)
-        return search.getSetlists(
-            date = dateString,
-            venueName = venue,
-        )
+        try {
+            val dateString = SimpleDateFormat(
+                "dd-MM-yyyy", Locale.US
+            ).format(date)
+            return search.getSetlists(
+                date = dateString,
+                venueName = venue,
+            )
+        } catch (_ : HttpException) {
+            return SetlistResponse(setlist = listOf())
+        }
     }
 
     override suspend fun getSetlist(id: String): Setlist {

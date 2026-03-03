@@ -90,7 +90,7 @@ class CreatePlaylistViewModel @Inject constructor(
         val builder = AuthorizationRequest.Builder(
             BuildConfig.SPOTIFY_CLIENT_ID,
             AuthorizationResponse.Type.TOKEN,
-            "com.swago.seenthemlive://callback")
+            "com.swago.seenthemlive://callback/redirect")
 
         builder.setScopes(arrayOf(SCOPES))
         return builder.build()

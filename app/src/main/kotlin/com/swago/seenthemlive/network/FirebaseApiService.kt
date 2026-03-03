@@ -3,7 +3,7 @@ package com.swago.seenthemlive.network
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestoreSettings
+import com.google.firebase.firestore.firestoreSettings
 import kotlinx.coroutines.tasks.await
 import java.io.Serializable
 import javax.inject.Inject

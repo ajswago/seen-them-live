@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
             val response = AuthorizationClient.getResponse(resultCode, data)
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
-                    spotifyAuthCompletion?.invoke(response.accessToken)
+                    spotifyAuthCompletion?.invoke(response.accessToken ?: "")
                 }
                 AuthorizationResponse.Type.ERROR -> {}
                 else -> {}
