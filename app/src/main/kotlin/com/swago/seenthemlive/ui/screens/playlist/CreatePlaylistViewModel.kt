@@ -28,7 +28,7 @@ class CreatePlaylistViewModel @Inject constructor(
     val spotifyRepository: NetworkSpotifyRepository
 ) : ViewModel() {
 
-    private val SCOPES =
+    private val scopes =
         "user-read-email,user-read-private,playlist-modify-private,playlist-modify-public"
 
     var code: String? = null
@@ -92,7 +92,7 @@ class CreatePlaylistViewModel @Inject constructor(
             AuthorizationResponse.Type.TOKEN,
             "com.swago.seenthemlive://callback/redirect")
 
-        builder.setScopes(arrayOf(SCOPES))
+        builder.setScopes(arrayOf(scopes))
         return builder.build()
     }
 
@@ -120,10 +120,10 @@ class CreatePlaylistViewModel @Inject constructor(
                     }
                     createPlaylistStep = CreatePlaylistStep.ADD_SONGS
                     val result = spotifyRepository.addSongsToPlaylist(code, playlistId, songIds)
-                    if (result != null && result.isNotEmpty())
-                        createPlaylistStep = CreatePlaylistStep.COMPLETE
+                    createPlaylistStep = if (!result.isNullOrEmpty())
+                        CreatePlaylistStep.COMPLETE
                     else
-                        createPlaylistStep = CreatePlaylistStep.FAILED
+                        CreatePlaylistStep.FAILED
                 } ?: run {
                     createPlaylistStep = CreatePlaylistStep.FAILED
                 }

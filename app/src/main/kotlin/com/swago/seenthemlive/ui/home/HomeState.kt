@@ -18,16 +18,13 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun rememberHomeState(
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
 ): HomeState {
     return remember(
         navController,
-        coroutineScope
     ) {
         HomeState(
             navController = navController,
-            coroutineScope = coroutineScope
         )
     }
 }
@@ -35,24 +32,7 @@ fun rememberHomeState(
 @Stable
 class HomeState(
     val navController: NavHostController,
-    coroutineScope: CoroutineScope
 ) {
-    private val previousDestination = mutableStateOf<NavDestination?>(null)
-
-    val currentDestination: NavDestination?
-        @Composable get() {
-            // Collect the currentBackStackEntryFlow as a state
-            val currentEntry = navController.currentBackStackEntryFlow
-                .collectAsState(initial = null)
-
-            // Fallback to previousDestination if currentEntry is null
-            return currentEntry.value?.destination.also { destination ->
-                if (destination != null) {
-                    previousDestination.value = destination
-                }
-            } ?: previousDestination.value
-        }
-
     var currentTopLevelDestination = mutableStateOf<TopLevelDestination?>(TopLevelDestination.SHOWS_LIST)
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries

@@ -55,45 +55,45 @@ class NetworkSpotifyApiService @Inject constructor() : SpotifyApiService {
     fun playlist(code: String) : Playlist = retrofit(code).create(Playlist::class.java)
 
     override suspend fun getProfile(code: String): SpotifyProfile? {
-        try {
-            return profile(code).getProfile()
+        return try {
+            profile(code).getProfile()
         } catch (_ : HttpException) {
-            return null
+            null
         }
     }
 
     override suspend fun searchSong(code: String, artist: String, name: String): String? {
-        try {
-            return playlist(code).searchSong(
+        return try {
+            playlist(code).searchSong(
                 q = "artist:$artist track:$name",
                 type=arrayOf("track"),
                 limit = 1
             ).tracks.items?.firstOrNull()?.uri
         } catch (_ : HttpException) {
-            return null
+            null
         }
     }
 
     override suspend fun createPlaylist(code: String, userId: String, name: String): String? {
-        try {
-            return playlist(code).createPlaylist(
+        return try {
+            playlist(code).createPlaylist(
                 userId = userId,
                 body = mapOf(
                     "name" to name
                 )
             ).id
         } catch (_ : HttpException) {
-            return null
+            null
         }
     }
 
     override suspend fun addSongsToPlaylist(code: String, playlistId: String, songIds: List<String>): List<String>? {
-        try {
-            return songIds.chunked(100).mapNotNull { uriGroup ->
+        return try {
+            songIds.chunked(100).mapNotNull { uriGroup ->
                 playlist(code).addSongsToPlaylist(playlistId, UriBody(uris = uriGroup.toTypedArray())).snapshotId
             }
         } catch (_ : HttpException) {
-            return null
+            null
         }
     }
 }
@@ -127,15 +127,15 @@ interface Playlist {
 }
 
 class FakeSpotifyApiService @Inject constructor() : SpotifyApiService {
-    override suspend fun getProfile(code: String): SpotifyProfile? {
+    override suspend fun getProfile(code: String): SpotifyProfile {
         return SpotifyProfile(country = "US", displayName = "test", email = "test@test.com", id = "ID")
     }
 
-    override suspend fun searchSong(code: String, artist: String, name: String): String? {
+    override suspend fun searchSong(code: String, artist: String, name: String): String {
         return "1"
     }
 
-    override suspend fun createPlaylist(code: String, userId: String, name: String): String? {
+    override suspend fun createPlaylist(code: String, userId: String, name: String): String {
         return "1"
     }
 

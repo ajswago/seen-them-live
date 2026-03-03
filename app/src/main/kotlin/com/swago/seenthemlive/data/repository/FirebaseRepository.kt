@@ -152,11 +152,6 @@ fun UserData.getShowsForArtist(artistId: String): List<GroupedShow> {
     } ?: listOf()
 }
 
-fun UserData.getShow(showId: String): Show? {
-    val setlist = this.getSetlist(showId)
-    return setlist?.asShow()
-}
-
 fun UserData.showSaved(showId: String): Boolean {
     val setlist = this.getSetlist(showId)
     return setlist != null
@@ -174,14 +169,6 @@ fun UserData.getTracksForArtist(artistId: String): List<Track> {
             trackCount = it.value.size
         )
     } ?: listOf()
-}
-
-fun UserData.getTracksForShow(showId: String): List<Track>? {
-    return this.getSetlist(showId)?.asTracksList()
-}
-
-fun UserData.getEncoreTracksForShow(showId: String): List<Track>? {
-    return this.getSetlist(showId)?.asEncoreTracksList()
 }
 
 fun UserData.getLinkedShows(setlist: Setlist): List<Show> {

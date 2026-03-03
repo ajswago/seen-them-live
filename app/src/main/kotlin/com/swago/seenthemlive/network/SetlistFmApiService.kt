@@ -27,7 +27,7 @@ interface SetlistFmApiService {
     suspend fun getSetlist(id: String): Setlist
 }
 
-class SetlistFmAuthInterceptor() : Interceptor {
+class SetlistFmAuthInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val newRequest = originalRequest.newBuilder()
@@ -58,14 +58,14 @@ class NetworkSetlistFmApiService @Inject constructor() : SetlistFmApiService {
     val getSetlist : GetSetlist = retrofit().create(GetSetlist::class.java)
 
     override suspend fun getSearchResults(searchTerms: SearchTerms): SetlistResponse {
-        try {
-            return search.getSetlists(
+        return try {
+            search.getSetlists(
                 artistName = searchTerms.artist,
                 venueName = searchTerms.venue,
                 stateCode = searchTerms.usState
             )
         } catch (_ : HttpException) {
-            return SetlistResponse(setlist = listOf())
+            SetlistResponse(setlist = listOf())
         }
     }
 

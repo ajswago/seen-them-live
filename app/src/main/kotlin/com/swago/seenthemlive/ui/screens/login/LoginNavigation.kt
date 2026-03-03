@@ -9,9 +9,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable object LoginRoute
 
-fun NavController.navigateToLogin(navOptions: NavOptions) =
-    navigate(route = LoginRoute, navOptions)
-
 fun NavGraphBuilder.loginScreen(
     onLogin: (FirebaseUser?) -> Unit
 ) {

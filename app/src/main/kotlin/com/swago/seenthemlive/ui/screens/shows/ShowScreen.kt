@@ -83,9 +83,8 @@ fun ShowRoute(
             viewModel.toggleSaved(completion)
         },
         onFindMoreClicked = {
-            val state = uiState
-            if (state is ShowUiState.Loaded) {
-                viewModel.performSearch(state.show.date, state.show.venueName)
+            if (uiState is ShowUiState.Loaded) {
+                viewModel.performSearch(uiState.show.date, uiState.show.venueName)
             }
         },
         onBackClick = onBackClick,

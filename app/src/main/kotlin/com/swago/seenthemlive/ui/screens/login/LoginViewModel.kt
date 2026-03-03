@@ -74,7 +74,7 @@ class LoginViewModel @Inject constructor(
     private fun firebaseAuthWithGoogle(idToken: String, completion: (FirebaseUser?) -> Unit) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         Firebase.auth.signInWithCredential(credential)
-            .addOnCompleteListener() { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = Firebase.auth.currentUser
                     completion(user)

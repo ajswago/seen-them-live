@@ -2,8 +2,6 @@ package com.swago.seenthemlive.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.swago.seenthemlive.data.repository.FirebaseRepository
 import com.swago.seenthemlive.models.Artist
 import com.swago.seenthemlive.models.Profile
