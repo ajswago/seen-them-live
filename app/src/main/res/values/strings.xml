@@ -1,115 +1,70 @@
 <resources>
+    <string name="app_name">SeenThemLiveCompose</string>
 
-    <string name="app_name">Seen Them Live</string>
+    <string name="location_format">%s, %s</string>
+    <string name="last_show_date_format">Last Show on %s</string>
+    <plurals name="count_times_seen_format">
+        <item quantity="one">Seen %d Time</item>
+        <item quantity="other">Seen %d Times</item>
+    </plurals>
+    <plurals name="count_unique_songs_format">
+        <item quantity="one">%d Unique Song Played</item>
+        <item quantity="other">%d Unique Songs Played</item>
+    </plurals>
+    <plurals name="count_shows_format">
+        <item quantity="one">%d Show Attended</item>
+        <item quantity="other">%d Shows Attended</item>
+    </plurals>
+    <plurals name="count_artists_format">
+        <item quantity="one">%d Artist Seen</item>
+        <item quantity="other">%d Artists Seen</item>
+    </plurals>
+    <plurals name="count_venues_format">
+        <item quantity="one">%d Venue Attended</item>
+        <item quantity="other">%d Venues Attended</item>
+    </plurals>
+    <string name="track_number_format">%d.</string>
+    <string name="cover_artist_format">%s cover</string>
 
-    <!-- Common -->
-    <string name="counted_item_list_index_format">%d.</string>
-    <string name="counted_item_list_count_format">(%d)</string>
-    <string name="song_list_index_format">%d.</string>
+    <string name="create_playlist_title">Create a Playlist</string>
+    <string name="playlist_name_field_label">Name</string>
+    <string name="create_button_label">Create</string>
 
-    <!--  Navigation  -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Seen Them Live</string>
-    <string name="nav_header_subtitle">By Anthony Swago</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="menu_list">My Concerts</string>
-    <string name="menu_artist">My Bands</string>
-    <string name="menu_timeline">Timeline</string>
-    <string name="menu_map">Map</string>
-    <string name="menu_profile">My Profile</string>
-    <string name="menu_friends">Friends</string>
+    <string name="search_shows_title">Search For Shows</string>
+    <string name="artist_field_label">Artist</string>
+    <string name="venue_field_label">Venue</string>
+    <string name="state_field_label">State</string>
+    <string name="state_no_selection_label">Select State</string>
+    <string name="search_button_label">Search</string>
 
-    <!-- View Concerts Activity -->
-    <string name="title_activity_view_concerts">ViewConcertsActivity</string>
+    <string name="search_title">Search</string>
+    <string name="results_list_header">Results</string>
+    <string name="shows_list_header">Shows</string>
+    <string name="show_title">Show</string>
+    <string name="also_at_show_header">Other Artists At This Show</string>
+    <string name="setlist_header">Setlist</string>
+    <string name="about_title">About</string>
+    <string name="create_playlist_screen_title">Create Playlist</string>
+    <string name="playlist_select_shows_header">Select Shows</string>
+    <string name="playlist_select_shows_secondary_label">All songs from selected shows will be added</string>
+    <string name="create_playlist_progress_title">Creating Playlist</string>
+    <string name="cancel_button_label">Cancel</string>
+    <string name="retry_button_label">Retry</string>
+    <string name="dismiss_button_label">Dismiss</string>
 
-    <!-- Profile Fragment -->
-    <string name="profile_stats_header_text">Concert Stats</string>
-    <string name="profile_concerts_count_format">Number of Concerts Attended: %d</string>
-    <string name="profile_bands_count_format">Number of Bands Seen: %d</string>
-    <string name="profile_venues_count_format">Number of Venues Attended: %d</string>
-    <string name="profile_top_artists_label">Top Artists: (Times Seen)</string>
+    <string name="find_more_headline">Search Other Artists</string>
 
-    <!-- Search Activity -->
-    <string name="artist_label">Search by artist name</string>
-    <string name="artist_hint">Artist name</string>
-    <string name="venue_label">Search by concert venue</string>
-    <string name="venue_hint">Venue name</string>
-    <string name="state_label">State</string>
-    <string name="state_empty_value">Select a state</string>
-    <string name="search">Perform search</string>
+    <string name="author_label">By Anthony Swago</string>
+    <string name="version_format">v%s – %s</string>
 
-    <!-- Setlist Fragment -->
-    <string name="setlist_song_list_label">Setlist</string>
-    <string name="setlist_encore_list_label">Encore</string>
-    <string name="setlist_encore2_list_label">Encore 2:</string>
-    <string name="setlist_encore3_list_label">Encore 3:</string>
-    <string name="setlist_other_artists_at_show">Find Other Artists At This Show...</string>
-
-    <!-- Artist Fragment -->
-    <string name="artist_item_count_format">Times Seen: %d</string>
-    <string name="artist_item_latest_date_format">Last Seen: %s</string>
-
-    <!-- Friend Profile Activity -->
-    <string name="import_button_content_description">import</string>
-
-    <!-- Spotify -->
-    <string name="spotify_shared_pref_key">Spotify</string>
-    <string name="spotify_auth_redirect_uri">com.swago.seenthemlive://callback</string>
-
-    <!-- States -->
-    <string-array name="States">
-        <item>AL</item>
-        <item>AK</item>
-        <item>AZ</item>
-        <item>AR</item>
-        <item>CA</item>
-        <item>CO</item>
-        <item>CT</item>
-        <item>DE</item>
-        <item>DC</item>
-        <item>FL</item>
-        <item>GA</item>
-        <item>HI</item>
-        <item>ID</item>
-        <item>IL</item>
-        <item>IN</item>
-        <item>IA</item>
-        <item>KS</item>
-        <item>KY</item>
-        <item>LA</item>
-        <item>ME</item>
-        <item>MD</item>
-        <item>MA</item>
-        <item>MI</item>
-        <item>MN</item>
-        <item>MS</item>
-        <item>MO</item>
-        <item>MT</item>
-        <item>NE</item>
-        <item>NV</item>
-        <item>NH</item>
-        <item>NJ</item>
-        <item>NM</item>
-        <item>NY</item>
-        <item>NC</item>
-        <item>ND</item>
-        <item>OH</item>
-        <item>OK</item>
-        <item>OR</item>
-        <item>PA</item>
-        <item>RI</item>
-        <item>SC</item>
-        <item>SD</item>
-        <item>TN</item>
-        <item>TX</item>
-        <item>UT</item>
-        <item>VT</item>
-        <item>VA</item>
-        <item>WA</item>
-        <item>WV</item>
-        <item>WI</item>
-        <item>WY</item>
-    </string-array>
-
+    <string name="cancel_button_description">Cancel</string>
+    <string name="more_content_icon_description">More Content</string>
+    <string name="search_icon_description">Search</string>
+    <string name="expanded_icon_description">Expanded</string>
+    <string name="collapsed_icon_description">Collapsed</string>
+    <string name="back_button_description">Back</string>
+    <string name="account_button_description">Account</string>
+    <string name="edit_button_description">Edit</string>
+    <string name="add_button_description">Add</string>
+    <string name="remove_button_description">Remove</string>
 </resources>
