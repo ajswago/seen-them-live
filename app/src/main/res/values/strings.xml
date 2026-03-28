@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SeenThemLiveCompose</string>
+    <string name="app_name">Seen Them Live</string>
 
     <string name="location_format">%s, %s</string>
     <string name="last_show_date_format">Last Show on %s</string>
