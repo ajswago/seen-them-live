@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "com.swago.seenthemlive"
-        minSdk = 26
+        minSdk = 33
         targetSdk = 36
         versionCode = 2
         versionName = "2.0"

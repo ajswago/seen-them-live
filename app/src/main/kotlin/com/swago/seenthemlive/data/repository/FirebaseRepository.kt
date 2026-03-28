@@ -16,6 +16,8 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.collections.filter
+import kotlin.collections.first
+import kotlin.collections.map
 
 interface FirebaseRepository {
     suspend fun getShows(): List<Show>
@@ -84,53 +86,55 @@ fun UserData.getShows(): List<Show> {
 
 fun UserData.getArtists(): List<Artist> {
     return this.setlists
-        ?.groupBy { it.artist }
+        ?.groupBy { it.artist?.mbid }
         ?.mapNotNull { groupedSetlist ->
-            if (listOf(groupedSetlist.key?.mbid, groupedSetlist.key?.name).any { it == null }) {
+            if (listOf(groupedSetlist.key, groupedSetlist.value.first().artist?.name).any { it == null }) {
                 return@mapNotNull null
             }
-            val sortedSetlists = groupedSetlist.value.sortedByDescending { setlist -> setlist.eventDate }
-            val lastSetlistDate = sortedSetlists.first().eventDate
-            val date = try {
-                SimpleDateFormat(
-                    "dd-MM-yyyy", Locale.US
-                ).parse(lastSetlistDate ?: "")
-            } catch (_: ParseException) {
-                Date()
-            }
+            val sortedSetlistDates: List<Date> = groupedSetlist.value.map { setlist ->
+                try {
+                    SimpleDateFormat(
+                        "dd-MM-yyyy", Locale.US
+                    ).parse(setlist.eventDate ?: "")
+                } catch (_: ParseException) {
+                    Date()
+                }
+            }.sortedDescending()
+            val lastSetlistDate = sortedSetlistDates.first()
             Artist(
-                id = groupedSetlist.key?.mbid ?: "",
-                name = groupedSetlist.key?.name ?: "",
-                lastShow = date,
+                id = groupedSetlist.key ?: "",
+                name = groupedSetlist.value.first().artist?.name ?: "",
+                lastShow = lastSetlistDate,
                 showCount = groupedSetlist.value.size,
             )
         } ?: listOf()
 }
 
 fun UserData.getArtist(artistId: String): Artist {
-    val groupedSetlists = this.setlists?.groupBy { it.artist }
-    val artist = groupedSetlists?.keys?.first { it?.mbid == artistId }
-    val sortedSetlists = groupedSetlists?.get(artist)?.sortedByDescending { setlist -> setlist.eventDate }
-    val lastSetlistDate = sortedSetlists?.first()?.eventDate
-    val date = try {
-        SimpleDateFormat(
-            "dd-MM-yyyy", Locale.US
-        ).parse(lastSetlistDate ?: "")
-    } catch (_: ParseException) {
-        Date()
-    }
+    val groupedSetlists = this.setlists?.groupBy { it.artist?.mbid }
+    val artistMbid = groupedSetlists?.keys?.first { it == artistId }
+    val sortedSetlists = groupedSetlists?.get(artistMbid)?.map { setlist ->
+        try {
+            SimpleDateFormat(
+                "dd-MM-yyyy", Locale.US
+            ).parse(setlist.eventDate ?: "")
+        } catch (_: ParseException) {
+            Date()
+        }
+    }?.sortedDescending()
+    val lastSetlistDate = sortedSetlists?.first()
     return Artist(
-        id = artist?.mbid ?: "",
-        name = artist?.name ?: "",
-        lastShow = date,
+        id = artistMbid ?: "",
+        name = groupedSetlists?.get(artistMbid)?.first()?.artist?.name ?: "",
+        lastShow = lastSetlistDate ?: Date(),
         showCount = sortedSetlists?.size ?: 0,
     )
 }
 
 fun UserData.getShowsForArtist(artistId: String): List<GroupedShow> {
     val setlistsByDate = this.setlists?.groupBy { Pair(it.eventDate, it.venue?.id) }
-    val groupedSetlists = this.setlists?.groupBy { it.artist }
-    val artist = groupedSetlists?.keys?.first { it?.mbid == artistId }
+    val groupedSetlists = this.setlists?.groupBy { it.artist?.mbid }
+    val artist = groupedSetlists?.keys?.first { it == artistId }
     val artistSetlists = groupedSetlists?.get(artist)
     return artistSetlists?.map { setlist ->
         val date = try {
@@ -195,13 +199,23 @@ fun UserData.getProfile(): Profile {
 
 fun UserData.getTopArtistsForProfile(): List<Artist> {
     return this.setlists
-        ?.groupBy { it.artist }
+        ?.groupBy { it.artist?.mbid }
         ?.map {
+            val sortedSetlists = it.value.map { setlist ->
+                try {
+                    SimpleDateFormat(
+                        "dd-MM-yyyy", Locale.US
+                    ).parse(setlist.eventDate ?: "")
+                } catch (_: ParseException) {
+                    Date()
+                }
+            }.sortedDescending()
+            val lastSetlistDate = sortedSetlists.first()
             Artist(
-                id = it.key?.mbid ?: "",
-                name = it.key?.name ?: "",
+                id = it.key ?: "",
+                name = it.value.first().artist?.name ?: "",
                 showCount = it.value.size,
-                lastShow = Date()
+                lastShow = lastSetlistDate
             )
         } ?: listOf()
 }
