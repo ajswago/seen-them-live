@@ -78,6 +78,16 @@ fun CreatePlaylistRoute(
                     MODE_PRIVATE)
                 editor.getString("code", "")
             },
+            updateCode = { code ->
+                val editor = context.getSharedPreferences(
+                    "spotifycode",
+                    MODE_PRIVATE).edit()
+                editor?.putString(
+                    "code",
+                    code
+                )
+                editor?.apply()
+            },
             authenticateWithSpotify = { request, completion ->
                 onSpotifyAuth(request, completion)
             }
@@ -137,7 +147,9 @@ fun CreatePlaylistScreen(
             ) {
                 when (uiState) {
                     CreatePlaylistUiState.Loading -> {
-                        CreatePlaylistCard(enabled = false)
+                        CreatePlaylistCard(enabled = false,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp))
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = stringResource(R.string.playlist_select_shows_header),

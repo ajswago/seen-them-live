@@ -54,7 +54,11 @@ class CreatePlaylistViewModel @Inject constructor(
         }
     }
 
-    fun checkSpotifyAuth(getSavedCode: () -> String?, authenticateWithSpotify: (AuthorizationRequest, (String) -> Unit) -> Unit) {
+    fun checkSpotifyAuth(
+        getSavedCode: () -> String?,
+        updateCode: (String) -> Unit,
+        authenticateWithSpotify: (AuthorizationRequest, (String) -> Unit) -> Unit
+    ) {
         code = getSavedCode()
         code?.let { code ->
             viewModelScope.launch {
@@ -66,6 +70,7 @@ class CreatePlaylistViewModel @Inject constructor(
                             viewModelScope.launch {
                                 val profile = spotifyRepository.getProfile(code)
                                 userId = profile?.id
+                                updateCode(code)
                                 load()
                             }
                         }
@@ -80,6 +85,7 @@ class CreatePlaylistViewModel @Inject constructor(
             viewModelScope.launch {
                 val profile = spotifyRepository.getProfile(code)
                 userId = profile?.id
+                updateCode(code)
                 load()
             }
         }

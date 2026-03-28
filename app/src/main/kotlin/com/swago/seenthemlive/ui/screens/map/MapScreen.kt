@@ -1,5 +1,6 @@
 package com.swago.seenthemlive.ui.screens.map
 
+import android.location.Geocoder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +14,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -30,10 +33,12 @@ fun MapRoute(
     modifier: Modifier = Modifier,
     viewModel: MapViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val geocoder = Geocoder(LocalContext.current)
+    val uiState = viewModel.uiState
     MapScreen(
         uiState = uiState,
         onProfileMenuOption = onProfileMenuOption,
+        refresh = { viewModel.load(geocoder) },
         modifier = modifier
     )
 }
@@ -43,8 +48,13 @@ fun MapRoute(
 fun MapScreen(
     uiState: MapUiState,
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    refresh: () -> Unit = {}
 ) {
+    LifecycleStartEffect(Unit) {
+        refresh()
+        onStopOrDispose { }
+    }
     Scaffold(
         topBar = {
             AppBarWithProfile(
