@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.swago.seenthemlive.models.Artist
 import com.swago.seenthemlive.ui.components.AppBarWithProfile
 import com.swago.seenthemlive.ui.components.ProfileMenuItem
@@ -37,11 +37,12 @@ fun ArtistListRoute(
     modifier: Modifier = Modifier,
     viewModel: ArtistListViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState
     ArtistListScreen(
         uiState = uiState,
         onProfileMenuOption = onProfileMenuOption,
         onArtistClicked = onArtistClick,
+        refresh = { viewModel.load() },
         modifier = modifier,
     )
 }
@@ -53,7 +54,12 @@ fun ArtistListScreen(
     onProfileMenuOption: (ProfileMenuItem) -> Unit,
     onArtistClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
+    refresh: () -> Unit = {}
 ) {
+    LifecycleStartEffect(Unit) {
+        refresh()
+        onStopOrDispose { }
+    }
     Scaffold(
         topBar = {
             AppBarWithProfile(
