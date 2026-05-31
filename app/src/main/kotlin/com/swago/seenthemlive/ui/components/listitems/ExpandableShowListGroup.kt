@@ -1,7 +1,6 @@
 package com.swago.seenthemlive.ui.components.listitems
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,9 +42,7 @@ fun ExpandableShowListGroup(
                 ArtistListItem(
                     artistName = name,
                     indent = true,
-                    onClick = { onArtistClick?.invoke(index) },
-                    modifier = Modifier
-                        .height(50.dp)
+                    onClick = { onArtistClick?.invoke(index) }
                 )
                 HorizontalDivider()
             }
@@ -95,7 +91,7 @@ fun ExpandableShowListGroupMultiplePreview() {
         date = SimpleDateFormat(
             "yyyy-MM-dd", Locale.US
         ).parse("2024-04-09") ?: Date(),
-        artistList = arrayOf("Dethklok", "DragonForce", "Nekrogoblikon"),
+        artistList = arrayOf("The World Is a Beautiful Place and I am No L", "DragonForce", "Nekrogoblikon"),
         onArtistClick = {
             println("Index tapped: $it")
         }
