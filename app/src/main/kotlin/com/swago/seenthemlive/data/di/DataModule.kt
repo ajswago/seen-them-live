@@ -16,8 +16,12 @@ import com.swago.seenthemlive.network.SetlistFmApiService
 import com.swago.seenthemlive.network.SpotifyApiService
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestoreSettings
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,11 +32,13 @@ abstract class DataModule {
     ): NetworkMonitor
 
     @Binds
+    @Singleton
     internal abstract fun bindsFirebaseRepository(
         firebaseRepository: NetworkFirebaseRepository
     ): FirebaseRepository
 
     @Binds
+    @Singleton
     internal abstract fun bindsFirebaseApiService(
         firebaseApiService: NetworkFirebaseApiService
     ): FirebaseApiService
@@ -56,4 +62,16 @@ abstract class DataModule {
     internal abstract fun bindsSpotifyApiService(
         spotifyApiService: NetworkSpotifyApiService
     ): SpotifyApiService
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideFirebaseFirestore(): FirebaseFirestore {
+            val firestore = FirebaseFirestore.getInstance()
+            firestore.firestoreSettings = firestoreSettings {
+                isPersistenceEnabled = false
+            }
+            return firestore
+        }
+    }
 }

@@ -4,7 +4,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestoreSettings
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
@@ -18,7 +17,9 @@ interface FirebaseApiService {
     suspend fun removeShow(showId: String): UserData
 }
 
-class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
+class NetworkFirebaseApiService @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : FirebaseApiService {
     
     // Mutex to prevent concurrent migration attempts
     private val migrationMutex = Mutex()
@@ -28,10 +29,6 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
     private var cachedUserId: String? = null
 
     override suspend fun getUser(): UserData {
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.firestoreSettings = firestoreSettings {
-            isPersistenceEnabled = false
-        }
         val userId = Firebase.auth.currentUser?.uid ?: ""
         if (userId.isEmpty()) {
             cachedUserData = null
@@ -114,10 +111,6 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
     }
     
     override suspend fun saveShow(setlist: Setlist): UserData {
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.firestoreSettings = firestoreSettings {
-            isPersistenceEnabled = false
-        }
         val userId = Firebase.auth.currentUser?.uid ?: ""
         if (userId.isEmpty()) return UserData()
         
@@ -154,10 +147,6 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
     }
     
     override suspend fun removeShow(showId: String): UserData {
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.firestoreSettings = firestoreSettings {
-            isPersistenceEnabled = false
-        }
         val userId = Firebase.auth.currentUser?.uid ?: ""
         if (userId.isEmpty()) return UserData()
         
