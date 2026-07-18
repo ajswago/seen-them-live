@@ -5,6 +5,8 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestoreSettings
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import java.io.Serializable
 import javax.inject.Inject
@@ -17,60 +19,97 @@ interface FirebaseApiService {
 }
 
 class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
+    
+    // Mutex to prevent concurrent migration attempts
+    private val migrationMutex = Mutex()
+    
+    // User-safe in-memory cache to prevent redundant fetches
+    private var cachedUserData: UserData? = null
+    private var cachedUserId: String? = null
+
     override suspend fun getUser(): UserData {
         val firestore = FirebaseFirestore.getInstance()
         firestore.firestoreSettings = firestoreSettings {
             isPersistenceEnabled = false
         }
         val userId = Firebase.auth.currentUser?.uid ?: ""
-        if (userId.isEmpty()) return UserData()
+        if (userId.isEmpty()) {
+            cachedUserData = null
+            cachedUserId = null
+            return UserData()
+        }
         
+        // Return cache if available and matches current user
+        if (userId == cachedUserId) {
+            cachedUserData?.let { return it }
+        } else {
+            cachedUserData = null
+            cachedUserId = null
+        }
+
         return try {
             val snapshot = firestore.collection("users").document(userId).get().await()
             val userData = snapshot.toObject(UserData::class.java) ?: UserData()
-            
-            // Query the setlists subcollection
+
+            // Fetch the subcollection setlists
             val subcollectionSnapshot = firestore.collection("users")
                 .document(userId)
                 .collection("setlists")
                 .get()
                 .await()
             val subcollectionSetlists = subcollectionSnapshot.toObjects(Setlist::class.java)
-            
-            // Check if the old nested setlists list exists in the root document
-            if (snapshot.contains("setlists")) {
-                val oldSetlists = userData.setlists
-                if (oldSetlists != null && oldSetlists.isNotEmpty()) {
-                    val batch = firestore.batch()
-                    for (setlist in oldSetlists) {
-                        val setlistId = setlist.id ?: continue
-                        val docRef = firestore.collection("users")
-                            .document(userId)
-                            .collection("setlists")
-                            .document(setlistId)
-                        batch.set(docRef, setlist)
+
+            // Thread-safe migration check
+            migrationMutex.withLock {
+                // Double-check cache inside the lock
+                if (userId == cachedUserId) {
+                    cachedUserData?.let { return it }
+                }
+
+                if (snapshot.contains("setlists")) {
+                    val oldSetlists = userData.setlists
+                    if (oldSetlists != null && oldSetlists.isNotEmpty()) {
+                        // Chunk setlists to respect Firestore's 500-write limit per batch
+                        val batchSize = 400
+                        val chunks = oldSetlists.chunked(batchSize)
+                        for (chunk in chunks) {
+                            val batch = firestore.batch()
+                            for (setlist in chunk) {
+                                val setlistId = setlist.id ?: continue
+                                val docRef = firestore.collection("users")
+                                    .document(userId)
+                                    .collection("setlists")
+                                    .document(setlistId)
+                                batch.set(docRef, setlist)
+                            }
+                            batch.commit().await()
+                        }
+                        
+                        // Clean up: delete the old nested array from the root document
+                        firestore.collection("users").document(userId)
+                            .update("setlists", FieldValue.delete())
+                            .await()
+
+                        userData.setlists = oldSetlists
+                    } else {
+                        // Clean up empty nested field
+                        firestore.collection("users").document(userId)
+                            .update("setlists", FieldValue.delete())
+                            .await()
+                        userData.setlists = subcollectionSetlists
                     }
-                    // Delete the old nested 'setlists' field from the root document
-                    val userDocRef = firestore.collection("users").document(userId)
-                    batch.update(userDocRef, "setlists", FieldValue.delete())
-                    batch.commit().await()
-                    
-                    userData.setlists = oldSetlists
                 } else {
-                    // It has the field but it is empty/null, let's remove the field to clean up
-                    firestore.collection("users").document(userId)
-                        .update("setlists", FieldValue.delete())
-                        .await()
                     userData.setlists = subcollectionSetlists
                 }
-            } else {
-                userData.setlists = subcollectionSetlists
             }
+            
+            cachedUserData = userData
+            cachedUserId = userId
             userData
         } catch (ce: CancellationException) {
-            throw ce // Important: rethrow the cancellation exception
-        } catch (_: Exception) {
-            UserData()
+            throw ce
+        } catch (e: Exception) {
+            throw e 
         }
     }
     
@@ -82,12 +121,13 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
         val userId = Firebase.auth.currentUser?.uid ?: ""
         if (userId.isEmpty()) return UserData()
         
+        val setlistId = setlist.id ?: throw IllegalArgumentException("Setlist ID cannot be null")
+        
         return try {
-            // First retrieve and migrate user profile
+            // First retrieve and migrate user profile (if cachedUserData is null or different user)
             val userData = getUser()
             
             // Save the new setlist to the subcollection
-            val setlistId = setlist.id ?: throw IllegalArgumentException("Setlist ID cannot be null")
             firestore.collection("users")
                 .document(userId)
                 .collection("setlists")
@@ -95,18 +135,21 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
                 .set(setlist)
                 .await()
                 
-            // Update the local list
+            // Update the local list and cache
             val updatedSetlists = userData.setlists?.toMutableList() ?: mutableListOf()
             updatedSetlists.removeIf { it.id == setlistId }
             updatedSetlists.add(setlist)
             userData.setlists = updatedSetlists
             
+            cachedUserData = userData
+            cachedUserId = userId
+            
             firestore.clearPersistence().await()
             userData
         } catch (ce: CancellationException) {
             throw ce
-        } catch (_: Exception) {
-            UserData()
+        } catch (e: Exception) {
+            throw e
         }
     }
     
@@ -119,7 +162,7 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
         if (userId.isEmpty()) return UserData()
         
         return try {
-            // First retrieve and migrate user profile
+            // First retrieve and migrate user profile (if cachedUserData is null or different user)
             val userData = getUser()
             
             // Delete the setlist from the subcollection
@@ -130,17 +173,20 @@ class NetworkFirebaseApiService @Inject constructor() : FirebaseApiService {
                 .delete()
                 .await()
                 
-            // Update the local list
+            // Update the local list and cache
             val updatedSetlists = userData.setlists?.toMutableList() ?: mutableListOf()
             updatedSetlists.removeIf { it.id == showId }
             userData.setlists = updatedSetlists
+            
+            cachedUserData = userData
+            cachedUserId = userId
             
             firestore.clearPersistence().await()
             userData
         } catch (ce: CancellationException) {
             throw ce
-        } catch (_: Exception) {
-            UserData()
+        } catch (e: Exception) {
+            throw e
         }
     }
 }
