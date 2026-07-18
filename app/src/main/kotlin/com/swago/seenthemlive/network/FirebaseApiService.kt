@@ -137,7 +137,6 @@ class NetworkFirebaseApiService @Inject constructor(
             cachedUserData = userData
             cachedUserId = userId
             
-            firestore.clearPersistence().await()
             userData
         } catch (ce: CancellationException) {
             throw ce
@@ -170,7 +169,6 @@ class NetworkFirebaseApiService @Inject constructor(
             cachedUserData = userData
             cachedUserId = userId
             
-            firestore.clearPersistence().await()
             userData
         } catch (ce: CancellationException) {
             throw ce
