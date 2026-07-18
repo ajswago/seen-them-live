@@ -106,7 +106,7 @@ class NetworkFirebaseApiService @Inject constructor(
         } catch (ce: CancellationException) {
             throw ce
         } catch (e: Exception) {
-            throw e 
+            UserData()
         }
     }
     
@@ -141,7 +141,7 @@ class NetworkFirebaseApiService @Inject constructor(
         } catch (ce: CancellationException) {
             throw ce
         } catch (e: Exception) {
-            throw e
+            UserData()
         }
     }
     
@@ -173,7 +173,7 @@ class NetworkFirebaseApiService @Inject constructor(
         } catch (ce: CancellationException) {
             throw ce
         } catch (e: Exception) {
-            throw e
+            UserData()
         }
     }
 }
