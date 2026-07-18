@@ -33,7 +33,7 @@ android {
         minSdk = 33
         targetSdk = 36
         versionCode = 2
-        versionName = "2.0"
+        versionName = "2.1"
         manifestPlaceholders["redirectSchemeName"] = "com.swago.seenthemlive"
         manifestPlaceholders["redirectHostName"] = "callback"
         manifestPlaceholders["redirectPathPattern"] = "/redirect"
