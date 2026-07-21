@@ -42,6 +42,7 @@ class LoginViewModel @Inject constructor(
 
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setServerClientId(BuildConfig.GOOGLE_WEB_API_KEY)
+        .setFilterByAuthorizedAccounts(false)
         .build()
 
     val request = GetCredentialRequest.Builder()
